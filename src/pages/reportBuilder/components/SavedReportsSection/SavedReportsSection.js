@@ -52,6 +52,11 @@ export const SavedReportsSection = props => {
     });
   };
 
+  const handlePin = report => {
+    // eslint-disable-next-line no-console
+    console.log(report);
+  };
+
   const openDeleteModal = reportToDelete => {
     openModal({ type: 'delete', focusedReport: reportToDelete });
   };
@@ -161,6 +166,7 @@ export const SavedReportsSection = props => {
         open={isModalOpen && type === 'view'}
         onClose={closeModal}
         handleDelete={openDeleteModal}
+        handlePin={handlePin}
         handleEdit={openEditModal}
         handleReportChange={handleReportChange}
         reports={reports}

@@ -37,7 +37,7 @@ const FilterBoxWrapper = props => (
   </Box>
 );
 
-const Actions = ({ id, handleDelete, handleEdit, reportType, report, ...rest }) => {
+const Actions = ({ id, handleDelete, handlePin, handleEdit, reportType, report, ...rest }) => {
   return (
     <Popover
       left
@@ -59,6 +59,7 @@ const Actions = ({ id, handleDelete, handleEdit, reportType, report, ...rest }) 
             as={PageLink}
           />
         )}
+        <ActionList.Action content="Pin On Dashboard" onClick={() => handlePin(report)} />
         <ActionList.Action content="Edit" onClick={() => handleEdit(report)} />
       </ActionList>
     </Popover>
@@ -72,6 +73,7 @@ export function ReportsListModal(props) {
     onClose,
     currentUser,
     handleDelete,
+    handlePin,
     handleEdit,
     isScheduledReportsEnabled,
   } = props;
@@ -97,6 +99,7 @@ export function ReportsListModal(props) {
         isScheduledReportsEnabled={isScheduledReportsEnabled}
         id={`popover-myreports-${report.id}`}
         handleDelete={handleDelete}
+        handlePin={handlePin}
         handleEdit={handleEdit}
         report={report}
         isLast={isLast}
@@ -112,6 +115,7 @@ export function ReportsListModal(props) {
         isScheduledReportsEnabled={isScheduledReportsEnabled}
         id={`popover-allreports-${report.id}`}
         handleDelete={handleDelete}
+        handlePin={handlePin}
         handleEdit={handleEdit}
         report={report}
         isLast={isLast}
@@ -145,6 +149,7 @@ export function ReportsListModal(props) {
         <Tabs tabs={[{ content: 'My Reports' }, { content: 'All Reports' }]} forceRender fitted>
           <Tabs.Item>
             <TableCollection
+              headerComponent={() => null}
               rows={myReports}
               columns={myReportsColumns}
               getRowData={myReportsRows}
@@ -161,6 +166,7 @@ export function ReportsListModal(props) {
           </Tabs.Item>
           <Tabs.Item>
             <TableCollection
+              headerComponent={() => null}
               rows={reports}
               columns={allReportsColumns}
               getRowData={allReportsRows}
