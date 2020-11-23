@@ -30,6 +30,11 @@ export const SavedReportsSection = props => {
   const { currentUser, handleReportChange, isScheduledReportsEnabled, selectedReport } = props;
   const onPinConfirm = () => {};
 
+  {
+    /* TODO: Get currently pinned report name into confirmation modal scope */
+  }
+  const mockCurrentlyPinnedReportName = 'The Summary Report';
+
   const onDelete = () => {
     const { deleteReport, getReports, showAlert } = props;
     deleteReport(focusedReport.id).then(() => {
@@ -53,8 +58,8 @@ export const SavedReportsSection = props => {
     });
   };
 
-  const handlePin = report => {
-    openModal({ type: 'confirm-pin', focusedReport: report });
+  const handlePin = reportToPin => {
+    openModal({ type: 'confirm-pin', focusedReport: reportToPin });
   };
 
   const openDeleteModal = reportToDelete => {
@@ -172,7 +177,6 @@ export const SavedReportsSection = props => {
         reports={reports}
       />
 
-      {/* TODO: Get currently pinned report name into confirmation modal scope */}
       {/* TODO: isPending={props.isPinningPending} */}
       <ConfirmationModal
         title="Pin to Dashboard"
@@ -181,7 +185,7 @@ export const SavedReportsSection = props => {
           <p>
             <Bold>{focusedReport.name}</Bold>
             <span>&nbsp;will now replace&nbsp;</span>
-            <Bold>XXXXX Report</Bold>
+            <Bold>{mockCurrentlyPinnedReportName}</Bold>
             <span>&nbsp;on Dashboard.</span>
           </p>
         }
