@@ -324,6 +324,16 @@ if (IS_HIBANA_ENABLED) {
         });
       });
 
+      it.skip('pins a saved report', () => {
+        cy.visit(PAGE_URL);
+        cy.wait('@getSavedReports');
+        cy.findByRole('button', { name: 'View All Reports' }).click();
+        cy.findByText('Open Menu').click({ force: true }); // The content is visually hidden (intentionally!), so `force: true` is needed here
+        cy.withinModal(() => {
+          cy.findByText('Pin On Dashboard').click({ force: true });
+        });
+      });
+
       it('deletes a saved report', () => {
         cy.stubRequest({
           method: 'DELETE',
