@@ -330,7 +330,7 @@ if (IS_HIBANA_ENABLED) {
         cy.findByRole('button', { name: 'View All Reports' }).click();
         cy.findByText('Open Menu').click({ force: true }); // The content is visually hidden (intentionally!), so `force: true` is needed here
 
-        cy.findByText('Pin On Dashboard').click({ force: true });
+        cy.findByText('Pin to Dashboard').click({ force: true });
 
         // TODO:
         // Assert Confirmation Modal Shows

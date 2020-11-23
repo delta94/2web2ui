@@ -59,7 +59,7 @@ const Actions = ({ id, handleDelete, handlePin, handleEdit, reportType, report, 
             as={PageLink}
           />
         )}
-        <ActionList.Action content="Pin On Dashboard" onClick={() => handlePin(report)} />
+        <ActionList.Action content="Pin to Dashboard" onClick={() => handlePin(report)} />
         <ActionList.Action content="Edit" onClick={() => handleEdit(report)} />
       </ActionList>
     </Popover>
