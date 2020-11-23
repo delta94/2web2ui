@@ -329,9 +329,15 @@ if (IS_HIBANA_ENABLED) {
         cy.wait('@getSavedReports');
         cy.findByRole('button', { name: 'View All Reports' }).click();
         cy.findByText('Open Menu').click({ force: true }); // The content is visually hidden (intentionally!), so `force: true` is needed here
-        cy.withinModal(() => {
-          cy.findByText('Pin On Dashboard').click({ force: true });
-        });
+
+        cy.findByText('Pin On Dashboard').click({ force: true });
+
+        // TODO:
+        // Assert Confirmation Modal Shows
+        // Conirm confirmation modal
+        // Assert pin icon visible
+        // Pin a different report
+        // Assert pin icon on that row instead
       });
 
       it('deletes a saved report', () => {

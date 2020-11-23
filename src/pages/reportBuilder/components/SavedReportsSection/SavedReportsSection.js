@@ -10,14 +10,13 @@ import { deleteReport, getReports } from 'src/actions/reports';
 import useModal from 'src/hooks/useModal';
 import ReportsListModal from './ReportsListModal';
 import ScheduledReportsModal from './ScheduledReportsModal';
-import { DeleteModal } from 'src/components/modals';
+import { ConfirmationModal, DeleteModal } from 'src/components/modals';
 import { showAlert } from 'src/actions/globalAlert';
 import { selectCondition } from 'src/selectors/accessConditionState';
 import { isAccountUiOptionSet } from 'src/helpers/conditions/account';
 import { useReportBuilderContext } from '../../context/ReportBuilderContext';
 
 export const SavedReportsSection = props => {
-  /* eslint-disable no-unused-vars */
   const {
     closeModal,
     isModalOpen,
@@ -29,6 +28,8 @@ export const SavedReportsSection = props => {
   const { actions } = useReportBuilderContext();
   const { refreshReportOptions } = actions;
   const { currentUser, handleReportChange, isScheduledReportsEnabled, selectedReport } = props;
+  const onPinConfirm = () => {};
+
   const onDelete = () => {
     const { deleteReport, getReports, showAlert } = props;
     deleteReport(focusedReport.id).then(() => {
@@ -53,8 +54,7 @@ export const SavedReportsSection = props => {
   };
 
   const handlePin = report => {
-    // eslint-disable-next-line no-console
-    console.log(report);
+    openModal({ type: 'confirm-pin', focusedReport: report });
   };
 
   const openDeleteModal = reportToDelete => {
@@ -170,6 +170,19 @@ export const SavedReportsSection = props => {
         handleEdit={openEditModal}
         handleReportChange={handleReportChange}
         reports={reports}
+      />
+      {/* TODO: isPending={props.isDeletePending} */}
+      <ConfirmationModal
+        title="Pin to Dashboard"
+        confirmVerb="Pin to Dashboard"
+        content={
+          <p>
+            <Bold>XXXXX Report</Bold> will now replace <Bold>XXXXX Report</Bold> on Dashboard.
+          </p>
+        }
+        open={isModalOpen && type === 'confirm-pin'}
+        onCancel={closeModal}
+        onConfirm={onPinConfirm}
       />
       <DeleteModal
         title="Are you sure you want to delete your saved report?"
