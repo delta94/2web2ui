@@ -171,13 +171,18 @@ export const SavedReportsSection = props => {
         handleReportChange={handleReportChange}
         reports={reports}
       />
-      {/* TODO: isPending={props.isDeletePending} */}
+
+      {/* TODO: Get currently pinned report name into confirmation modal scope */}
+      {/* TODO: isPending={props.isPinningPending} */}
       <ConfirmationModal
         title="Pin to Dashboard"
         confirmVerb="Pin to Dashboard"
         content={
           <p>
-            <Bold>XXXXX Report</Bold> will now replace <Bold>XXXXX Report</Bold> on Dashboard.
+            <Bold>{focusedReport.name}</Bold>
+            <span>&nbsp;will now replace&nbsp;</span>
+            <Bold>XXXXX Report</Bold>
+            <span>&nbsp;on Dashboard.</span>
           </p>
         }
         open={isModalOpen && type === 'confirm-pin'}
@@ -189,8 +194,9 @@ export const SavedReportsSection = props => {
         confirmVerb="Delete"
         content={
           <p>
-            The report <Bold>"{focusedReport.name}"</Bold> will be permanently removed. This cannot
-            be undone.
+            <span>The report&nbsp;</span>
+            <Bold>"{focusedReport.name}"</Bold>
+            <span>&nbsp;will be permanently removed. This cannot be undone.</span>
           </p>
         }
         open={isModalOpen && type === 'delete'}
