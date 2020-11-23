@@ -30,9 +30,7 @@ export const SavedReportsSection = props => {
   const { currentUser, handleReportChange, isScheduledReportsEnabled, selectedReport } = props;
   const onPinConfirm = () => {};
 
-  {
-    /* TODO: Get currently pinned report name into confirmation modal scope */
-  }
+  /* TODO: Get currently pinned report name into confirmation modal scope */
   const mockCurrentlyPinnedReportName = 'The Summary Report';
 
   const onDelete = () => {
