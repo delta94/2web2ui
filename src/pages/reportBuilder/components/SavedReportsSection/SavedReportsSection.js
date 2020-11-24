@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { updateUserUIOptions } from 'src/actions/currentUser';
 import { PRESET_REPORT_CONFIGS } from '../../constants/presetReport';
 import TypeSelect from 'src/components/typeahead/TypeSelect';
 import { Button, Column, Columns } from 'src/components/matchbox';
@@ -14,9 +15,11 @@ import { ConfirmationModal, DeleteModal } from 'src/components/modals';
 import { showAlert } from 'src/actions/globalAlert';
 import { selectCondition } from 'src/selectors/accessConditionState';
 import { isAccountUiOptionSet } from 'src/helpers/conditions/account';
+import { isUserUiOptionSet } from 'src/helpers/conditions/user';
 import { useReportBuilderContext } from '../../context/ReportBuilderContext';
 
 export const SavedReportsSection = props => {
+  const { pinnedReport } = props;
   const {
     closeModal,
     isModalOpen,
@@ -28,10 +31,18 @@ export const SavedReportsSection = props => {
   const { actions } = useReportBuilderContext();
   const { refreshReportOptions } = actions;
   const { currentUser, handleReportChange, isScheduledReportsEnabled, selectedReport } = props;
-  const onPinConfirm = () => {};
 
-  /* TODO: Get currently pinned report name into confirmation modal scope */
-  const mockCurrentlyPinnedReportName = 'The Summary Report';
+  const onPinConfirm = () => {
+    if (focusedReport.id === pinnedReport) {
+      props.updateUserUIOptions({ pinned_report: null }).then(() => {
+        closeModal();
+      });
+    } else {
+      props.updateUserUIOptions({ pinned_report: focusedReport.id }).then(() => {
+        closeModal();
+      });
+    }
+  };
 
   const onDelete = () => {
     const { deleteReport, getReports, showAlert } = props;
@@ -183,8 +194,8 @@ export const SavedReportsSection = props => {
           <p>
             <Bold>{focusedReport.name}</Bold>
             <span>&nbsp;will now replace&nbsp;</span>
-            <Bold>{mockCurrentlyPinnedReportName}</Bold>
-            <span>&nbsp;on Dashboard.</span>
+            <Bold>{`{name}`}</Bold>
+            <span>&nbsp;on your Dashboard.</span>
           </p>
         }
         open={isModalOpen && type === 'confirm-pin'}
@@ -215,11 +226,15 @@ const mapStateToProps = state => ({
   reports: state.reports.list,
   status: state.reports.status,
   isDeletePending: state.reports.deletePending,
+  pinnedReport: selectCondition(isUserUiOptionSet('pinned_report'))(state),
   isScheduledReportsEnabled: selectCondition(isAccountUiOptionSet('allow_scheduled_reports'))(
     state,
   ),
 });
 
-export default connect(mapStateToProps, { getReports, deleteReport, showAlert })(
-  SavedReportsSection,
-);
+export default connect(mapStateToProps, {
+  getReports,
+  updateUserUIOptions,
+  deleteReport,
+  showAlert,
+})(SavedReportsSection);
