@@ -8,6 +8,7 @@ import {
   Button,
   Modal,
   Popover,
+  Radio,
   ScreenReaderOnly,
   Table,
   Tag,
@@ -16,6 +17,8 @@ import { formatDateTime } from 'src/helpers/date';
 import { ButtonLink, PageLink } from 'src/components/links';
 import { selectCondition } from 'src/selectors/accessConditionState';
 import { isAccountUiOptionSet } from 'src/helpers/conditions/account';
+import { useForm } from 'react-hook-form';
+import { updateUserUIOptions } from 'src/actions/currentUser';
 
 const allReportsColumns = [
   { label: 'Name', sortKey: 'name' },
@@ -74,6 +77,8 @@ export function ReportsListModal(props) {
     handleDelete,
     handleEdit,
     isScheduledReportsEnabled,
+    onDashboard,
+    updateUserUIOptions,
   } = props;
   const handleReportChange = report => {
     props.handleReportChange(report);
@@ -82,8 +87,17 @@ export function ReportsListModal(props) {
 
   const myReports = reports.filter(({ creator }) => creator === currentUser);
 
+  const { register, handleSubmit } = useForm({ defaultValues: { reportId: null } });
+
   const myReportsRows = report => {
-    const { name, modified, isLast } = report;
+    const { name, modified, isLast, id } = report;
+    if (onDashboard)
+      return [
+        <Radio value={id} ref={register({ required: true })} id={id} name="reportId" />,
+        <div>{name}</div>,
+        <div>{formatDateTime(modified)}</div>,
+      ];
+
     return [
       <ButtonLink
         onClick={() => {
@@ -104,8 +118,32 @@ export function ReportsListModal(props) {
     ];
   };
 
+  const getMyReportColumns = () => {
+    if (onDashboard)
+      return [
+        {},
+        { label: 'Name', sortKey: 'name' },
+        { label: 'Last Modification', sortKey: 'modified' },
+      ];
+
+    return myReportsColumns;
+  };
+
+  const getColumnsForAllReports = () => {
+    if (onDashboard)
+      return [
+        {},
+        { label: 'Name', sortKey: 'name' },
+        { label: 'Last Modification', width: '25%', sortKey: 'modified' },
+        { label: 'Created By', sortKey: 'creator' },
+        {},
+      ];
+
+    return allReportsColumns;
+  };
+
   const allReportsRows = report => {
-    const { name, modified, creator, subaccount_id, current_user_can_edit, isLast } = report;
+    const { name, modified, creator, subaccount_id, current_user_can_edit, isLast, id } = report;
     //conditionally render the actionlist
     const action = current_user_can_edit ? (
       <Actions
@@ -119,6 +157,19 @@ export function ReportsListModal(props) {
     ) : (
       ''
     );
+    const row = [
+      <div>{formatDateTime(modified)}</div>,
+      <div>{creator}</div>,
+      <Tag>
+        <Subaccount id={subaccount_id} master={subaccount_id === 0} shrinkLength={12} />
+      </Tag>,
+    ];
+    if (onDashboard)
+      return [
+        <Radio value={id} ref={register({ required: true })} id={id} name="reportId" />,
+        <div>{name}</div>,
+        ...row,
+      ];
 
     return [
       <ButtonLink
@@ -128,55 +179,85 @@ export function ReportsListModal(props) {
       >
         {name}
       </ButtonLink>,
-      <div>{formatDateTime(modified)}</div>,
-      <div>{creator}</div>,
-      <Tag>
-        <Subaccount id={subaccount_id} master={subaccount_id === 0} shrinkLength={12} />
-      </Tag>,
+      ...row,
       action,
     ];
   };
 
+  const onSubmit = data => {
+    const { reportId } = data;
+
+    updateUserUIOptions({ pinned_report: reportId });
+
+    onClose();
+  };
+
+  const ModalContentContainer = ({ children }) => {
+    if (!onDashboard) return <>{children}</>;
+
+    return (
+      <form onSubmit={handleSubmit(onSubmit)} id="changeReportForm">
+        <Radio.Group label="reportList" labelHidden>
+          {children}
+        </Radio.Group>
+      </form>
+    );
+  };
+
   return (
     <Modal open={open} onClose={onClose} showCloseButton maxWidth="1300">
-      <Modal.Header>Saved Reports</Modal.Header>
-      <Modal.Content p="0">
+      <Modal.Header>{onDashboard ? 'Change Report' : 'Saved Reports'}</Modal.Header>
+      <Modal.Content>
         {/* Use p instead of padding due to bug in matchbox 4.3.1*/}
         <Tabs tabs={[{ content: 'My Reports' }, { content: 'All Reports' }]} forceRender fitted>
           <Tabs.Item>
-            <TableCollection
-              rows={myReports}
-              columns={myReportsColumns}
-              getRowData={myReportsRows}
-              wrapperComponent={Table}
-              filterBox={{
-                label: '',
-                show: true,
-                itemToStringKeys: ['name', 'modified'],
-                exampleModifiers: ['name', 'modified'],
-                maxWidth: '1250',
-                wrapper: FilterBoxWrapper,
-              }}
-            />
+            <ModalContentContainer>
+              <TableCollection
+                rows={myReports}
+                columns={getMyReportColumns()}
+                getRowData={myReportsRows}
+                wrapperComponent={Table}
+                filterBox={{
+                  label: '',
+                  show: true,
+                  itemToStringKeys: ['name', 'modified'],
+                  exampleModifiers: ['name', 'modified'],
+                  maxWidth: '1250',
+                  wrapper: FilterBoxWrapper,
+                }}
+              />
+            </ModalContentContainer>
           </Tabs.Item>
           <Tabs.Item>
-            <TableCollection
-              rows={reports}
-              columns={allReportsColumns}
-              getRowData={allReportsRows}
-              wrapperComponent={Table}
-              filterBox={{
-                label: '',
-                show: true,
-                itemToStringKeys: ['name', 'modified', 'creator'],
-                exampleModifiers: ['name', 'modified', 'creator'],
-                maxWidth: '1250',
-                wrapper: FilterBoxWrapper,
-              }}
-            />
+            <ModalContentContainer>
+              <TableCollection
+                rows={reports}
+                columns={getColumnsForAllReports()}
+                getRowData={allReportsRows}
+                wrapperComponent={Table}
+                filterBox={{
+                  label: '',
+                  show: true,
+                  itemToStringKeys: ['name', 'modified', 'creator'],
+                  exampleModifiers: ['name', 'modified', 'creator'],
+                  maxWidth: '1250',
+                  wrapper: FilterBoxWrapper,
+                }}
+              />
+            </ModalContentContainer>
           </Tabs.Item>
         </Tabs>
       </Modal.Content>
+      {onDashboard && (
+        <Modal.Footer>
+          <Button variant="primary" type="submit" form="changeReportForm" loadingLabel="Loading">
+            Change Report
+          </Button>
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+        </Modal.Footer>
+      )}
     </Modal>
   );
 }
@@ -189,4 +270,4 @@ const mapStateToProps = state => {
     ),
   };
 };
-export default connect(mapStateToProps)(ReportsListModal);
+export default connect(mapStateToProps, { updateUserUIOptions })(ReportsListModal);

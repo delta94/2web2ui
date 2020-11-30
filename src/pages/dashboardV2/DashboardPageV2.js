@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { Code, ChatBubble, LightbulbOutline, ShowChart } from '@sparkpost/matchbox-icons';
+import { Code, ChatBubble, LightbulbOutline, ShowChart, Sync } from '@sparkpost/matchbox-icons';
 import SendingMailWebp from '@sparkpost/matchbox-media/images/Sending-Mail.webp';
 import SendingMail from '@sparkpost/matchbox-media/images/Sending-Mail@medium.jpg';
 import ConfigurationWebp from '@sparkpost/matchbox-media/images/Configuration.webp';
@@ -27,6 +27,8 @@ import useDashboardContext from './hooks/useDashboardContext';
 import Dashboard from './components/Dashboard';
 import Sidebar from './components/Sidebar';
 import { LINKS } from 'src/constants';
+import { useModal } from 'src/hooks';
+import ReportsListModal from 'src/pages/reportBuilder/components/SavedReportsSection/ReportsListModal';
 
 const OnboardingImg = styled(Picture.Image)`
   vertical-align: bottom;
@@ -38,6 +40,7 @@ export default function DashboardPageV2() {
     canManageSendingDomains,
     canManageApiKeys,
     getAccount,
+    getReports,
     listAlerts,
     getUsage,
     verifySendingLink,
@@ -48,7 +51,9 @@ export default function DashboardPageV2() {
     pending,
     listSendingDomains,
     listApiKeys,
+    reports,
   } = useDashboardContext();
+  const allReports = reports.map(report => ({ ...report, key: report.id }));
   const hasSetupDocumentationPanel = isAnAdmin || isDev;
 
   useEffect(() => {
@@ -57,8 +62,10 @@ export default function DashboardPageV2() {
     if (canViewUsage) getUsage();
     if (canManageSendingDomains) listSendingDomains();
     if (canManageApiKeys) listApiKeys();
+    getReports();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const { closeModal, openModal, isModalOpen } = useModal();
 
   const { pinnedReport } = usePinnedReport(onboarding);
 
@@ -69,6 +76,15 @@ export default function DashboardPageV2() {
       <ScreenReaderOnly>
         <Heading as="h1">Dashboard</Heading>
       </ScreenReaderOnly>
+
+      {isModalOpen && (
+        <ReportsListModal
+          onDashboard={true}
+          open={isModalOpen}
+          onClose={closeModal}
+          reports={allReports}
+        />
+      )}
 
       <Stack>
         {currentUser?.first_name && (
