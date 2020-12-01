@@ -19,6 +19,7 @@ import { selectApiKeysForSending } from 'src/selectors/api-keys';
 import { listApiKeys } from 'src/actions/api-keys';
 import { selectVerifiedDomains } from 'src/selectors/sendingDomains';
 import { list as listSendingDomains } from 'src/actions/sendingDomains';
+import { getReports } from 'src/actions/reports';
 
 function mapStateToProps(state) {
   const isAnAdmin = isAdmin(state);
@@ -99,6 +100,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = {
   getAccount,
+  getReports,
   listAlerts,
   getUsage,
   listSendingDomains,
