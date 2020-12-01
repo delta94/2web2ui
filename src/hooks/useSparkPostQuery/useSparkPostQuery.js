@@ -29,8 +29,9 @@ export default function useSparkPostQuery(queryFn, config = {}) {
 }
 
 function handleError({ error, method, queryCache, auth, dispatch }) {
-  const { response } = error;
+  const { response = {} } = error;
   const apiError = _.get(response, 'data.errors[0]', {});
+
   const message =
     apiError.description ||
     apiError.message ||
