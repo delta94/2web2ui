@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import styled from 'styled-components';
 import { MoreHoriz, PushPin } from '@sparkpost/matchbox-icons';
 import { isUserUiOptionSet } from 'src/helpers/conditions/user';
 import { Tabs, TableCollection, Subaccount } from 'src/components';
@@ -17,6 +18,13 @@ import { formatDateTime } from 'src/helpers/date';
 import { ButtonLink, PageLink } from 'src/components/links';
 import { selectCondition } from 'src/selectors/accessConditionState';
 import { isAccountUiOptionSet } from 'src/helpers/conditions/account';
+
+const DisabledAction = styled(ActionList.Action)`
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
 
 const allReportColumnHeaders = [
   { label: 'Name', sortKey: 'name' },
@@ -75,10 +83,10 @@ const Actions = ({ id, handleDelete, handlePin, handleEdit, reportType, report, 
             as={PageLink}
           />
         )}
-        <ActionList.Action
+        <DisabledAction
           content="Pin to Dashboard"
           onClick={() => (reportIsPinned ? '' : handlePin(report, rest.pinnedReport))}
-          disable={reportIsPinned}
+          disabled={reportIsPinned}
         />
         <ActionList.Action content="Edit" onClick={() => handleEdit(report)} />
       </ActionList>
