@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { ROLES } from 'src/constants';
 import hasGrants from 'src/helpers/conditions/hasGrants';
 import { hasRole, isAdmin } from 'src/helpers/conditions/user';
+import { updateUserUIOptions } from 'src/actions/currentUser';
 import { fetch as getAccount, getUsage } from 'src/actions/account';
 import { listAlerts } from 'src/actions/alerts';
 import { selectRecentlyTriggeredAlerts } from 'src/selectors/alerts';
@@ -19,6 +20,8 @@ import { selectApiKeysForSending } from 'src/selectors/api-keys';
 import { listApiKeys } from 'src/actions/api-keys';
 import { selectVerifiedDomains } from 'src/selectors/sendingDomains';
 import { list as listSendingDomains } from 'src/actions/sendingDomains';
+import { selectCondition } from 'src/selectors/accessConditionState';
+import { isUserUiOptionSet } from 'src/helpers/conditions/user';
 
 function mapStateToProps(state) {
   const isAnAdmin = isAdmin(state);
@@ -36,7 +39,7 @@ function mapStateToProps(state) {
   const canManageApiKeys = hasGrants('api_keys/manage')(state);
   const canManageSendingDomains = hasGrants('sending_domains/manage')(state);
 
-  let onboarding = 'analytics';
+  let onboarding = 'done';
   if (canViewUsage && lastUsageDate === null && (isAnAdmin || isDev)) {
     let addSendingDomainNeeded;
     let verifySendingNeeded;
@@ -83,6 +86,7 @@ function mapStateToProps(state) {
     canManageApiKeys,
     isAnAdmin,
     isDev,
+    pinnedReportId: selectCondition(isUserUiOptionSet('pinned_report_id'))(state),
     currentUser: state.currentUser,
     currentPlanName: currentPlanNameSelector(state),
     recentAlerts: selectRecentlyTriggeredAlerts(state),
@@ -100,6 +104,7 @@ const mapDispatchToProps = {
   getAccount,
   listAlerts,
   getUsage,
+  updateUserUIOptions,
   listSendingDomains,
   listApiKeys,
 };

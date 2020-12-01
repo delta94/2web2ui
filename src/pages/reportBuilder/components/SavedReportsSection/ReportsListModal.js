@@ -21,7 +21,6 @@ import { selectCondition } from 'src/selectors/accessConditionState';
 import { isAccountUiOptionSet } from 'src/helpers/conditions/account';
 
 const DisabledAction = styled(ActionList.Action)`
-  &[aria-disabled='true'],
   &[disabled] {
     opacity: 0.5;
     cursor: not-allowed;
@@ -92,9 +91,9 @@ const Actions = ({ id, handleDelete, handlePin, handleEdit, reportType, report, 
         )}
         <DisabledAction
           content="Pin to Dashboard"
+          is="button"
           onClick={() => (reportIsPinned ? '' : handlePin(report, rest.pinnedReport))}
           disabled={reportIsPinned}
-          aria-disabled={reportIsPinned}
           tabIndex={reportIsPinned ? '-1' : '2'}
         />
         <ActionList.Action
