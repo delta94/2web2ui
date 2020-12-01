@@ -24,6 +24,7 @@ const DisabledAction = styled(ActionList.Action)`
   &[disabled] {
     opacity: 0.5;
     cursor: not-allowed;
+    pointer-events: none;
   }
 `;
 
@@ -76,21 +77,27 @@ const Actions = ({ id, handleDelete, handlePin, handleEdit, reportType, report, 
       }
     >
       <ActionList>
-        <ActionList.Action content="Delete" onClick={() => handleDelete(report)} />
+        <ActionList.Action content="Delete" onClick={() => handleDelete(report)} tabIndex="0" />
         {rest.isScheduledReportsEnabled && (
           <ActionList.Action
             content="Schedule"
             to={`/signals/schedule/${report.id}`}
             as={PageLink}
+            tabIndex="1"
           />
         )}
         <DisabledAction
           content="Pin to Dashboard"
-          onClick={() => (reportIsPinned ? '' : handlePin(report, rest.pinnedReport))}
+          onClick={() => handlePin(report, rest.pinnedReport)}
           disabled={reportIsPinned}
           aria-disabled={reportIsPinned}
+          tabIndex={reportIsPinned ? '-1' : '2'}
         />
-        <ActionList.Action content="Edit" onClick={() => handleEdit(report)} />
+        <ActionList.Action
+          content="Edit"
+          onClick={() => handleEdit(report)}
+          tabIndex={reportIsPinned ? '2' : '3'}
+        />
       </ActionList>
     </Popover>
   );
