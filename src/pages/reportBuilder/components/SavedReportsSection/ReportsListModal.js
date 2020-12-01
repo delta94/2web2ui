@@ -13,6 +13,7 @@ import {
   ScreenReaderOnly,
   Table,
   Tag,
+  Tooltip,
 } from 'src/components/matchbox';
 import { formatDateTime } from 'src/helpers/date';
 import { ButtonLink, PageLink } from 'src/components/links';
@@ -52,7 +53,11 @@ const FilterBoxWrapper = props => (
 const Icons = ({ report, pinnedReport }) => {
   let icons = [];
   if (pinnedReport && pinnedReport.id === report.id) {
-    icons.push(<PushPin />);
+    icons.push(
+      <Tooltip content="Pinned to Dashboard" id="pinned-to-dashboard">
+        <PushPin />
+      </Tooltip>,
+    );
   }
   return icons;
 };
