@@ -31,8 +31,13 @@ export const SavedReportsSection = props => {
   const { currentUser, handleReportChange, isScheduledReportsEnabled, selectedReport } = props;
 
   const onPinConfirm = () => {
+    const { showAlert } = props;
     props.updateUserUIOptions({ pinned_report_id: focusedReport.id }).then(() => {
       closeModal();
+      showAlert({
+        type: 'success',
+        message: `You have pinned ${focusedReport.name} to your Dashboard.`,
+      });
     });
   };
 
@@ -42,7 +47,7 @@ export const SavedReportsSection = props => {
       closeModal();
       showAlert({
         type: 'success',
-        message: `You have successfully deleted ${focusedReport.name}`,
+        message: `You have successfully deleted ${focusedReport.name}.`,
       });
       // Unsets the report if it's the report that's deleted.
       if (focusedReport.id === selectedReport.id) {
@@ -197,7 +202,7 @@ export const SavedReportsSection = props => {
                   <span>&nbsp;on your Dashboard.</span>
                 </p>
               )}
-            {(!previouslyPinnedReport || !previouslyPinnedReport.id) && (
+            {!previouslyPinnedReport.id && (
               <p>
                 <Bold>{focusedReport.name}</Bold>
                 <span>&nbsp;will be pinned to your Dashboard.&nbsp;</span>

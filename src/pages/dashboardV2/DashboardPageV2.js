@@ -29,6 +29,7 @@ import useDashboardContext from './hooks/useDashboardContext';
 import Dashboard from './components/Dashboard';
 import Sidebar from './components/Sidebar';
 import { LINKS } from 'src/constants';
+import { showAlert } from 'src/actions/globalAlert';
 
 const OnboardingImg = styled(Picture.Image)`
   vertical-align: bottom;
@@ -60,6 +61,10 @@ export default function DashboardPageV2() {
 
   const onPinConfirm = () => {
     updateUserUIOptions({ pinned_report_id: null }).then(() => {
+      showAlert({
+        type: 'success',
+        message: `Report no longer pinned.`,
+      });
       closeModal();
     });
   };

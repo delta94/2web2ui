@@ -324,20 +324,40 @@ if (IS_HIBANA_ENABLED) {
         });
       });
 
-      it.skip('pins a saved report', () => {
+      it('pins a saved report', () => {
         cy.visit(PAGE_URL);
         cy.wait('@getSavedReports');
         cy.findByRole('button', { name: 'View All Reports' }).click();
-        cy.findByText('Open Menu').click({ force: true }); // The content is visually hidden (intentionally!), so `force: true` is needed here
 
-        cy.findByText('Pin to Dashboard').click({ force: true });
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(200); // give the modal a hot damn second
 
-        // TODO:
-        // Assert Confirmation Modal Shows
-        // Conirm confirmation modal
-        // Assert pin icon visible
-        // Pin a different report
-        // Assert pin icon on that row instead
+        cy.withinModal(() => {
+          cy.findAllByText('Open Menu').click({ force: true });
+          cy.findAllByText('Pin to Dashboard').click({ force: true });
+        });
+
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(200); // give the modal a hot damn second
+
+        cy.withinModal(() => {
+          cy.get('p').contains('My Bounce Report will be pinned to your Dashboard.');
+          cy.findAllByText('Pin to Dashboard').should('be.visible');
+        });
+
+        cy.stubRequest({
+          method: 'PUT',
+          url: '/api/v1/users/mockuser',
+          fixture: 'blank.json',
+          requestAlias: 'updateUiOption',
+        });
+
+        cy.findByRole('button', { name: 'Pin to Dashboard' }).click();
+        cy.wait('@updateUiOption');
+
+        cy.withinSnackbar(() => {
+          cy.findByText('You have pinned My Bounce Report to your Dashboard.').should('be.visible');
+        });
       });
 
       it('deletes a saved report', () => {

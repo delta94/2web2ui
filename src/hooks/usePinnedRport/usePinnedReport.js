@@ -11,14 +11,14 @@ import { getReports } from 'src/actions/reports';
 
 const defaultReportName = 'Summary Report';
 
-// TODO: accept pinnedReportId param first
+// TODO: change args to (pinnedReportId, onboarding)
 export default function usePinnedReport(onboarding) {
   const pinnedReport = { options: {}, name: '', linkToReportBuilder: '/' };
   const excludeOptionsFromLink = ['isReady'];
   const dispatch = useDispatch();
   const reports = useSelector(state => state.reports.list);
   const subaccounts = useSelector(state => state.subaccounts.list);
-  const pinnedReportId = null; // TODO: accept pinnedReportId param first
+  const pinnedReportId = null; // TODO: change args to (pinnedReportId, onboarding)
 
   useEffect(() => {
     if (onboarding === 'done') {
