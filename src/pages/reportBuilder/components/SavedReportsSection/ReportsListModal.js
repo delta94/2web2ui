@@ -20,6 +20,7 @@ import { selectCondition } from 'src/selectors/accessConditionState';
 import { isAccountUiOptionSet } from 'src/helpers/conditions/account';
 
 const DisabledAction = styled(ActionList.Action)`
+  &[aria-disabled],
   &[disabled] {
     opacity: 0.5;
     cursor: not-allowed;
