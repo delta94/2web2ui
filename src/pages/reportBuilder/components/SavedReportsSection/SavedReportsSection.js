@@ -15,16 +15,14 @@ import { ConfirmationModal, DeleteModal } from 'src/components/modals';
 import { showAlert } from 'src/actions/globalAlert';
 import { selectCondition } from 'src/selectors/accessConditionState';
 import { isAccountUiOptionSet } from 'src/helpers/conditions/account';
-import { isUserUiOptionSet } from 'src/helpers/conditions/user';
 import { useReportBuilderContext } from '../../context/ReportBuilderContext';
 
 export const SavedReportsSection = props => {
-  const { pinnedReport } = props;
   const {
     closeModal,
     isModalOpen,
     openModal,
-    meta: { type, focusedReport = {} } = {},
+    meta: { type, focusedReport = {}, previouslyPinnedReport = {} } = {},
   } = useModal();
 
   const reports = props.reports.map(report => ({ ...report, key: report.id }));
@@ -33,15 +31,9 @@ export const SavedReportsSection = props => {
   const { currentUser, handleReportChange, isScheduledReportsEnabled, selectedReport } = props;
 
   const onPinConfirm = () => {
-    if (focusedReport.id === pinnedReport) {
-      props.updateUserUIOptions({ pinned_report: null }).then(() => {
-        closeModal();
-      });
-    } else {
-      props.updateUserUIOptions({ pinned_report: focusedReport.id }).then(() => {
-        closeModal();
-      });
-    }
+    props.updateUserUIOptions({ pinned_report_id: focusedReport.id }).then(() => {
+      closeModal();
+    });
   };
 
   const onDelete = () => {
@@ -67,8 +59,12 @@ export const SavedReportsSection = props => {
     });
   };
 
-  const handlePin = reportToPin => {
-    openModal({ type: 'confirm-pin', focusedReport: reportToPin });
+  const handlePin = (reportToPin, oldReportThatWasPinned) => {
+    openModal({
+      type: 'confirm-pin',
+      focusedReport: reportToPin,
+      previouslyPinnedReport: oldReportThatWasPinned,
+    });
   };
 
   const openDeleteModal = reportToDelete => {
@@ -186,19 +182,31 @@ export const SavedReportsSection = props => {
         reports={reports}
       />
 
-      {/* TODO: isPending={props.isPinningPending} */}
       <ConfirmationModal
         title="Pin to Dashboard"
         confirmVerb="Pin to Dashboard"
         content={
-          <p>
-            <Bold>{focusedReport.name}</Bold>
-            <span>&nbsp;will now replace&nbsp;</span>
-            <Bold>{`{name}`}</Bold>
-            <span>&nbsp;on your Dashboard.</span>
-          </p>
+          <>
+            {previouslyPinnedReport &&
+              previouslyPinnedReport.id &&
+              focusedReport.id !== previouslyPinnedReport.id && (
+                <p>
+                  <Bold>{focusedReport.name}</Bold>
+                  <span>&nbsp;will now replace&nbsp;</span>
+                  <Bold>{previouslyPinnedReport.name}</Bold>
+                  <span>&nbsp;on your Dashboard.</span>
+                </p>
+              )}
+            {(!previouslyPinnedReport || !previouslyPinnedReport.id) && (
+              <p>
+                <Bold>{focusedReport.name}</Bold>
+                <span>&nbsp;will be pinned to your Dashboard.&nbsp;</span>
+              </p>
+            )}
+          </>
         }
         open={isModalOpen && type === 'confirm-pin'}
+        isPending={props.userOptionsPending}
         onCancel={closeModal}
         onConfirm={onPinConfirm}
       />
@@ -226,7 +234,7 @@ const mapStateToProps = state => ({
   reports: state.reports.list,
   status: state.reports.status,
   isDeletePending: state.reports.deletePending,
-  pinnedReport: selectCondition(isUserUiOptionSet('pinned_report'))(state),
+  userOptionsPending: state.currentUser.userOptionsPending,
   isScheduledReportsEnabled: selectCondition(isAccountUiOptionSet('allow_scheduled_reports'))(
     state,
   ),

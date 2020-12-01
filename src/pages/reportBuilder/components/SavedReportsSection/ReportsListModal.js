@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { MoreHoriz, Star } from '@sparkpost/matchbox-icons';
-// TODO: Replace star with PushPin - why is PushPin not importing?
+import { MoreHoriz, PushPin } from '@sparkpost/matchbox-icons';
 import { isUserUiOptionSet } from 'src/helpers/conditions/user';
 import { Tabs, TableCollection, Subaccount } from 'src/components';
 import {
@@ -25,11 +24,13 @@ const allReportColumnHeaders = [
   { label: 'Created By', sortKey: 'creator' },
   {},
   {},
+  {},
 ];
 
 const myReportColumnHeaders = [
   { label: 'Name', sortKey: 'name' },
   { label: 'Last Modification', sortKey: 'modified' },
+  {},
   {},
 ];
 
@@ -39,44 +40,49 @@ const FilterBoxWrapper = props => (
   </Box>
 );
 
-const Actions = ({
-  id,
-  handleDelete,
-  handlePin,
-  handleEdit,
-  reportType,
-  report,
-  pinnedReport,
-  ...rest
-}) => {
+const Icons = ({ report, pinnedReport }) => {
+  let icons = [];
+  if (pinnedReport && pinnedReport.id === report.id) {
+    icons.push(<PushPin />);
+  }
+  return icons;
+};
+
+const Actions = ({ id, handleDelete, handlePin, handleEdit, reportType, report, ...rest }) => {
+  let reportIsPinned = false;
+  if (rest.pinnedReport) {
+    reportIsPinned = rest.pinnedReport.id === report.id;
+  }
+
   return (
-    <>
-      {pinnedReport === report.id && <Star />}
-      <Popover
-        left
-        top={rest.isLast}
-        id={id}
-        trigger={
-          <Button variant="minimal" aria-controls={id} data-id={id} ml="200">
-            <Button.Icon as={MoreHoriz} />
-            <ScreenReaderOnly>Open Menu</ScreenReaderOnly>
-          </Button>
-        }
-      >
-        <ActionList>
-          <ActionList.Action content="Delete" onClick={() => handleDelete(report)} />
-          {rest.isScheduledReportsEnabled && (
-            <ActionList.Action
-              content="Schedule"
-              to={`/signals/schedule/${report.id}`}
-              as={PageLink}
-            />
-          )}
-          <ActionList.Action content="Pin to Dashboard" onClick={() => handlePin(report)} />
-          <ActionList.Action content="Edit" onClick={() => handleEdit(report)} />
-        </ActionList>
-      </Popover>
-    </>
+    <Popover
+      left
+      top={rest.isLast}
+      id={id}
+      trigger={
+        <Button variant="minimal" aria-controls={id} data-id={id}>
+          <Button.Icon as={MoreHoriz} />
+          <ScreenReaderOnly>Open Menu</ScreenReaderOnly>
+        </Button>
+      }
+    >
+      <ActionList>
+        <ActionList.Action content="Delete" onClick={() => handleDelete(report)} />
+        {rest.isScheduledReportsEnabled && (
+          <ActionList.Action
+            content="Schedule"
+            to={`/signals/schedule/${report.id}`}
+            as={PageLink}
+          />
+        )}
+        <ActionList.Action
+          content="Pin to Dashboard"
+          onClick={() => (reportIsPinned ? '' : handlePin(report, rest.pinnedReport))}
+          disable={reportIsPinned}
+        />
+        <ActionList.Action content="Edit" onClick={() => handleEdit(report)} />
+      </ActionList>
+    </Popover>
   );
 };
 
@@ -89,7 +95,7 @@ export function ReportsListModal(props) {
     handleDelete,
     handlePin,
     handleEdit,
-    pinnedReport,
+    pinnedReportId,
     isScheduledReportsEnabled,
   } = props;
 
@@ -99,47 +105,39 @@ export function ReportsListModal(props) {
   };
 
   const myReports = reports.filter(({ creator }) => creator === currentUser);
+  let pinnedReport;
+
+  if (pinnedReportId) {
+    pinnedReport = reports.find(report => report.id === pinnedReportId);
+  }
 
   const myReportsColumns = report => {
     const { name, modified, isLast } = report;
     return [
-      <Table.Cell>
-        <ButtonLink
-          onClick={() => {
-            handleReportChange(report);
-          }}
-        >
-          {name}
-        </ButtonLink>
-      </Table.Cell>,
-      <Table.Cell>
-        <div>{formatDateTime(modified)}</div>
-      </Table.Cell>,
-      <Table.Cell className="clearfix">
-        <Actions
-          isScheduledReportsEnabled={isScheduledReportsEnabled}
-          id={`popover-myreports-${report.id}`}
-          handleDelete={handleDelete}
-          handlePin={handlePin}
-          handleEdit={handleEdit}
-          report={report}
-          pinnedReport={pinnedReport}
-          isLast={isLast}
-        />
-      </Table.Cell>,
+      <ButtonLink
+        onClick={() => {
+          handleReportChange(report);
+        }}
+      >
+        {name}
+      </ButtonLink>,
+      <div>{formatDateTime(modified)}</div>,
+      <Icons report={report} pinnedReport={pinnedReport}></Icons>,
+      <Actions
+        isScheduledReportsEnabled={isScheduledReportsEnabled}
+        id={`popover-myreports-${report.id}`}
+        handleDelete={handleDelete}
+        handlePin={handlePin}
+        handleEdit={handleEdit}
+        report={report}
+        pinnedReport={pinnedReport}
+        isLast={isLast}
+      />,
     ];
   };
-  const MyReportsRow = report => (
-    <Table.Row>
-      {myReportsColumns(report).forEach(column => (
-        <column />
-      ))}
-    </Table.Row>
-  );
 
   const allReportsColumns = report => {
     const { name, modified, creator, subaccount_id, current_user_can_edit, isLast } = report;
-    //conditionally render the actionlist
     const action = current_user_can_edit ? (
       <Actions
         isScheduledReportsEnabled={isScheduledReportsEnabled}
@@ -168,16 +166,10 @@ export function ReportsListModal(props) {
       <Tag>
         <Subaccount id={subaccount_id} master={subaccount_id === 0} shrinkLength={12} />
       </Tag>,
+      <Icons report={report} pinnedReport={pinnedReport}></Icons>,
       action,
     ];
   };
-  const AllReportsRow = report => (
-    <Table.Row>
-      {allReportsColumns(report).forEach(column => (
-        <column />
-      ))}
-    </Table.Row>
-  );
 
   return (
     <Modal open={open} onClose={onClose} showCloseButton maxWidth="1300">
@@ -189,7 +181,7 @@ export function ReportsListModal(props) {
             <TableCollection
               rows={myReports}
               columns={myReportColumnHeaders}
-              rowComponent={MyReportsRow}
+              getRowData={myReportsColumns}
               wrapperComponent={Table}
               filterBox={{
                 label: '',
@@ -205,7 +197,7 @@ export function ReportsListModal(props) {
             <TableCollection
               rows={reports}
               columns={allReportColumnHeaders}
-              rowComponent={AllReportsRow}
+              getRowData={allReportsColumns}
               wrapperComponent={Table}
               filterBox={{
                 label: '',
@@ -226,7 +218,7 @@ export function ReportsListModal(props) {
 const mapStateToProps = state => {
   return {
     currentUser: state.currentUser.username,
-    pinnedReport: selectCondition(isUserUiOptionSet('pinned_report'))(state),
+    pinnedReportId: selectCondition(isUserUiOptionSet('pinned_report_id'))(state),
     isScheduledReportsEnabled: selectCondition(isAccountUiOptionSet('allow_scheduled_reports'))(
       state,
     ),

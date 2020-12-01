@@ -91,11 +91,12 @@ export default function DashboardPageV2() {
                       </PageLink>
                     </Panel.Action>
                   </Panel.Header>
-                  <Panel.Section>
+                  <Panel.Section p="0">
                     <ChartGroups reportOptions={pinnedReport.options} />
                   </Panel.Section>
                 </Dashboard.Panel>
               )}
+
               {onboarding === 'analyticsReportPromo' && (
                 <Dashboard.Panel>
                   <Columns>
