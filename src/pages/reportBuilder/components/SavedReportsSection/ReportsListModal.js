@@ -87,6 +87,7 @@ const Actions = ({ id, handleDelete, handlePin, handleEdit, reportType, report, 
           content="Pin to Dashboard"
           onClick={() => (reportIsPinned ? '' : handlePin(report, rest.pinnedReport))}
           disabled={reportIsPinned}
+          aria-disabled={reportIsPinned}
         />
         <ActionList.Action content="Edit" onClick={() => handleEdit(report)} />
       </ActionList>
