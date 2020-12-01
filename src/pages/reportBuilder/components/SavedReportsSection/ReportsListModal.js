@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { MoreHoriz } from '@sparkpost/matchbox-icons';
 import { Tabs, TableCollection, Subaccount } from 'src/components';
 import {
@@ -19,6 +20,7 @@ import { selectCondition } from 'src/selectors/accessConditionState';
 import { isAccountUiOptionSet } from 'src/helpers/conditions/account';
 import { useForm } from 'react-hook-form';
 import { updateUserUIOptions } from 'src/actions/currentUser';
+import { showAlert } from 'src/actions/globalAlert';
 
 const allReportsColumns = [
   { label: 'Name', sortKey: 'name' },
@@ -68,32 +70,33 @@ const Actions = ({ id, handleDelete, handleEdit, reportType, report, ...rest }) 
   );
 };
 
-export function ReportsListModal(props) {
-  const {
-    reports,
-    open,
-    onClose,
-    currentUser,
-    handleDelete,
-    handleEdit,
-    isScheduledReportsEnabled,
-    onDashboard,
-    updateUserUIOptions,
-  } = props;
-  const handleReportChange = report => {
-    props.handleReportChange(report);
+export function ReportsListModal({
+  reports,
+  open,
+  onClose,
+  currentUser,
+  handleDelete,
+  handleEdit,
+  isScheduledReportsEnabled,
+  onDashboard,
+  handleReportChange,
+}) {
+  const handleReportChangeAndClose = report => {
+    handleReportChange(report);
     onClose();
   };
 
   const myReports = reports.filter(({ creator }) => creator === currentUser);
 
-  const { register, handleSubmit } = useForm({ defaultValues: { reportId: null } });
+  const { register, handleSubmit } = useForm();
+
+  const dispatch = useDispatch();
 
   const myReportsRows = report => {
     const { name, modified, isLast, id } = report;
     if (onDashboard)
       return [
-        <Radio value={id} ref={register({ required: true })} id={id} name="reportId" />,
+        <Radio value={id} ref={register} id={id} name="reportId" />,
         <div>{name}</div>,
         <div>{formatDateTime(modified)}</div>,
       ];
@@ -101,7 +104,7 @@ export function ReportsListModal(props) {
     return [
       <ButtonLink
         onClick={() => {
-          handleReportChange(report);
+          handleReportChangeAndClose(report);
         }}
       >
         {name}
@@ -166,7 +169,7 @@ export function ReportsListModal(props) {
     ];
     if (onDashboard)
       return [
-        <Radio value={id} ref={register({ required: true })} id={id} name="reportId" />,
+        <Radio value={id} ref={register} id={id} name="reportId" />,
         <div>{name}</div>,
         ...row,
       ];
@@ -174,7 +177,7 @@ export function ReportsListModal(props) {
     return [
       <ButtonLink
         onClick={() => {
-          handleReportChange(report);
+          handleReportChangeAndClose(report);
         }}
       >
         {name}
@@ -187,7 +190,16 @@ export function ReportsListModal(props) {
   const onSubmit = data => {
     const { reportId } = data;
 
-    updateUserUIOptions({ pinned_report: reportId });
+    if (reportId) {
+      dispatch(updateUserUIOptions({ pinned_report: reportId })).then(() => {
+        dispatch(
+          showAlert({
+            type: 'success',
+            message: 'Pinned Report updated',
+          }),
+        );
+      });
+    }
 
     onClose();
   };
@@ -204,50 +216,51 @@ export function ReportsListModal(props) {
     );
   };
 
+  const renderContent = () => {
+    return (
+      <ModalContentContainer>
+        <Tabs tabs={[{ content: 'My Reports' }, { content: 'All Reports' }]} fitted>
+          <Tabs.Item>
+            <TableCollection
+              rows={myReports}
+              columns={getMyReportColumns()}
+              getRowData={myReportsRows}
+              wrapperComponent={Table}
+              filterBox={{
+                label: '',
+                show: true,
+                itemToStringKeys: ['name', 'modified'],
+                exampleModifiers: ['name', 'modified'],
+                maxWidth: '1250',
+                wrapper: FilterBoxWrapper,
+              }}
+            />
+          </Tabs.Item>
+          <Tabs.Item>
+            <TableCollection
+              rows={reports}
+              columns={getColumnsForAllReports()}
+              getRowData={allReportsRows}
+              wrapperComponent={Table}
+              filterBox={{
+                label: '',
+                show: true,
+                itemToStringKeys: ['name', 'modified', 'creator'],
+                exampleModifiers: ['name', 'modified', 'creator'],
+                maxWidth: '1250',
+                wrapper: FilterBoxWrapper,
+              }}
+            />
+          </Tabs.Item>
+        </Tabs>
+      </ModalContentContainer>
+    );
+  };
+
   return (
     <Modal open={open} onClose={onClose} showCloseButton maxWidth="1300">
       <Modal.Header>{onDashboard ? 'Change Report' : 'Saved Reports'}</Modal.Header>
-      <Modal.Content>
-        {/* Use p instead of padding due to bug in matchbox 4.3.1*/}
-        <Tabs tabs={[{ content: 'My Reports' }, { content: 'All Reports' }]} forceRender fitted>
-          <Tabs.Item>
-            <ModalContentContainer>
-              <TableCollection
-                rows={myReports}
-                columns={getMyReportColumns()}
-                getRowData={myReportsRows}
-                wrapperComponent={Table}
-                filterBox={{
-                  label: '',
-                  show: true,
-                  itemToStringKeys: ['name', 'modified'],
-                  exampleModifiers: ['name', 'modified'],
-                  maxWidth: '1250',
-                  wrapper: FilterBoxWrapper,
-                }}
-              />
-            </ModalContentContainer>
-          </Tabs.Item>
-          <Tabs.Item>
-            <ModalContentContainer>
-              <TableCollection
-                rows={reports}
-                columns={getColumnsForAllReports()}
-                getRowData={allReportsRows}
-                wrapperComponent={Table}
-                filterBox={{
-                  label: '',
-                  show: true,
-                  itemToStringKeys: ['name', 'modified', 'creator'],
-                  exampleModifiers: ['name', 'modified', 'creator'],
-                  maxWidth: '1250',
-                  wrapper: FilterBoxWrapper,
-                }}
-              />
-            </ModalContentContainer>
-          </Tabs.Item>
-        </Tabs>
-      </Modal.Content>
+      <Modal.Content>{renderContent()}</Modal.Content>
       {onDashboard && (
         <Modal.Footer>
           <Button variant="primary" type="submit" form="changeReportForm" loadingLabel="Loading">
@@ -270,4 +283,4 @@ const mapStateToProps = state => {
     ),
   };
 };
-export default connect(mapStateToProps, { updateUserUIOptions })(ReportsListModal);
+export default connect(mapStateToProps)(ReportsListModal);
