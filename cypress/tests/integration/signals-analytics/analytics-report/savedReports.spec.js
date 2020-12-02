@@ -293,8 +293,8 @@ if (IS_HIBANA_ENABLED) {
           cy.findByRole('tab', { name: 'All Reports' }).click();
           cy.findAllByText('My Bounce Report').should('have.length', 1); //For both tabs
           cy.findAllByText('My Bounce Report')
-            .first()
-            .should('be.hidden');
+            .last()
+            .should('be.visible');
           cy.findByText('Your Sending Report').should('be.visible');
         });
       });
