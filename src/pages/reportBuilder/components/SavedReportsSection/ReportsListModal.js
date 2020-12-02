@@ -80,13 +80,12 @@ const Actions = ({ id, handleDelete, handlePin, handleEdit, reportType, report, 
       }
     >
       <ActionList>
-        <ActionList.Action content="Delete" onClick={() => handleDelete(report)} tabIndex="0" />
+        <ActionList.Action content="Delete" onClick={() => handleDelete(report)} />
         {rest.isScheduledReportsEnabled && (
           <ActionList.Action
             content="Schedule"
             to={`/signals/schedule/${report.id}`}
             as={PageLink}
-            tabIndex="1"
           />
         )}
         <DisabledAction
@@ -94,13 +93,9 @@ const Actions = ({ id, handleDelete, handlePin, handleEdit, reportType, report, 
           is="button"
           onClick={() => (reportIsPinned ? '' : handlePin(report, rest.pinnedReport))}
           disabled={reportIsPinned}
-          tabIndex={reportIsPinned ? '-1' : '2'}
+          tabIndex={reportIsPinned ? '-1' : false}
         />
-        <ActionList.Action
-          content="Edit"
-          onClick={() => handleEdit(report)}
-          tabIndex={reportIsPinned ? '2' : '3'}
-        />
+        <ActionList.Action content="Edit" onClick={() => handleEdit(report)} />
       </ActionList>
     </Popover>
   );
