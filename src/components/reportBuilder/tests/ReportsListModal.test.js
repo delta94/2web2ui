@@ -44,9 +44,7 @@ describe('ReportsListModal', () => {
     };
     const testSecondTab = texts => {
       texts.forEach(text => {
-        expect(screen.getAllByText(text)).toHaveLength(2);
-        expect(screen.getAllByText(text)[0]).not.toBeVisible();
-        expect(screen.getAllByText(text)[1]).toBeVisible();
+        expect(screen.getByText(text)).toBeVisible();
       });
     };
 
