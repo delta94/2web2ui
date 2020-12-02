@@ -1,8 +1,7 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { useDispatch } from 'react-redux';
+import React, { useState } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import { MoreHoriz } from '@sparkpost/matchbox-icons';
-import { Tabs, TableCollection, Subaccount } from 'src/components';
+import { TableCollection, Subaccount } from 'src/components';
 import {
   ActionList,
   Box,
@@ -12,13 +11,13 @@ import {
   Radio,
   ScreenReaderOnly,
   Table,
+  Tabs,
   Tag,
 } from 'src/components/matchbox';
 import { formatDateTime } from 'src/helpers/date';
 import { ButtonLink, PageLink } from 'src/components/links';
 import { selectCondition } from 'src/selectors/accessConditionState';
 import { isAccountUiOptionSet } from 'src/helpers/conditions/account';
-import { useForm } from 'react-hook-form';
 import { updateUserUIOptions } from 'src/actions/currentUser';
 import { showAlert } from 'src/actions/globalAlert';
 
@@ -88,15 +87,26 @@ export function ReportsListModal({
 
   const myReports = reports.filter(({ creator }) => creator === currentUser);
 
-  const { register, handleSubmit } = useForm();
-
   const dispatch = useDispatch();
+
+  const [tabIndex, setTabIndex] = useState(0);
+
+  const [selectedReportId, setSelectedReportId] = useState(null);
+
+  const handleRadioChange = id => setSelectedReportId(id);
 
   const myReportsRows = report => {
     const { name, modified, isLast, id } = report;
     if (onDashboard)
       return [
-        <Radio value={id} ref={register} id={id} name="reportId" />,
+        <Radio
+          value={id}
+          id={id}
+          key={id}
+          name="reportId"
+          onChange={() => handleRadioChange(id)}
+          checked={selectedReportId === id}
+        />,
         <div>{name}</div>,
         <div>{formatDateTime(modified)}</div>,
       ];
@@ -169,7 +179,14 @@ export function ReportsListModal({
     ];
     if (onDashboard)
       return [
-        <Radio value={id} ref={register} id={id} name="reportId" />,
+        <Radio
+          value={id}
+          id={id}
+          key={id}
+          name="reportId"
+          onChange={() => handleRadioChange(id)}
+          checked={selectedReportId === id}
+        />,
         <div>{name}</div>,
         ...row,
       ];
@@ -187,19 +204,15 @@ export function ReportsListModal({
     ];
   };
 
-  const onSubmit = data => {
-    const { reportId } = data;
-
-    if (reportId) {
-      dispatch(updateUserUIOptions({ pinned_report: reportId })).then(() => {
-        dispatch(
-          showAlert({
-            type: 'success',
-            message: 'Pinned Report updated',
-          }),
-        );
-      });
-    }
+  const onSubmit = () => {
+    dispatch(updateUserUIOptions({ pinned_report: selectedReportId })).then(() => {
+      dispatch(
+        showAlert({
+          type: 'success',
+          message: 'Pinned Report updated',
+        }),
+      );
+    });
 
     onClose();
   };
@@ -208,62 +221,69 @@ export function ReportsListModal({
     if (!onDashboard) return <>{children}</>;
 
     return (
-      <form onSubmit={handleSubmit(onSubmit)} id="changeReportForm">
-        <Radio.Group label="reportList" labelHidden>
-          {children}
-        </Radio.Group>
-      </form>
+      <Radio.Group label="reportList" labelHidden>
+        {children}
+      </Radio.Group>
     );
   };
 
-  const renderContent = () => {
-    return (
-      <ModalContentContainer>
-        <Tabs tabs={[{ content: 'My Reports' }, { content: 'All Reports' }]} fitted>
-          <Tabs.Item>
-            <TableCollection
-              rows={myReports}
-              columns={getMyReportColumns()}
-              getRowData={myReportsRows}
-              wrapperComponent={Table}
-              filterBox={{
-                label: '',
-                show: true,
-                itemToStringKeys: ['name', 'modified'],
-                exampleModifiers: ['name', 'modified'],
-                maxWidth: '1250',
-                wrapper: FilterBoxWrapper,
-              }}
-            />
-          </Tabs.Item>
-          <Tabs.Item>
-            <TableCollection
-              rows={reports}
-              columns={getColumnsForAllReports()}
-              getRowData={allReportsRows}
-              wrapperComponent={Table}
-              filterBox={{
-                label: '',
-                show: true,
-                itemToStringKeys: ['name', 'modified', 'creator'],
-                exampleModifiers: ['name', 'modified', 'creator'],
-                maxWidth: '1250',
-                wrapper: FilterBoxWrapper,
-              }}
-            />
-          </Tabs.Item>
-        </Tabs>
-      </ModalContentContainer>
-    );
-  };
+  const TABS = [
+    <TableCollection
+      rows={myReports}
+      columns={getMyReportColumns()}
+      getRowData={myReportsRows}
+      wrapperComponent={Table}
+      filterBox={{
+        label: '',
+        show: true,
+        itemToStringKeys: ['name', 'modified'],
+        exampleModifiers: ['name', 'modified'],
+        maxWidth: '1250',
+        wrapper: FilterBoxWrapper,
+      }}
+    />,
+
+    <TableCollection
+      rows={reports}
+      columns={getColumnsForAllReports()}
+      getRowData={allReportsRows}
+      wrapperComponent={Table}
+      filterBox={{
+        label: '',
+        show: true,
+        itemToStringKeys: ['name', 'modified', 'creator'],
+        exampleModifiers: ['name', 'modified', 'creator'],
+        maxWidth: '1250',
+        wrapper: FilterBoxWrapper,
+      }}
+    />,
+  ];
 
   return (
     <Modal open={open} onClose={onClose} showCloseButton maxWidth="1300">
       <Modal.Header>{onDashboard ? 'Change Report' : 'Saved Reports'}</Modal.Header>
-      <Modal.Content>{renderContent()}</Modal.Content>
+      <Modal.Content>
+        <ModalContentContainer>
+          <Tabs
+            tabs={[
+              { content: 'My Reports', onClick: () => setTabIndex(0) },
+              { content: 'All Reports', onClick: () => setTabIndex(1) },
+            ]}
+            fitted
+            selected={tabIndex}
+          />
+
+          {TABS[tabIndex]}
+        </ModalContentContainer>
+      </Modal.Content>
       {onDashboard && (
         <Modal.Footer>
-          <Button variant="primary" type="submit" form="changeReportForm" loadingLabel="Loading">
+          <Button
+            variant="primary"
+            loadingLabel="Loading"
+            onClick={onSubmit}
+            disabled={!selectedReportId}
+          >
             Change Report
           </Button>
           <Button variant="secondary" onClick={onClose}>
