@@ -14,7 +14,7 @@ import {
 import { REPORT_BUILDER_FILTER_KEY_MAP } from 'src/constants';
 import { useReportBuilderContext } from '../context/ReportBuilderContext';
 import { Heading } from 'src/components/text';
-import { Loading } from 'src/components';
+import { Loading, Empty } from 'src/components';
 const DEFAULT_UNIT = 'number';
 
 function getUniqueUnits(metrics) {
@@ -127,6 +127,10 @@ export function Charts(props) {
 
   if (chartStatus === 'loading' || chartStatus === 'idle') {
     return <Loading minHeight="200px" />;
+  }
+
+  if (chartStatus === 'error') {
+    return <Empty message="Unable to load report" description="Please try again" />;
   }
 
   return (
