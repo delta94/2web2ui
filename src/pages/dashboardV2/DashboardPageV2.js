@@ -6,7 +6,7 @@ import SendingMailWebp from '@sparkpost/matchbox-media/images/Sending-Mail.webp'
 import SendingMail from '@sparkpost/matchbox-media/images/Sending-Mail@medium.jpg';
 import ConfigurationWebp from '@sparkpost/matchbox-media/images/Configuration.webp';
 import Configuration from '@sparkpost/matchbox-media/images/Configuration@medium.jpg';
-import { Loading, Abbreviation } from 'src/components';
+import { Loading, Abbreviation, ReportsListModal } from 'src/components';
 import {
   Box,
   Button,
@@ -28,7 +28,6 @@ import Dashboard from './components/Dashboard';
 import Sidebar from './components/Sidebar';
 import { LINKS } from 'src/constants';
 import { useModal } from 'src/hooks';
-import ReportsListModal from 'src/pages/reportBuilder/components/SavedReportsSection/ReportsListModal';
 
 const OnboardingImg = styled(Picture.Image)`
   vertical-align: bottom;

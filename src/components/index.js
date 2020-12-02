@@ -41,6 +41,7 @@ export * from './collection';
 export * from './formatters';
 export * from './loading';
 export * from './modals';
+export * from './reportBuilder';
 export * from './reduxFormWrappers';
 export * from './tags';
 export * from './card';
