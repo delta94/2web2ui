@@ -200,12 +200,12 @@ if (IS_HIBANA_ENABLED) {
             .should('have.contain', 'mockuser');
 
           cy.findAllByRole('option')
-            .eq(1)
+            .eq(2)
             .should('have.contain', 'Your Sending Report')
             .should('have.contain', 'sally-sender');
 
           cy.findAllByRole('option')
-            .eq(2)
+            .eq(3)
             .should('have.contain', 'Summary Report')
             .should('have.contain', 'Default');
         });
@@ -431,13 +431,27 @@ if (IS_HIBANA_ENABLED) {
         cy.findByRole('button', { name: 'View All Reports' }).click();
         //Avoid flakey test by waiting for modal to render. Might be some other issue as well.
         /* eslint-disable-next-line */
-        cy.wait(500);
-        cy.findByText('Open Menu').click({ force: true }); // The content is visually hidden (intentionally!), so `force: true` is needed here
-        cy.findByText('Delete').click({ force: true });
+        cy.wait(250);
+
+        cy.withinModal(() => {
+          cy.get('table').within(() => {
+            cy.findByText('My Bounce Report')
+              .closest('tr')
+              .within(() => {
+                cy.findByText('Open Menu').click({ force: true }); // The content is visually hidden (intentionally!), so `force: true` is needed here
+                cy.findByText('Delete').click({ force: true });
+              });
+          });
+        });
+
+        //Avoid flakey test by waiting for modal to render. Might be some other issue as well.
+        /* eslint-disable-next-line */
+        cy.wait(250);
 
         cy.withinModal(() => {
           cy.findByText('Delete').click({ force: true });
         });
+
         cy.wait('@deleteReport');
         cy.wait('@newGetSavedReports');
 
@@ -449,7 +463,10 @@ if (IS_HIBANA_ENABLED) {
             .eq(0)
             .should('not.contain', 'My Bounce Report');
         });
-        cy.findByText('You have successfully deleted My Bounce Report').should('be.visible');
+
+        cy.withinSnackbar(() => {
+          cy.findByText('You have successfully deleted My Bounce Report.').should('be.visible');
+        });
       });
 
       it('disabled creating new reports when limit is reached', () => {
