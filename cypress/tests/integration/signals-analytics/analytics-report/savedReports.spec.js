@@ -324,21 +324,27 @@ if (IS_HIBANA_ENABLED) {
         });
       });
 
-      it('pins a saved report', () => {
+      it('pins a saved report with unique verbiage for first time save vs overriding save', () => {
         cy.visit(PAGE_URL);
-        cy.wait('@getSavedReports');
         cy.findByRole('button', { name: 'View All Reports' }).click();
 
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(500); // give the modal a hot damn second
+        cy.wait(250);
 
         cy.withinModal(() => {
-          cy.findAllByText('Open Menu').click({ force: true });
-          cy.findAllByText('Pin to Dashboard').click({ force: true });
+          cy.get('table').within(() => {
+            cy.findByDataId('pinned-to-dashboard').should('not.be.visible');
+            cy.findByText('My Bounce Report')
+              .closest('tr')
+              .within(() => {
+                cy.findAllByText('Open Menu').click({ force: true });
+                cy.findAllByText('Pin to Dashboard').click({ force: true });
+              });
+          });
         });
 
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(500); // give the modal a hot damn second
+        cy.wait(250);
 
         cy.withinModal(() => {
           cy.get('p').contains('My Bounce Report will be pinned to your Dashboard.');
@@ -348,7 +354,7 @@ if (IS_HIBANA_ENABLED) {
         cy.stubRequest({
           method: 'PUT',
           url: '/api/v1/users/mockuser',
-          fixture: 'blank.json',
+          fixture: 'users/200.put.update-ui-options.json',
           requestAlias: 'updateUiOption',
         });
 
@@ -356,8 +362,43 @@ if (IS_HIBANA_ENABLED) {
         cy.wait('@updateUiOption');
 
         cy.withinSnackbar(() => {
-          cy.findByText('Successfully pinned My Bounce Report to your Dashboard.').should(
+          cy.findAllByText('Successfully pinned My Bounce Report to your Dashboard.').should(
             'be.visible',
+          );
+        });
+
+        cy.findByRole('button', { name: 'View All Reports' }).click();
+
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(250);
+
+        cy.withinModal(() => {
+          cy.get('table').within(() => {
+            cy.findByText('My Bounce Report')
+              .closest('tr')
+              .within(() => {
+                cy.findByLabelText('pinned-to-dashboard').should('be.visible');
+                cy.findByText('Open Menu').click({ force: true });
+                cy.findByText('Pin to Dashboard')
+                  .closest('button')
+                  .should('be.disabled');
+              });
+
+            cy.findByText('My Other Bounce Report')
+              .closest('tr')
+              .within(() => {
+                cy.findAllByText('Open Menu').click({ force: true });
+                cy.findAllByText('Pin to Dashboard').click({ force: true });
+              });
+          });
+        });
+
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(250);
+
+        cy.withinModal(() => {
+          cy.get('p').contains(
+            'My Other Bounce Report will now replace My Bounce Report on your Dashboard.',
           );
         });
       });

@@ -54,7 +54,7 @@ const Icons = ({ report, pinnedReport }) => {
   if (pinnedReport && pinnedReport.id === report.id) {
     icons.push(
       <Tooltip content="Pinned to Dashboard" id="pinned-to-dashboard">
-        <PushPin />
+        <PushPin label="pinned-to-dashboard" />
       </Tooltip>,
     );
   }
