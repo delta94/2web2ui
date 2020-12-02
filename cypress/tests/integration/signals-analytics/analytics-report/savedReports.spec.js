@@ -295,9 +295,6 @@ if (IS_HIBANA_ENABLED) {
           cy.findAllByText('My Bounce Report')
             .first()
             .should('be.hidden');
-          cy.findAllByText('My Bounce Report')
-            .last()
-            .should('be.visible');
           cy.findByText('Your Sending Report').should('be.visible');
         });
       });
