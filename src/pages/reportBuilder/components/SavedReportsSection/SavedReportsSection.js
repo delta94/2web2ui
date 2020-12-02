@@ -36,7 +36,7 @@ export const SavedReportsSection = props => {
       closeModal();
       showAlert({
         type: 'success',
-        message: `You have pinned ${focusedReport.name} to your Dashboard.`,
+        message: `Successfully pinned ${focusedReport.name} to your Dashboard.`,
       });
     });
   };

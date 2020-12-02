@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { Code, ChatBubble, LightbulbOutline, ShowChart, PushPin } from '@sparkpost/matchbox-icons';
-import { ConfirmationModal } from 'src/components/modals';
+import { Code, ChatBubble, LightbulbOutline, ShowChart } from '@sparkpost/matchbox-icons';
 import SendingMailWebp from '@sparkpost/matchbox-media/images/Sending-Mail.webp';
 import SendingMail from '@sparkpost/matchbox-media/images/Sending-Mail@medium.jpg';
 import ConfigurationWebp from '@sparkpost/matchbox-media/images/Configuration.webp';
@@ -23,13 +22,11 @@ import {
 import { Bold, Heading, TranslatableText } from 'src/components/text';
 import { ExternalLink, PageLink, SupportTicketLink } from 'src/components/links';
 import { ChartGroups } from 'src/pages/reportBuilder/components/Charts';
-import useModal from 'src/hooks/useModal';
 import { usePinnedReport } from 'src/hooks';
 import useDashboardContext from './hooks/useDashboardContext';
 import Dashboard from './components/Dashboard';
 import Sidebar from './components/Sidebar';
 import { LINKS } from 'src/constants';
-import { showAlert } from 'src/actions/globalAlert';
 
 const OnboardingImg = styled(Picture.Image)`
   vertical-align: bottom;
@@ -47,27 +44,12 @@ export default function DashboardPageV2() {
     onboarding,
     isAnAdmin,
     isDev,
-    pinnedReportId,
     currentUser,
     pending,
     listSendingDomains,
     listApiKeys,
-    updateUserUIOptions,
-    userOptionsPending,
   } = useDashboardContext();
   const hasSetupDocumentationPanel = isAnAdmin || isDev;
-
-  const { closeModal, isModalOpen, openModal, meta: { type } = {} } = useModal();
-
-  const onPinConfirm = () => {
-    updateUserUIOptions({ pinned_report_id: null }).then(() => {
-      showAlert({
-        type: 'success',
-        message: `Report no longer pinned.`,
-      });
-      closeModal();
-    });
-  };
 
   useEffect(() => {
     getAccount();
@@ -109,11 +91,6 @@ export default function DashboardPageV2() {
                         <TranslatableText>Analyze Report</TranslatableText> <ShowChart size={25} />
                       </PageLink>
                     </Panel.Action>
-                    {pinnedReportId && (
-                      <Panel.Action>
-                        <PushPin onClick={() => openModal({ type: 'unpin' })} />
-                      </Panel.Action>
-                    )}
                   </Panel.Header>
                   <Panel.Section p="0">
                     <ChartGroups reportOptions={pinnedReport.options} />
@@ -389,23 +366,6 @@ export default function DashboardPageV2() {
           </Layout.Section>
         </Layout>
       </Stack>
-
-      <ConfirmationModal
-        title="Unpin Report"
-        confirmVerb="Unpin Report"
-        content={
-          <>
-            <p>
-              <Bold>Summary Report</Bold>
-              <span>&nbsp;will be pinned to your Dashboard.&nbsp;</span>
-            </p>
-          </>
-        }
-        open={isModalOpen && type === 'unpin'}
-        isPending={userOptionsPending}
-        onCancel={closeModal}
-        onConfirm={onPinConfirm}
-      />
     </Dashboard>
   );
 }

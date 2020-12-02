@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { ROLES } from 'src/constants';
 import hasGrants from 'src/helpers/conditions/hasGrants';
 import { hasRole, isAdmin } from 'src/helpers/conditions/user';
-import { updateUserUIOptions } from 'src/actions/currentUser';
 import { fetch as getAccount, getUsage } from 'src/actions/account';
 import { listAlerts } from 'src/actions/alerts';
 import { selectRecentlyTriggeredAlerts } from 'src/selectors/alerts';
@@ -104,7 +103,6 @@ const mapDispatchToProps = {
   getAccount,
   listAlerts,
   getUsage,
-  updateUserUIOptions,
   listSendingDomains,
   listApiKeys,
 };

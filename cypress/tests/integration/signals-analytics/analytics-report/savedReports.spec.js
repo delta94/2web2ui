@@ -330,7 +330,7 @@ if (IS_HIBANA_ENABLED) {
         cy.findByRole('button', { name: 'View All Reports' }).click();
 
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(200); // give the modal a hot damn second
+        cy.wait(500); // give the modal a hot damn second
 
         cy.withinModal(() => {
           cy.findAllByText('Open Menu').click({ force: true });
@@ -338,7 +338,7 @@ if (IS_HIBANA_ENABLED) {
         });
 
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(200); // give the modal a hot damn second
+        cy.wait(500); // give the modal a hot damn second
 
         cy.withinModal(() => {
           cy.get('p').contains('My Bounce Report will be pinned to your Dashboard.');
@@ -356,7 +356,9 @@ if (IS_HIBANA_ENABLED) {
         cy.wait('@updateUiOption');
 
         cy.withinSnackbar(() => {
-          cy.findByText('You have pinned My Bounce Report to your Dashboard.').should('be.visible');
+          cy.findByText('Successfully pinned My Bounce Report to your Dashboard.').should(
+            'be.visible',
+          );
         });
       });
 
