@@ -5,17 +5,8 @@ import { Error } from '@sparkpost/matchbox-icons';
 import { refreshReportBuilder } from 'src/actions/summaryChart';
 import { list as getSubaccountsList } from 'src/actions/subaccounts';
 import { getReports } from 'src/actions/reports';
-import { Empty, Tabs, Loading, Unit, LegendCircle } from 'src/components';
-import {
-  Box,
-  Button,
-  Grid,
-  LabelValue,
-  Inline,
-  Page,
-  Panel,
-  Tooltip,
-} from 'src/components/matchbox';
+import { Empty, Tabs, Loading } from 'src/components';
+import { Box, Button, Page, Panel, Tooltip } from 'src/components/matchbox';
 import { ReportOptions, ReportTable, SaveReportModal } from './components';
 import Charts from './components/Charts';
 import {
@@ -35,19 +26,7 @@ import { useReportBuilderContext } from './context/ReportBuilderContext';
 import { PRESET_REPORT_CONFIGS } from './constants/presetReport';
 import { parseSearchNew as parseSearch } from 'src/helpers/reports';
 import { useLocation } from 'react-router-dom';
-
-const MetricDefinition = ({ label, children }) => {
-  return (
-    <LabelValue>
-      <LabelValue.Label>
-        <Box color="gray.600">{label}</Box>
-      </LabelValue.Label>
-      <LabelValue.Value>
-        <Box color="white">{children}</Box>
-      </LabelValue.Value>
-    </LabelValue>
-  );
-};
+import AggregateMetricsSection from '../../components/reportBuilder/AggregateMetricsSection';
 
 export function ReportBuilder({
   chart,
@@ -216,36 +195,14 @@ export function ReportBuilder({
               <Tabs defaultTabIndex={0} forceRender tabs={tabs}>
                 <Tabs.Item>
                   <Charts {...chart} metrics={processedMetrics} to={to} yScale="linear" />
-                  <Box padding="400" backgroundColor="gray.1000">
-                    <Grid>
-                      <Grid.Column sm={3}>
-                        <Box id="date">
-                          <MetricDefinition label="Date">
-                            <Unit value={dateValue} />
-                          </MetricDefinition>
-                        </Box>
-                      </Grid.Column>
-                      <Grid.Column sm={9}>
-                        <Inline space="600">
-                          {chart.aggregateData.map(({ key, label, value, unit }) => {
-                            const stroke = processedMetrics.find(({ key: newKey }) => {
-                              return newKey === key;
-                            })?.stroke;
-                            return (
-                              <Box marginRight="600" key={key}>
-                                <MetricDefinition label={label}>
-                                  <Box display="flex" alignItems="center">
-                                    {stroke && <LegendCircle marginRight="200" color={stroke} />}
-                                    <Unit value={value} unit={unit} />
-                                  </Box>
-                                </MetricDefinition>
-                              </Box>
-                            );
-                          })}
-                        </Inline>
-                      </Grid.Column>
-                    </Grid>
-                  </Box>
+                  <AggregateMetricsSection
+                    dateValue={dateValue}
+                    processedMetrics={processedMetrics}
+                    updates={{
+                      ...reportOptions,
+                      filters: reportOptions.filters,
+                    }}
+                  />
                 </Tabs.Item>
                 {hasBounceTab && (
                   <Tabs.Item>
