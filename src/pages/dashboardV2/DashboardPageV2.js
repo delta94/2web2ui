@@ -31,6 +31,9 @@ import { LINKS } from 'src/constants';
 import { useModal } from 'src/hooks';
 import ChangeReportModal from './components/ChangeReportModal';
 
+import AggregateMetricsSection from '../../components/reportBuilder/AggregateMetricsSection';
+import moment from 'moment';
+import { getMetricsFromKeys } from 'src/helpers/metrics';
 const OnboardingImg = styled(Picture.Image)`
   vertical-align: bottom;
 `;
@@ -71,6 +74,10 @@ export default function DashboardPageV2() {
 
   const { pinnedReport } = usePinnedReport(onboarding);
 
+  const dateValue = `${moment(pinnedReport?.options?.from).format('MMM Do')} - ${moment(
+    pinnedReport?.options?.to,
+  ).format('MMM Do, YYYY')}`;
+
   if (pending) return <Loading />;
 
   return (
@@ -108,6 +115,14 @@ export default function DashboardPageV2() {
                   <Panel.Section>
                     <ChartGroups reportOptions={pinnedReport.options} p="0" />
                   </Panel.Section>
+                  <AggregateMetricsSection
+                    dateValue={dateValue}
+                    processedMetrics={getMetricsFromKeys(pinnedReport?.options?.metrics)}
+                    updates={{
+                      ...pinnedReport.options,
+                      filters: pinnedReport?.options?.filters,
+                    }}
+                  />
                 </Dashboard.Panel>
               )}
               {onboarding === 'analyticsReportPromo' && (
