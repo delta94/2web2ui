@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import moment from 'moment';
 import { Error } from '@sparkpost/matchbox-icons';
-import { refreshReportBuilder } from 'src/actions/summaryChart';
 import { getSubscription } from 'src/actions/billing';
+import { _getTableDataReportBuilder as getTableData } from 'src/actions/summaryChart';
 import { list as getSubaccountsList } from 'src/actions/subaccounts';
 import { getReports } from 'src/actions/reports';
 import { Empty, Tabs, Loading } from 'src/components';
@@ -32,16 +32,18 @@ import {
 } from './components/tabs';
 import { useReportBuilderContext } from './context/ReportBuilderContext';
 import { PRESET_REPORT_CONFIGS } from './constants';
+import { getQueryFromOptionsV2, getMetricsFromKeys } from 'src/helpers/metrics';
+import { getRelativeDates } from 'src/helpers/date';
 
 export function ReportBuilder({
   chart,
   getSubscription,
-  refreshReportBuilder,
   subscription,
   reports,
   reportsStatus,
   getReports,
   getSubaccountsList,
+  getTableData,
   subaccountsReady,
 }) {
   const [showTable, setShowTable] = useState(true); // TODO: Incorporate in to the context reducer due to state interaction
@@ -58,13 +60,27 @@ export function ReportBuilder({
   }, [reportOptions.metrics]);
 
   useEffect(() => {
-    if (reportOptions.isReady && !isEmpty) {
-      refreshReportBuilder({
+    if (reportOptions.isReady && !isEmpty && !(chart.groupBy === 'aggregate')) {
+      let updates = {
         ...reportOptions,
         filters: reportOptions.filters,
-      });
+      };
+      if (updates.metrics) {
+        updates = { ...updates, metrics: getMetricsFromKeys(updates.metrics, true) };
+      }
+
+      // merge together states
+      const merged = {
+        ...chart,
+        ...updates,
+        ...getRelativeDates(updates.relativeRange, { precision: updates.precision }),
+      };
+
+      const params = getQueryFromOptionsV2(merged);
+
+      getTableData({ params, metrics: merged.metrics });
     }
-  }, [refreshReportBuilder, reportOptions, isEmpty]);
+  }, [reportOptions, isEmpty, chart.groupBy, chart, getTableData]);
 
   useEffect(() => {
     getSubscription();
@@ -259,10 +275,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  refreshReportBuilder,
   getSubscription,
   getReports,
   getSubaccountsList,
+  getTableData,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReportBuilder);
