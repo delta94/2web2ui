@@ -54,7 +54,7 @@ export function ReportBuilder({
   }, [reportOptions.metrics]);
 
   useEffect(() => {
-    if (reportOptions.isReady && !isEmpty && !(chart.groupBy === 'aggregate')) {
+    if (reportOptions.isReady && !isEmpty && chart.groupBy !== 'aggregate') {
       let updates = {
         ...reportOptions,
         filters: reportOptions.filters,
@@ -74,7 +74,8 @@ export function ReportBuilder({
 
       getTableData({ params, metrics: merged.metrics });
     }
-  }, [reportOptions, isEmpty, chart.groupBy, chart, getTableData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reportOptions, isEmpty, getTableData]);
 
   useEffect(() => {
     getSubscription();
