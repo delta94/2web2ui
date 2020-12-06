@@ -72,6 +72,8 @@ export const MyReportsTab = ({
   isScheduledReportsEnabled,
   handleDelete,
   handleEdit,
+  searchedText,
+  setSearchedText,
 }) => {
   const myReports = reports.filter(({ creator }) => creator === currentUser);
   const getMyReportColumns = () => {
@@ -132,6 +134,8 @@ export const MyReportsTab = ({
         exampleModifiers: ['name', 'modified'],
         maxWidth: '1250',
         wrapper: FilterBoxWrapper,
+        initialValue: searchedText,
+        onChange: value => setSearchedText(value),
       }}
     />
   );
@@ -146,6 +150,8 @@ export const AllReportsTab = ({
   isScheduledReportsEnabled,
   handleDelete,
   handleEdit,
+  searchedText,
+  setSearchedText,
 }) => {
   const getColumnsForAllReports = () => {
     if (onDashboard)
@@ -221,6 +227,8 @@ export const AllReportsTab = ({
         exampleModifiers: ['name', 'modified', 'creator'],
         maxWidth: '1250',
         wrapper: FilterBoxWrapper,
+        initialValue: searchedText,
+        onChange: value => setSearchedText(value),
       }}
     />
   );

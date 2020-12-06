@@ -28,6 +28,8 @@ export function ReportsListModal({
 
   const [selectedReportId, setSelectedReportId] = useState(null);
 
+  const [searchedText, setSearchedText] = useState('');
+
   const handleRadioChange = id => setSelectedReportId(id);
 
   const onSubmit = () => {
@@ -64,6 +66,8 @@ export function ReportsListModal({
       isScheduledReportsEnabled={isScheduledReportsEnabled}
       handleDelete={handleDelete}
       handleEdit={handleEdit}
+      searchedText={searchedText}
+      setSearchedText={setSearchedText}
     />,
     <AllReportsTab
       reports={reports}
@@ -74,6 +78,8 @@ export function ReportsListModal({
       isScheduledReportsEnabled={isScheduledReportsEnabled}
       handleDelete={handleDelete}
       handleEdit={handleEdit}
+      searchedText={searchedText}
+      setSearchedText={setSearchedText}
     />,
   ];
 
