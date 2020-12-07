@@ -6,12 +6,7 @@ import {
   selectEndOfBillingPeriod,
   selectStartOfBillingPeriod,
 } from 'src/selectors/accountBillingInfo';
-import {
-  getAccount,
-  getSubscription,
-  getUsage,
-  //getUsageHistory
-} from 'src/helpers/api';
+import { getAccount, getSubscription, getUsage, getUsageHistory } from 'src/helpers/api';
 import { MessagingUsageSection, FeatureUsageSection, RVUsageSection } from './components';
 
 export default function UsagePage() {
@@ -20,11 +15,11 @@ export default function UsagePage() {
     getAccount({ include: 'usage' }),
   );
   const { data: usage, status: usageStatus, refetch: usageRefetch } = useSparkPostQuery(getUsage);
-  // const {
-  //   data: usageHistory,
-  //   status: usageHistoryStatus,
-  //   refetch: usageHistoryRefetch,
-  // } = useSparkPostQuery(getUsageHistory);
+  const {
+    data: usageHistory,
+    status: usageHistoryStatus,
+    refetch: usageHistoryRefetch,
+  } = useSparkPostQuery(getUsageHistory);
   const {
     data: subscription,
     status: subscriptionStatus,
@@ -32,15 +27,14 @@ export default function UsagePage() {
   } = useSparkPostQuery(getSubscription);
 
   // API Status Handling
-  // const statuses = [accountStatus, usageStatus, usageHistoryStatus, subscriptionStatus];
-  const statuses = [accountStatus, usageStatus, subscriptionStatus];
+  const statuses = [accountStatus, usageStatus, usageHistoryStatus, subscriptionStatus];
   const isLoading = statuses.includes('loading');
   const isError = statuses.includes('error');
 
   function handleReload() {
     accountRefetch();
     usageRefetch();
-    // usageHistoryRefetch();
+    usageHistoryRefetch();
     subscriptionRefetch();
   }
 
@@ -58,37 +52,14 @@ export default function UsagePage() {
   }
 
   // Merging data so existing selectors can work together to grab from a common object
-  // const data = { account, subscription, usage, usageHistory };
-  const data = { account, subscription, usage };
+  const data = { account, subscription, usage, usageHistory };
   const endOfBillingPeriod = selectEndOfBillingPeriod(data);
   const startOfBillingPeriod = selectStartOfBillingPeriod(data);
   const accountUsage = data.account.usage;
   const accountSubscription = data.account.subscription;
   const billingSubscription = data.subscription;
   const rvUsage = data.usage.recipient_validation;
-  // const rvUsageHistory = data.usageHistory.recipient_validation;
-  const rvUsageHistory = [
-    {
-      date: '2020-08-15',
-      usage: 1234,
-    },
-    {
-      date: '2020-08-16',
-      usage: 11343,
-    },
-    {
-      date: '2020-08-17',
-      usage: 13500,
-    },
-    {
-      date: '2020-08-18',
-      usage: 13500,
-    },
-    {
-      date: '2020-08-19',
-      usage: 13500,
-    },
-  ];
+  const rvUsageHistory = data.usageHistory.recipient_validation;
 
   return (
     <Page title="Usage">
