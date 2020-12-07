@@ -60,7 +60,7 @@ export class Collection extends Component {
 
   handleFilterChange = pattern => {
     const { rows, filterBox, sortColumn, sortDirection } = this.props;
-    const { keyMap, itemToStringKeys, matchThreshold, onChange = () => {} } = filterBox;
+    const { keyMap, itemToStringKeys, matchThreshold, onChange } = filterBox;
     const update = {
       currentPage: 1,
       filteredRows: null,
@@ -85,7 +85,7 @@ export class Collection extends Component {
     }
 
     this.setState(update);
-    onChange(pattern);
+    if (onChange) onChange(pattern);
   };
 
   debouncedHandleFilterChange = _.debounce(this.handleFilterChange, 300);
