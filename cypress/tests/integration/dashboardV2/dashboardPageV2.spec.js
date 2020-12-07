@@ -36,13 +36,17 @@ describe('Version 2 of the dashboard page', () => {
       stubReportsRequest();
       stubUsageReq({ fixture: 'usage/200.get.messaging.json' });
       cy.stubRequest({
-        url: `/api/v1/users/${Cypress.env('USERNAME')}`,
-        fixture: `users/200.get.has-pinned-report.json`,
-        requestAlias: 'userWithPinnedReport',
+        method: 'GET',
+        url: '/api/v1/metrics/deliverability/time-series**/**',
+        fixture: 'metrics/deliverability/time-series/200.get.json',
+        requestAlias: 'dataGetTimeSeries',
       });
 
-      cy.wait(['@alertsReq', '@accountReq', '@usageReq', '@getReports', '@userWithPinnedReport']);
-      cy.findByText('My Bounce Report');
+      cy.visit(PAGE_URL);
+      cy.wait(['@alertsReq', '@accountReq', '@usageReq', '@getReports']);
+      cy.findByRole('heading', { name: 'Summary Report' });
+      cy.get('.recharts-wrapper').should('be.visible');
+      cy.findByText('Change Report').click();
       cy.stubRequest({
         url: 'api/v1/users/mockuser',
         method: 'PUT',
@@ -66,7 +70,11 @@ describe('Version 2 of the dashboard page', () => {
       stubAccountsReq();
       stubUsageReq({ fixture: 'usage/200.get.messaging.json' });
       stubReportsRequest();
-
+      cy.stubRequest({
+        url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+        fixture: `users/200.get.has-pinned-report.json`,
+        requestAlias: 'userWithPinnedReport',
+      });
       cy.stubRequest({
         method: 'GET',
         url: '/api/v1/metrics/deliverability/time-series**/**',
@@ -75,10 +83,8 @@ describe('Version 2 of the dashboard page', () => {
       });
 
       cy.visit(PAGE_URL);
-      cy.wait(['@alertsReq', '@accountReq', '@usageReq', '@getReports']);
-      cy.findByRole('heading', { name: 'Summary Report' });
-      cy.get('.recharts-wrapper').should('be.visible');
-      cy.findByText('Change Report').click();
+      cy.wait(['@alertsReq', '@accountReq', '@usageReq', '@getReports', '@userWithPinnedReport']);
+      cy.findByText('My Bounce Report');
     });
 
     it('Shows Helpful Shortcuts "invite team members" when admin', () => {
@@ -742,13 +748,5 @@ function stubUsersRequest({ access_level }) {
     url: `/api/v1/users/${Cypress.env('USERNAME')}`,
     fixture: `users/200.get.${access_level}.json`,
     requestAlias: 'stubbedUsersRequest',
-  });
-}
-
-function stubReportsRequest({ fixture = 'reports/200.get.json' } = {}) {
-  cy.stubRequest({
-    url: '/api/v1/reports',
-    fixture: fixture,
-    requestAlias: 'getReports',
   });
 }
