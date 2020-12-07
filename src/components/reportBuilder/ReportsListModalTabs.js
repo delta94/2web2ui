@@ -136,6 +136,8 @@ export const MyReportsTabWithSelectableRows = ({
         id={id}
         key={id}
         name="reportId"
+        label={`Report ${id}`}
+        labelHidden
         onChange={() => handleRadioChange(id)}
         checked={selectedReportId === id}
       />,
@@ -248,6 +250,8 @@ export const AllReportsTabWithSelectableRows = ({
         value={id}
         id={id}
         key={id}
+        label={`Report ${id}`}
+        labelHidden
         name="reportId"
         onChange={() => handleRadioChange(id)}
         checked={selectedReportId === id}

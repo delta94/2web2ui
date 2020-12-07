@@ -26,8 +26,43 @@ describe('Version 2 of the dashboard page', () => {
       cy.wait(['@alertsReq', '@accountReq', '@usageReq']);
       cy.findByRole('heading', { name: 'Summary Report' });
       cy.get('.recharts-wrapper').should('be.visible');
-      cy.findByText('Analyze Report').click();
+      cy.findByText('View Report').click();
       cy.findByRole('heading', { name: 'Analytics Report' });
+    });
+    it('renders the Analytics Report step with "Change Report" button which open the modal to change pinned report', () => {
+      stubGrantsRequest({ role: 'admin' });
+      stubAlertsReq();
+      stubAccountsReq();
+      stubReportsRequest();
+      stubUsageReq({ fixture: 'usage/200.get.messaging.json' });
+      cy.stubRequest({
+        method: 'GET',
+        url: '/api/v1/metrics/deliverability/time-series**/**',
+        fixture: 'metrics/deliverability/time-series/200.get.json',
+        requestAlias: 'dataGetTimeSeries',
+      });
+
+      cy.visit(PAGE_URL);
+      cy.wait(['@alertsReq', '@accountReq', '@usageReq', '@getReports']);
+      cy.findByRole('heading', { name: 'Summary Report' });
+      cy.get('.recharts-wrapper').should('be.visible');
+      cy.findByText('Change Report').click();
+      cy.stubRequest({
+        url: 'api/v1/users/mockuser',
+        method: 'PUT',
+        fixture: 'users/200.put.update-ui-options.json',
+        requestAlias: 'updateUIOptions',
+      });
+      cy.withinModal(() => {
+        cy.findByLabelText('Report d50d8475-d4e8-4df0-950f-b142f77df0bf').check({ force: true });
+        cy.findByRole('button', { name: 'Change Report' }).click();
+      });
+      cy.wait('@updateUIOptions').then(xhr => {
+        expect(xhr.request.body).to.deep.equal({
+          options: { ui: { pinned_report: 'd50d8475-d4e8-4df0-950f-b142f77df0bf' } },
+        });
+      });
+      cy.findByText('Pinned Report updated').should('be.visible');
     });
     it('Shows Helpful Shortcuts "invite team members" when admin', () => {
       stubGrantsRequest({ role: 'admin' });
@@ -682,5 +717,13 @@ function stubUsersRequest({ access_level }) {
     url: `/api/v1/users/${Cypress.env('USERNAME')}`,
     fixture: `users/200.get.${access_level}.json`,
     requestAlias: 'stubbedUsersRequest',
+  });
+}
+
+function stubReportsRequest({ fixture = 'reports/200.get.json' } = {}) {
+  cy.stubRequest({
+    url: '/api/v1/reports',
+    fixture: fixture,
+    requestAlias: 'getReports',
   });
 }
