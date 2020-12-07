@@ -40,21 +40,25 @@ export default function usePinnedReport(onboarding) {
       ...getRelativeDateRange(reportOptions),
     };
   };
+  let summaryReportQueryString = PRESET_REPORT_CONFIGS.find(x => x.name === defaultReportName)
+    .query_string;
+  const summaryReportOptions = parseSearch(summaryReportQueryString);
   const report = _.find(reports, { id: pinnedReportId });
   if (report) {
     const options = parseSearch(report.query_string);
     pinnedReport.name = report.name;
     pinnedReport.options = reportOptionsWithDates({
       timezone: getLocalTimezone(),
+      metrics: summaryReportOptions.metrics,
       comparisons: [],
+      relativeRange: '7days',
+      precision: 'hour',
       ...options,
       isReady: true,
       filters: hydrateFilters(options.filters, { subaccounts }),
     });
     pinnedReport.linkToReportBuilder = `/signals/analytics?${report.query_string}&report=${pinnedReportId}`;
   } else {
-    let query_string = PRESET_REPORT_CONFIGS.find(x => x.name === defaultReportName).query_string;
-    let summaryReportOptions = parseSearch(query_string);
     pinnedReport.name = defaultReportName;
     pinnedReport.options = reportOptionsWithDates({
       timezone: getLocalTimezone(),
@@ -65,7 +69,7 @@ export default function usePinnedReport(onboarding) {
       isReady: true,
       filters: hydrateFilters(summaryReportOptions.filters, { subaccounts }),
     });
-    pinnedReport.linkToReportBuilder = `/signals/analytics?${query_string}`;
+    pinnedReport.linkToReportBuilder = `/signals/analytics?${summaryReportQueryString}`;
   }
 
   return { pinnedReport };
