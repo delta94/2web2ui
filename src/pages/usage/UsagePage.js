@@ -70,7 +70,7 @@ export default function UsagePage() {
   const rvUsageHistory = [
     {
       date: '2020-08-15',
-      usage: 12355,
+      usage: 1234,
     },
     {
       date: '2020-08-16',
