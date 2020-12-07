@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { Unit, LegendCircle } from 'src/components';
-import { Box, Grid, LabelValue, Inline } from 'src/components/matchbox';
+import { Box, Button, Grid, LabelValue, Inline } from 'src/components/matchbox';
+import { FilterAlt } from '@sparkpost/matchbox-icons';
 import { _getAggregateDataReportBuilder as getAggregateData } from 'src/actions/summaryChart';
 import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'src/hooks';
 import _ from 'lodash';
+import styled from 'styled-components';
 
 const MetricDefinition = ({ label, children }) => {
   return (
@@ -19,7 +21,18 @@ const MetricDefinition = ({ label, children }) => {
   );
 };
 
-export default function AggregateMetricsSection({ dateValue, updates, processedMetrics }) {
+const ViewFilterButton = styled(Button)`
+  float: right;
+  color: ${props => props.theme.colors.gray['600']};
+`;
+
+export default function AggregateMetricsSection({
+  dateValue,
+  updates,
+  processedMetrics,
+  showFiltersButton,
+  handleClickFiltersButton,
+}) {
   const dispatch = useDispatch();
   const chart = useSelector(state => state.summaryChart);
   const previousUpdates = usePrevious(updates);
@@ -31,13 +44,25 @@ export default function AggregateMetricsSection({ dateValue, updates, processedM
   return (
     <Box padding="400" backgroundColor="gray.1000">
       <Grid>
-        <Grid.Column sm={3}>
+        <Grid.Column sm={showFiltersButton ? 9 : 3}>
           <Box id="date">
             <MetricDefinition label="Date">
               <Unit value={dateValue} />
             </MetricDefinition>
           </Box>
         </Grid.Column>
+        {showFiltersButton && (
+          <>
+            <Grid.Column sm={3}>
+              <ViewFilterButton onClick={handleClickFiltersButton}>
+                View Filters <FilterAlt size={20} />
+              </ViewFilterButton>
+            </Grid.Column>
+            <Box height="300" width="100%">
+              &nbsp;
+            </Box>
+          </>
+        )}
         <Grid.Column sm={9}>
           <Inline space="600">
             {chart.aggregateData.map(({ key, label, value, unit }) => {
