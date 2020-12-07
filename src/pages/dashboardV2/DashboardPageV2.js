@@ -6,7 +6,7 @@ import SendingMailWebp from '@sparkpost/matchbox-media/images/Sending-Mail.webp'
 import SendingMail from '@sparkpost/matchbox-media/images/Sending-Mail@medium.jpg';
 import ConfigurationWebp from '@sparkpost/matchbox-media/images/Configuration.webp';
 import Configuration from '@sparkpost/matchbox-media/images/Configuration@medium.jpg';
-import { Loading, Abbreviation, ReportsListModal } from 'src/components';
+import { Loading, Abbreviation, ChangeReportModal } from 'src/components';
 import {
   Box,
   Button,
@@ -77,7 +77,7 @@ export default function DashboardPageV2() {
       </ScreenReaderOnly>
 
       {isModalOpen && (
-        <ReportsListModal
+        <ChangeReportModal
           onDashboard={true}
           open={isModalOpen}
           onClose={closeModal}
