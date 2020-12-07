@@ -36,17 +36,13 @@ describe('Version 2 of the dashboard page', () => {
       stubReportsRequest();
       stubUsageReq({ fixture: 'usage/200.get.messaging.json' });
       cy.stubRequest({
-        method: 'GET',
-        url: '/api/v1/metrics/deliverability/time-series**/**',
-        fixture: 'metrics/deliverability/time-series/200.get.json',
-        requestAlias: 'dataGetTimeSeries',
+        url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+        fixture: `users/200.get.has-pinned-report.json`,
+        requestAlias: 'userWithPinnedReport',
       });
 
-      cy.visit(PAGE_URL);
-      cy.wait(['@alertsReq', '@accountReq', '@usageReq', '@getReports']);
-      cy.findByRole('heading', { name: 'Summary Report' });
-      cy.get('.recharts-wrapper').should('be.visible');
-      cy.findByText('Change Report').click();
+      cy.wait(['@alertsReq', '@accountReq', '@usageReq', '@getReports', '@userWithPinnedReport']);
+      cy.findByText('My Bounce Report');
       cy.stubRequest({
         url: 'api/v1/users/mockuser',
         method: 'PUT',
@@ -64,6 +60,27 @@ describe('Version 2 of the dashboard page', () => {
       });
       cy.findByText('Pinned Report updated').should('be.visible');
     });
+    it('renders the Analytics Report step with pinned report when last usage date is not null and a pinned report is present in account ui options', () => {
+      stubGrantsRequest({ role: 'admin' });
+      stubAlertsReq();
+      stubAccountsReq();
+      stubUsageReq({ fixture: 'usage/200.get.messaging.json' });
+      stubReportsRequest();
+
+      cy.stubRequest({
+        method: 'GET',
+        url: '/api/v1/metrics/deliverability/time-series**/**',
+        fixture: 'metrics/deliverability/time-series/200.get.json',
+        requestAlias: 'dataGetTimeSeries',
+      });
+
+      cy.visit(PAGE_URL);
+      cy.wait(['@alertsReq', '@accountReq', '@usageReq', '@getReports']);
+      cy.findByRole('heading', { name: 'Summary Report' });
+      cy.get('.recharts-wrapper').should('be.visible');
+      cy.findByText('Change Report').click();
+    });
+
     it('Shows Helpful Shortcuts "invite team members" when admin', () => {
       stubGrantsRequest({ role: 'admin' });
       stubAlertsReq();
@@ -708,6 +725,14 @@ function stubGrantsRequest({ role }) {
     url: '/api/v1/authenticate/grants*',
     fixture: `authenticate/grants/200.get.${role}.json`,
     requestAlias: 'getGrants',
+  });
+}
+
+function stubReportsRequest({ fixture = 'reports/200.get.json' } = {}) {
+  cy.stubRequest({
+    url: '/api/v1/reports',
+    fixture: fixture,
+    requestAlias: 'getReports',
   });
 }
 
