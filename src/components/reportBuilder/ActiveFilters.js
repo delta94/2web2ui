@@ -2,7 +2,10 @@ import React from 'react';
 import _ from 'lodash';
 import { Box, Inline, Tag, Text } from 'src/components/matchbox';
 import { Comparison, Emphasized } from 'src/components/text';
-import { getIterableFormattedGroupings, getActiveFilterTagGroups } from '../helpers';
+import {
+  getIterableFormattedGroupings,
+  getActiveFilterTagGroups,
+} from '../../pages/reportBuilder/helpers';
 
 export default function ActiveFilters({ filters, handleFilterRemove }) {
   const iterableGroupings = getIterableFormattedGroupings(filters);
