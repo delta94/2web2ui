@@ -126,6 +126,7 @@ export default function SpLineChart(props) {
     tooltipLabelFormatter = identity,
     tooltipValueFormatter = identity,
     showXAxis,
+    xAxisKey = 'ts',
     yLabel,
   } = props;
 
@@ -136,7 +137,7 @@ export default function SpLineChart(props) {
           <Bar key="noKey" dataKey="noKey" background={{ fill: tokens.color_gray_200 }} />
           <XAxis
             axisLine={false}
-            dataKey="ts"
+            dataKey={xAxisKey}
             height={30}
             hide={!showXAxis}
             interval="preserveStartEnd"

@@ -1,13 +1,14 @@
 import React from 'react';
 import _ from 'lodash';
-import { Box, Grid, Inline, Layout } from 'src/components/matchbox';
+import { Panel, Box, Grid, Inline, Layout } from 'src/components/matchbox';
 import { SubduedText, TranslatableText } from 'src/components/text';
 import { PageLink } from 'src/components/links';
 import { formatDate } from 'src/helpers/date';
 import totalRecipientValidationCost from 'src/helpers/recipientValidation';
 import { LabelAndKeyPair } from '.';
+import RVUsageChart from './RVUsageChart';
 
-export default function RVUsageSection({ rvUsage }) {
+export default function RVUsageSection({ rvUsage, rvUsageHistory }) {
   const volumeUsed = _.get(rvUsage, 'month.used', 0);
 
   return (
@@ -20,6 +21,11 @@ export default function RVUsageSection({ rvUsage }) {
         </SubduedText>
       </Layout.Section>
       <Layout.Section>
+        <Panel mb="-1px">
+          <Panel.Section>
+            <RVUsageChart data={rvUsageHistory} />
+          </Panel.Section>
+        </Panel>
         <Box padding="400" backgroundColor="gray.1000">
           <Grid>
             <Grid.Column sm={3}>
