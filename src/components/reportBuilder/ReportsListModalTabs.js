@@ -65,42 +65,15 @@ const Actions = ({ id, handleDelete, handleEdit, reportType, report, ...rest }) 
 export const MyReportsTab = ({
   reports,
   currentUser,
-  onDashboard,
-  handleRadioChange,
-  selectedReportId,
   handleReportChangeAndClose,
   isScheduledReportsEnabled,
   handleDelete,
   handleEdit,
-  searchedText,
-  setSearchedText,
 }) => {
   const myReports = reports.filter(({ creator }) => creator === currentUser);
-  const getMyReportColumns = () => {
-    if (onDashboard)
-      return [
-        {},
-        { label: 'Name', sortKey: 'name' },
-        { label: 'Last Modification', sortKey: 'modified' },
-      ];
 
-    return myReportsColumns;
-  };
   const myReportsRows = report => {
-    const { name, modified, isLast, id } = report;
-    if (onDashboard)
-      return [
-        <Radio
-          value={id}
-          id={id}
-          key={id}
-          name="reportId"
-          onChange={() => handleRadioChange(id)}
-          checked={selectedReportId === id}
-        />,
-        <div>{name}</div>,
-        <div>{formatDateTime(modified)}</div>,
-      ];
+    const { name, modified, isLast } = report;
 
     return [
       <ButtonLink
@@ -119,6 +92,55 @@ export const MyReportsTab = ({
         report={report}
         isLast={isLast}
       />,
+    ];
+  };
+  return (
+    <TableCollection
+      rows={myReports}
+      columns={myReportsColumns}
+      getRowData={myReportsRows}
+      wrapperComponent={Table}
+      filterBox={{
+        label: '',
+        show: true,
+        itemToStringKeys: ['name', 'modified'],
+        exampleModifiers: ['name', 'modified'],
+        maxWidth: '1250',
+        wrapper: FilterBoxWrapper,
+      }}
+    />
+  );
+};
+
+export const MyReportsTabWithSelectableRows = ({
+  reports,
+  currentUser,
+  handleRadioChange,
+  selectedReportId,
+  searchedText,
+  setSearchedText,
+}) => {
+  const myReports = reports.filter(({ creator }) => creator === currentUser);
+  const getMyReportColumns = () => {
+    return [
+      {},
+      { label: 'Name', sortKey: 'name' },
+      { label: 'Last Modification', sortKey: 'modified' },
+    ];
+  };
+  const myReportsRows = report => {
+    const { name, modified, id } = report;
+    return [
+      <Radio
+        value={id}
+        id={id}
+        key={id}
+        name="reportId"
+        onChange={() => handleRadioChange(id)}
+        checked={selectedReportId === id}
+      />,
+      <div>{name}</div>,
+      <div>{formatDateTime(modified)}</div>,
     ];
   };
   return (
@@ -143,31 +165,17 @@ export const MyReportsTab = ({
 
 export const AllReportsTab = ({
   reports,
-  onDashboard,
-  handleRadioChange,
-  selectedReportId,
   handleReportChangeAndClose,
   isScheduledReportsEnabled,
   handleDelete,
   handleEdit,
-  searchedText,
-  setSearchedText,
 }) => {
   const getColumnsForAllReports = () => {
-    if (onDashboard)
-      return [
-        {},
-        { label: 'Name', sortKey: 'name' },
-        { label: 'Last Modification', width: '25%', sortKey: 'modified' },
-        { label: 'Created By', sortKey: 'creator' },
-        {},
-      ];
-
     return allReportsColumns;
   };
 
   const allReportsRows = report => {
-    const { name, modified, creator, subaccount_id, current_user_can_edit, isLast, id } = report;
+    const { name, modified, creator, subaccount_id, current_user_can_edit, isLast } = report;
     //conditionally render the actionlist
     const action = current_user_can_edit ? (
       <Actions
@@ -181,26 +189,6 @@ export const AllReportsTab = ({
     ) : (
       ''
     );
-    const row = [
-      <div>{formatDateTime(modified)}</div>,
-      <div>{creator}</div>,
-      <Tag>
-        <Subaccount id={subaccount_id} master={subaccount_id === 0} shrinkLength={12} />
-      </Tag>,
-    ];
-    if (onDashboard)
-      return [
-        <Radio
-          value={id}
-          id={id}
-          key={id}
-          name="reportId"
-          onChange={() => handleRadioChange(id)}
-          checked={selectedReportId === id}
-        />,
-        <div>{name}</div>,
-        ...row,
-      ];
 
     return [
       <ButtonLink
@@ -210,8 +198,66 @@ export const AllReportsTab = ({
       >
         {name}
       </ButtonLink>,
-      ...row,
+      <div>{formatDateTime(modified)}</div>,
+      <div>{creator}</div>,
+      <Tag>
+        <Subaccount id={subaccount_id} master={subaccount_id === 0} shrinkLength={12} />
+      </Tag>,
       action,
+    ];
+  };
+  return (
+    <TableCollection
+      rows={reports}
+      columns={getColumnsForAllReports()}
+      getRowData={allReportsRows}
+      wrapperComponent={Table}
+      filterBox={{
+        label: '',
+        show: true,
+        itemToStringKeys: ['name', 'modified', 'creator'],
+        exampleModifiers: ['name', 'modified', 'creator'],
+        maxWidth: '1250',
+        wrapper: FilterBoxWrapper,
+      }}
+    />
+  );
+};
+
+export const AllReportsTabWithSelectableRows = ({
+  reports,
+  handleRadioChange,
+  selectedReportId,
+  searchedText,
+  setSearchedText,
+}) => {
+  const getColumnsForAllReports = () => {
+    return [
+      {},
+      { label: 'Name', sortKey: 'name' },
+      { label: 'Last Modification', width: '25%', sortKey: 'modified' },
+      { label: 'Created By', sortKey: 'creator' },
+      {},
+    ];
+  };
+
+  const allReportsRows = report => {
+    const { name, modified, creator, subaccount_id, id } = report;
+    return [
+      <Radio
+        value={id}
+        id={id}
+        key={id}
+        name="reportId"
+        onChange={() => handleRadioChange(id)}
+        checked={selectedReportId === id}
+      />,
+      <div>{name}</div>,
+      <div>{formatDateTime(modified)}</div>,
+      <div>{creator}</div>,
+      <Tag>
+        <Subaccount id={subaccount_id} master={subaccount_id === 0} shrinkLength={12} />
+      </Tag>,
     ];
   };
   return (
