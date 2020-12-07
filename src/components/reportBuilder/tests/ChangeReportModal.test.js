@@ -3,13 +3,10 @@ import { render, screen } from '@testing-library/react';
 import { ChangeReportModal } from '../ChangeReportModal';
 import TestApp from 'src/__testHelpers__/TestApp';
 
-describe('ChangeReportModal - on Dashboard', () => {
+describe('ChangeReportModal', () => {
   const defaults = {
     currentUser: 'Sparky McSparkFace',
-    handleDelete: jest.fn(),
-    handleEdit: jest.fn(),
     open: true,
-    onDashboard: true,
     reports: [
       {
         id: 0,
