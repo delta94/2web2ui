@@ -1,10 +1,9 @@
 import React from 'react';
 import { tokens } from '@sparkpost/design-tokens-hibana';
-
 import { formatNumber } from 'src/helpers/units';
 import totalRecipientValidationCost from 'src/helpers/recipientValidation';
 import { getTimeTickFormatter } from 'src/helpers/chart.js';
-import LineChart from '../../reportBuilder/components/LineChart';
+import LineChart from 'src/components/charts/LineChart';
 
 function RVUsageChart(props) {
   const { data } = props;
