@@ -18,6 +18,11 @@ export function ChangeReportModal({ reports, open, onClose, currentUser }) {
 
   const handleRadioChange = id => setSelectedReportId(id);
 
+  const handleTabChange = index => {
+    handleRadioChange(null);
+    setTabIndex(index);
+  };
+
   const onSubmit = () => {
     dispatch(updateUserUIOptions({ pinned_report: selectedReportId })).then(() => {
       dispatch(
@@ -64,8 +69,8 @@ export function ChangeReportModal({ reports, open, onClose, currentUser }) {
         <ModalContentContainer>
           <Tabs
             tabs={[
-              { content: 'My Reports', onClick: () => setTabIndex(0) },
-              { content: 'All Reports', onClick: () => setTabIndex(1) },
+              { content: 'My Reports', onClick: () => handleTabChange(0) },
+              { content: 'All Reports', onClick: () => handleTabChange(1) },
             ]}
             fitted
             selected={tabIndex}

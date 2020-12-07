@@ -100,17 +100,15 @@ export default function DashboardPageV2() {
                 <Dashboard.Panel>
                   <Panel.Header>
                     <Panel.Headline>{pinnedReport.name}</Panel.Headline>
-                    <Panel.Action>
-                      <PageLink to={pinnedReport.linkToReportBuilder}>
-                        <TranslatableText>Analyze Report</TranslatableText> <ShowChart size={25} />
-                      </PageLink>
+                    <Panel.Action to={pinnedReport.linkToReportBuilder}>
+                      <TranslatableText>View Report</TranslatableText> <ShowChart size={25} />
                     </Panel.Action>
                     <Panel.Action onClick={openModal}>
                       <TranslatableText>Change Report</TranslatableText> <Sync size={25} />
                     </Panel.Action>
                   </Panel.Header>
                   <Panel.Section>
-                    <ChartGroups reportOptions={pinnedReport.options} />
+                    <ChartGroups reportOptions={pinnedReport.options} p="0" />
                   </Panel.Section>
                 </Dashboard.Panel>
               )}
