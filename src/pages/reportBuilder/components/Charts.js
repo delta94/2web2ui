@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import styled from 'styled-components';
 import _ from 'lodash';
 import { getLineChartFormatters } from 'src/helpers/chart';
 import LineChart from './LineChart';
@@ -18,11 +17,6 @@ import { Heading } from 'src/components/text';
 import { Loading, Empty } from 'src/components';
 
 const DEFAULT_UNIT = 'number';
-
-const HeadingPanelSection = styled(Panel.Section)`
-  padding-bottom: 0;
-  border-bottom: 0;
-`;
 
 function getUniqueUnits(metrics) {
   return _.uniq(metrics.map(({ unit = DEFAULT_UNIT }) => unit));
@@ -62,11 +56,11 @@ export function ChartGroups(props) {
         ];
         return (
           <div key={`chart_group_${index}`}>
-            <HeadingPanelSection>
+            <Panel.Header>
               <Heading data-id={`heading_${index}`} as="h3" looksLike="h4">
                 {compareFilter.value}
               </Heading>
-            </HeadingPanelSection>
+            </Panel.Header>
 
             <Charts
               activeChart={activeChart}
