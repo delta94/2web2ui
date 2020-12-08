@@ -59,7 +59,7 @@ describe('Version 2 of the dashboard page', () => {
       });
       cy.wait('@updateUIOptions').then(xhr => {
         expect(xhr.request.body).to.deep.equal({
-          options: { ui: { pinned_report: 'd50d8475-d4e8-4df0-950f-b142f77df0bf' } },
+          options: { ui: { pinned_report_id: 'd50d8475-d4e8-4df0-950f-b142f77df0bf' } },
         });
       });
       cy.findByText('Pinned Report updated').should('be.visible');
