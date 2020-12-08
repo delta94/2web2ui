@@ -35,7 +35,7 @@ export default function ActiveFilters({ filters, handleFilterRemove }) {
                       key={`filter-${groupingIndex}-${filterIndex}`}
                       paddingY="100"
                       paddingX="200"
-                      backgroundColor="gray.100"
+                      // backgroundColor="gray.100"
                       data-id="active-filter"
                     >
                       <Inline as="span" space="200">

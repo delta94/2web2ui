@@ -83,7 +83,7 @@ export default function DashboardPageV2() {
         <Heading as="h1">Dashboard</Heading>
       </ScreenReaderOnly>
 
-      {isModalOpen && (
+      {isModalOpen && name === 'Change Report' && (
         <ChangeReportModal
           onDashboard={true}
           open={isModalOpen}
