@@ -13,7 +13,6 @@ const {
   apiDateFormat,
   chartColors = [],
 } = config;
-const indexedPrecisions = _.keyBy(precisionMap, 'value');
 const DELIMITERS = ',;:+~`!@#$%^*()-={}[]"\'<>?./|\\'.split('');
 
 export function getQueryFromOptions({
@@ -181,7 +180,14 @@ export function getMomentPrecisionByPrecision(precision) {
 }
 
 export function getPrecisionType(precision) {
-  return indexedPrecisions[precision].time <= 60 * 24 * 2 ? 'hour' : precision;
+  switch (precision) {
+    case '1min':
+    case '5min':
+    case '15min':
+      return 'hour';
+    default:
+      return precision;
+  }
 }
 
 // We are forced to use UTC for any precision greater or equal to 'day'
