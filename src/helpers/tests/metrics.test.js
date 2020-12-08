@@ -72,19 +72,10 @@ describe('metrics helpers', () => {
 
     expect(metricsHelpers.getPrecision({ from, to })).toEqual('1min');
 
-    to.add(1, 'hours');
-    expect(metricsHelpers.getPrecision({ from, to })).toEqual('5min');
-
-    to.add(2, 'hours');
-    expect(metricsHelpers.getPrecision({ from, to })).toEqual('15min');
-
-    to.add(5, 'hours');
+    to.add(8, 'hours');
     expect(metricsHelpers.getPrecision({ from, to })).toEqual('hour');
 
-    to.add(6, 'days');
-    expect(metricsHelpers.getPrecision({ from, to })).toEqual('day'); // 12hr precision makes for an odd x-axis, use day here
-
-    to.add(25, 'days');
+    to.add(10, 'days');
     expect(metricsHelpers.getPrecision({ from, to })).toEqual('day');
 
     to.add(30, 'days');
@@ -99,10 +90,18 @@ describe('metrics helpers', () => {
     const to = moment('2016-12-18T04:30').utc();
 
     it('should return recommended precision when no precision is given', () => {
-      expect(metricsHelpers.getRollupPrecision({ from, to, precision: undefined })).toEqual('5min');
+      expect(metricsHelpers.getRollupPrecision({ from, to, precision: undefined })).toEqual('1min');
+      expect(
+        metricsHelpers.getRollupPrecision({
+          from,
+          to: moment('2016-12-28T00:00').utc(),
+          precision: undefined,
+        }),
+      ).toEqual('hour');
     });
+
     it('should return correct precision', () => {
-      expect(metricsHelpers.getRollupPrecision({ from, to, precision: 'month' })).toEqual('5min');
+      expect(metricsHelpers.getRollupPrecision({ from, to, precision: 'month' })).toEqual('1min');
     });
     it('should return the same precision when it is still in the allowed precision options', () => {
       expect(metricsHelpers.getRollupPrecision({ from, to, precision: 'hour' })).toEqual('hour');
@@ -161,18 +160,6 @@ describe('metrics helpers', () => {
         from: '2016-12-18T10:28',
         to: '2016-12-18T11:28',
         expected: { from: '2016-12-18T10:28', to: '2016-12-18T11:28' },
-      },
-      {
-        timeLabel: '5min',
-        from: '2016-12-18T10:09',
-        to: '2016-12-18T12:01',
-        expected: { from: '2016-12-18T10:05', to: '2016-12-18T12:05' },
-      },
-      {
-        timeLabel: '15min',
-        from: '2016-12-18T06:29',
-        to: '2016-12-18T10:01',
-        expected: { from: '2016-12-18T06:15', to: '2016-12-18T10:15' },
       },
       {
         timeLabel: 'hour',

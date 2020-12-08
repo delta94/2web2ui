@@ -66,7 +66,6 @@ describe('Summary Report page', () => {
       const sevenDaysAgo = momentDateTime
         .subtract(6, 'day')
         .local()
-        .startOf('day')
         .format('MMM Do YYYY h:mma');
       cy.url().should('include', 'range=7days');
       cy.findByDataId('report-options').within(() => {

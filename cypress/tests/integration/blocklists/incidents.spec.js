@@ -118,7 +118,7 @@ describe('The blocklist incidents page', () => {
     }
 
     cy.wait('@getIncidents').then(({ url }) => {
-      cy.wrap(url).should('include', 'from=2019-09-03');
+      cy.wrap(url).should('include', 'from=2019-09-04');
       cy.wrap(url).should('include', 'to=2019-09-11');
     });
   });

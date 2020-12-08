@@ -44,9 +44,7 @@ describe('Date Time Section on Summary Report & Report Builder', () => {
       cy.findByLabelText('Precision').should('be.disabled');
       cy.findByLabelText('Time Zone').should('be.disabled');
 
-      const weekAgo = Cypress.moment(timestamp)
-        .startOf('day')
-        .subtract(7, 'day');
+      const weekAgo = Cypress.moment(timestamp).subtract(7, 'day');
       cy.findByDataId('report-options').within(() => {
         cy.findByLabelText('Date Range').should(
           'have.value',
@@ -54,10 +52,10 @@ describe('Date Time Section on Summary Report & Report Builder', () => {
         );
       });
       cy.wait('@getTimeSeries').should(xhr => {
-        expect(xhr.url).to.contain('precision=day');
+        expect(xhr.url).to.contain('precision=hour');
         expect(xhr.url).to.contain(`from=${weekAgo.local().format('YYYY-MM-DDTHH:mm')}`);
       });
-      cy.findByLabelText('Precision').should('have.value', 'day');
+      cy.findByLabelText('Precision').should('have.value', 'hour');
     });
 
     it('changing date picker values changes the precision correctly (Hibana)', () => {
