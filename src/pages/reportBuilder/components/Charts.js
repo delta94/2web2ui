@@ -59,9 +59,11 @@ export function ChartGroups(props) {
           <Panel.Section key={`chart_group_${index}`}>
             <Stack>
               <Box>
-                <Heading data-id={`heading_${index}`} as="h3" looksLike="h4">
-                  {compareFilter.value}
-                </Heading>
+                <Panel.Header>
+                  <Heading data-id={`heading_${index}`} as="h3" looksLike="h4">
+                    {compareFilter.value}
+                  </Heading>
+                </Panel.Header>
               </Box>
               <Box>
                 <Charts
