@@ -40,6 +40,22 @@ if (IS_HIBANA_ENABLED) {
       cy.findByLabelText('Break Down By').should('be.visible');
     });
 
+    it('should render error state for charts', () => {
+      cy.stubRequest({
+        url: '/api/v1/metrics/deliverability/time-series**/**',
+        fixture: 'metrics/deliverability/time-series/400.get.json',
+        statusCode: 400,
+        requestAlias: 'newGetTimeSeries',
+      });
+      // Wait for request + 3 retries
+      cy.wait(['@newGetTimeSeries']);
+      cy.wait(['@newGetTimeSeries']);
+      cy.wait(['@newGetTimeSeries']);
+      cy.wait(['@newGetTimeSeries']);
+
+      cy.findByText('Unable to load report').should('be.visible');
+    });
+
     it('renders the initial page based on query params', () => {
       cy.visit(`${PAGE_URL}&filters=Recipient Domain%3Atest.com`);
       cy.withinMainContent(() => {
