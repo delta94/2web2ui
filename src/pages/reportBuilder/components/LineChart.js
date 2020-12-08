@@ -3,11 +3,13 @@ import {
   Bar,
   ComposedChart,
   Line,
+  Area,
   Rectangle,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
+  ReferenceLine,
 } from 'recharts';
 import moment from 'moment';
 import styles from './LineChart.module.scss';
@@ -77,6 +79,21 @@ export default function SpLineChart(props) {
     });
   };
 
+  const renderAreas = () => {
+    const { areas = [] } = props;
+    return areas.map(area => {
+      const areaProps = {
+        strokeWidth: 2,
+        animationDuration: 400,
+        activeDot: false,
+        dot: false,
+        type: 'linear',
+        ...area,
+      };
+      return <Area {...areaProps} />;
+    });
+  };
+
   // Manually generates X axis ticks
   const getXTicks = () => {
     const { data, precision } = props;
@@ -115,6 +132,10 @@ export default function SpLineChart(props) {
     return ticks;
   };
 
+  const renderReferenceLine = referenceLine => {
+    return <ReferenceLine {...referenceLine} />;
+  };
+
   const {
     data,
     height,
@@ -125,8 +146,13 @@ export default function SpLineChart(props) {
     yScale = 'linear',
     tooltipLabelFormatter = identity,
     tooltipValueFormatter = identity,
+    xAxisKey = 'ts',
     showXAxis,
     yLabel,
+    lines,
+    areas,
+    defs,
+    referenceLine,
   } = props;
 
   return (
@@ -136,7 +162,7 @@ export default function SpLineChart(props) {
           <Bar key="noKey" dataKey="noKey" background={{ fill: tokens.color_gray_200 }} />
           <XAxis
             axisLine={false}
-            dataKey="ts"
+            dataKey={xAxisKey}
             height={30}
             hide={!showXAxis}
             interval="preserveStartEnd"
@@ -163,7 +189,10 @@ export default function SpLineChart(props) {
             labelFormatter={tooltipLabelFormatter}
             formatter={tooltipValueFormatter}
           />
-          {renderLines()}
+          {defs ? defs : null}
+          {lines ? renderLines() : null}
+          {areas ? renderAreas() : null}
+          {referenceLine ? renderReferenceLine(referenceLine) : null}
         </ComposedChart>
       </ResponsiveContainer>
       <span className="sp-linechart-yLabel">{yLabel}</span>
