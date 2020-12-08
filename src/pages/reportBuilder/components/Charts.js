@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import styled from 'styled-components';
 import _ from 'lodash';
 import { getLineChartFormatters } from 'src/helpers/chart';
 import LineChart from './LineChart';
@@ -15,7 +16,13 @@ import {
 import { useReportBuilderContext } from '../context/ReportBuilderContext';
 import { Heading } from 'src/components/text';
 import { Loading, Empty } from 'src/components';
+
 const DEFAULT_UNIT = 'number';
+
+const HeadingPanelSection = styled(Panel.Section)`
+  padding-bottom: 0;
+  border-bottom: 0;
+`;
 
 function getUniqueUnits(metrics) {
   return _.uniq(metrics.map(({ unit = DEFAULT_UNIT }) => unit));
@@ -34,14 +41,12 @@ export function ChartGroups(props) {
 
   if (!hasComparisons) {
     return (
-      <Panel.Section>
-        <Charts
-          activeChart={activeChart}
-          setActiveChart={setActiveChart}
-          id="chart"
-          reportOptions={reportOptions}
-        />
-      </Panel.Section>
+      <Charts
+        activeChart={activeChart}
+        setActiveChart={setActiveChart}
+        id="chart"
+        reportOptions={reportOptions}
+      />
     );
   }
 
@@ -56,24 +61,20 @@ export function ChartGroups(props) {
           { AND: { [filterType]: { eq: [compareFilter] } } },
         ];
         return (
-          <Panel.Section>
-            <Stack key={`chart_group_${index}`}>
-              <Box>
-                <Heading data-id={`heading_${index}`} as="h3" looksLike="h4">
-                  {compareFilter.value}
-                </Heading>
-              </Box>
+          <div key={`chart_group_${index}`}>
+            <HeadingPanelSection>
+              <Heading data-id={`heading_${index}`} as="h3" looksLike="h4">
+                {compareFilter.value}
+              </Heading>
+            </HeadingPanelSection>
 
-              <Box>
-                <Charts
-                  activeChart={activeChart}
-                  setActiveChart={setActiveChart}
-                  id={`chart_group_${index}`}
-                  reportOptions={{ ...reportOptions, filters: comparedFilters }}
-                />
-              </Box>
-            </Stack>
-          </Panel.Section>
+            <Charts
+              activeChart={activeChart}
+              setActiveChart={setActiveChart}
+              id={`chart_group_${index}`}
+              reportOptions={{ ...reportOptions, filters: comparedFilters }}
+            />
+          </div>
         );
       })}
     </>
@@ -135,29 +136,31 @@ export function Charts(props) {
   }
 
   return (
-    <Stack>
-      {charts.map((chart, index) => (
-        <Box key={`chart-${index}`} onMouseOver={() => setActiveChart(`${id}_chart_${index}`)}>
-          <LineChart
-            height={height}
-            syncId="summaryChart"
-            data={chartData}
-            precision={precision}
-            showTooltip={activeChart === `${id}_chart_${index}`}
-            lines={chart.metrics.map(({ name, label, stroke }) => ({
-              key: name,
-              dataKey: name,
-              name: label,
-              stroke,
-            }))}
-            {...formatters}
-            yTickFormatter={chart.yAxisFormatter}
-            yLabel={chart.label}
-            tooltipValueFormatter={chart.yAxisFormatter}
-            showXAxis={index === charts.length - 1}
-          />
-        </Box>
-      ))}
-    </Stack>
+    <Panel.Section>
+      <Stack>
+        {charts.map((chart, index) => (
+          <Box key={`chart-${index}`} onMouseOver={() => setActiveChart(`${id}_chart_${index}`)}>
+            <LineChart
+              height={height}
+              syncId="summaryChart"
+              data={chartData}
+              precision={precision}
+              showTooltip={activeChart === `${id}_chart_${index}`}
+              lines={chart.metrics.map(({ name, label, stroke }) => ({
+                key: name,
+                dataKey: name,
+                name: label,
+                stroke,
+              }))}
+              {...formatters}
+              yTickFormatter={chart.yAxisFormatter}
+              yLabel={chart.label}
+              tooltipValueFormatter={chart.yAxisFormatter}
+              showXAxis={index === charts.length - 1}
+            />
+          </Box>
+        ))}
+      </Stack>
+    </Panel.Section>
   );
 }
