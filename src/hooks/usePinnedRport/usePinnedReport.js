@@ -19,8 +19,8 @@ export default function usePinnedReport(onboarding) {
   const reports = useSelector(state => state.reports.list);
   const subaccounts = useSelector(state => state.subaccounts.list);
   const pinnedReportId = useSelector(state =>
-    selectCondition(isUserUiOptionSet('pinned_report_id'))(state),
-  ); //TODO: this is the id stored in user ui option "pinned_report"
+    selectCondition(isUserUiOptionSet('pinned_report_id_id'))(state),
+  ); //TODO: this is the id stored in user ui option "pinned_report_id"
 
   useEffect(() => {
     if (onboarding === 'analytics') {

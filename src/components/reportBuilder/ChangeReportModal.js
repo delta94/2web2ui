@@ -24,7 +24,7 @@ export function ChangeReportModal({ reports, open, onClose, currentUser }) {
   };
 
   const onSubmit = () => {
-    dispatch(updateUserUIOptions({ pinned_report: selectedReportId })).then(() => {
+    dispatch(updateUserUIOptions({ pinned_report_id: selectedReportId })).then(() => {
       dispatch(
         showAlert({
           type: 'success',
