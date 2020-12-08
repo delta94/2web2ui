@@ -29,13 +29,13 @@ export default function ActiveFilters({ filters, handleFilterRemove }) {
                 backgroundColor="gray.100"
                 space="0"
               >
+                <span aria-hidden="true">[</span>
                 {grouping.filters.map((filter, filterIndex) => {
                   return (
                     <Box
                       key={`filter-${groupingIndex}-${filterIndex}`}
                       paddingY="100"
                       paddingX="200"
-                      // backgroundColor="gray.100"
                       data-id="active-filter"
                     >
                       <Inline as="span" space="200">
@@ -74,7 +74,7 @@ export default function ActiveFilters({ filters, handleFilterRemove }) {
                     </Box>
                   );
                 })}
-
+                <span aria-hidden="true">]</span>
                 {grouping.hasAndBetweenGroups ? (
                   <Box marginX="200">
                     <Comparison>And</Comparison>
