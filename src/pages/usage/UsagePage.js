@@ -6,7 +6,7 @@ import {
   selectEndOfBillingPeriod,
   selectStartOfBillingPeriod,
 } from 'src/selectors/accountBillingInfo';
-import { getAccount, getSubscription, getUsage } from 'src/helpers/api';
+import { getAccount, getSubscription, getUsage, getUsageHistory } from 'src/helpers/api';
 import { MessagingUsageSection, FeatureUsageSection, RVUsageSection } from './components';
 
 export default function UsagePage() {
@@ -15,18 +15,30 @@ export default function UsagePage() {
   );
   const { data: usage, status: usageStatus, refetch: usageRefetch } = useSparkPostQuery(getUsage);
   const {
+    data: usageHistory,
+    status: usageHistoryStatus,
+    refetch: usageHistoryRefetch,
+  } = useSparkPostQuery(getUsageHistory);
+  const {
     data: subscription,
     status: subscriptionStatus,
     refetch: subscriptionRefetch,
   } = useSparkPostQuery(getSubscription);
   const isLoading =
-    accountStatus === 'loading' || usageStatus === 'loading' || subscriptionStatus === 'loading';
+    accountStatus === 'loading' ||
+    usageStatus === 'loading' ||
+    subscriptionStatus === 'loading' ||
+    usageHistoryStatus === 'loading';
   const isError =
-    accountStatus === 'error' || usageStatus === 'error' || subscriptionStatus === 'error';
+    accountStatus === 'error' ||
+    usageStatus === 'error' ||
+    subscriptionStatus === 'error' ||
+    usageHistoryStatus === 'error';
 
   function handleReload() {
     accountRefetch();
     usageRefetch();
+    usageHistoryRefetch();
     subscriptionRefetch();
   }
 
@@ -44,19 +56,21 @@ export default function UsagePage() {
   }
 
   // Merging data so existing selectors can work together to grab from a common object
-  const data = { account, subscription, usage };
+  const data = { account, subscription, usage, usageHistory };
   const endOfBillingPeriod = selectEndOfBillingPeriod(data);
   const startOfBillingPeriod = selectStartOfBillingPeriod(data);
   const accountUsage = data.account.usage;
   const accountSubscription = data.account.subscription;
   const billingSubscription = data.subscription;
   const rvUsage = data.usage.recipient_validation;
+  const messagingUsageHistory = data.usageHistory.messaging;
 
   return (
     <Page title="Usage">
       <Layout>
         <MessagingUsageSection
           usage={accountUsage}
+          messagingUsageHistory={messagingUsageHistory}
           subscription={accountSubscription}
           endOfBillingPeriod={endOfBillingPeriod}
           startOfBillingPeriod={startOfBillingPeriod}

@@ -1,14 +1,16 @@
 import React from 'react';
-import { Box, Grid, Inline, Layout, Stack } from 'src/components/matchbox';
+import { Box, Grid, Inline, Layout, Stack, Panel } from 'src/components/matchbox';
 import { ExternalLink, PageLink } from 'src/components/links';
 import { Heading, SubduedText } from 'src/components/text';
 import { formatDate } from 'src/helpers/date';
 import config from 'src/config';
 import { LINKS } from 'src/constants';
 import { LabelAndKeyPair } from '.';
+import MessagingUsageChart from './MessagingUsageChart';
 
 export default function MessagingUsageSection({
   usage,
+  messagingUsageHistory,
   subscription,
   endOfBillingPeriod,
   startOfBillingPeriod,
@@ -57,78 +59,85 @@ export default function MessagingUsageSection({
 
       <Layout.Section>
         {usage && (
-          <Box padding="400" backgroundColor="gray.1000">
-            <Stack>
-              <Grid>
-                <Grid.Column sm={3}>
-                  <Box id="date">
-                    <LabelAndKeyPair
-                      label="Billing Cycle"
-                      value={`${formatDate(startOfBillingPeriod, config.dateFormat)} - ${formatDate(
-                        endOfBillingPeriod,
-                        config.dateFormat,
-                      )}`}
-                    ></LabelAndKeyPair>
-                  </Box>
-                </Grid.Column>
-                <Grid.Column sm={9}>
-                  <Inline space="400">
-                    <Box>
+          <Stack space="0">
+            <Panel mb="-1px">
+              <Panel.Section>
+                <MessagingUsageChart data={messagingUsageHistory} />
+              </Panel.Section>
+            </Panel>
+            <Box padding="400" backgroundColor="gray.1000">
+              <Stack>
+                <Grid>
+                  <Grid.Column sm={3}>
+                    <Box id="date">
                       <LabelAndKeyPair
-                        label="Today's Usage"
-                        value={usage.day.used.toLocaleString()}
+                        label="Billing Cycle"
+                        value={`${formatDate(
+                          startOfBillingPeriod,
+                          config.dateFormat,
+                        )} - ${formatDate(endOfBillingPeriod, config.dateFormat)}`}
                       ></LabelAndKeyPair>
                     </Box>
-                    <Box>
-                      {hasDailyLimit && (
+                  </Grid.Column>
+                  <Grid.Column sm={9}>
+                    <Inline space="400">
+                      <Box>
                         <LabelAndKeyPair
-                          label="Daily Limit"
-                          value={usage.day.limit.toLocaleString()}
+                          label="Today's Usage"
+                          value={usage.day.used.toLocaleString()}
                         ></LabelAndKeyPair>
+                      </Box>
+                      <Box>
+                        {hasDailyLimit && (
+                          <LabelAndKeyPair
+                            label="Daily Limit"
+                            value={usage.day.limit.toLocaleString()}
+                          ></LabelAndKeyPair>
+                        )}
+                      </Box>
+                    </Inline>
+                  </Grid.Column>
+                </Grid>
+                <Grid>
+                  <Grid.Column sm={3}>
+                    <Box></Box>
+                  </Grid.Column>
+                  <Grid.Column sm={9}>
+                    <Inline space="400">
+                      <Box>
+                        <LabelAndKeyPair
+                          label="Month's Usage"
+                          value={usage.month.used.toLocaleString()}
+                        ></LabelAndKeyPair>
+                      </Box>
+                      <Box>
+                        <LabelAndKeyPair
+                          label="Monthly Allotment"
+                          value={subscription.plan_volume.toLocaleString()}
+                        ></LabelAndKeyPair>
+                      </Box>
+                      {overage > 0 && (
+                        <Box>
+                          <LabelAndKeyPair
+                            label="Month's Overages"
+                            value={overage.toLocaleString()}
+                          ></LabelAndKeyPair>
+                        </Box>
                       )}
-                    </Box>
-                  </Inline>
-                </Grid.Column>
-              </Grid>
-              <Grid>
-                <Grid.Column sm={3}>
-                  <Box></Box>
-                </Grid.Column>
-                <Grid.Column sm={9}>
-                  <Inline space="400">
-                    <Box>
-                      <LabelAndKeyPair
-                        label="Month's Usage"
-                        value={usage.month.used.toLocaleString()}
-                      ></LabelAndKeyPair>
-                    </Box>
-                    <Box>
-                      <LabelAndKeyPair
-                        label="Monthly Allotment"
-                        value={subscription.plan_volume.toLocaleString()}
-                      ></LabelAndKeyPair>
-                    </Box>
-                    {overage > 0 && (
-                      <Box>
-                        <LabelAndKeyPair
-                          label="Month's Overages"
-                          value={overage.toLocaleString()}
-                        ></LabelAndKeyPair>
-                      </Box>
-                    )}
-                    {hasMonthlyLimit && (
-                      <Box>
-                        <LabelAndKeyPair
-                          label="Monthly Limit"
-                          value={usage.month.limit.toLocaleString()}
-                        ></LabelAndKeyPair>
-                      </Box>
-                    )}
-                  </Inline>
-                </Grid.Column>
-              </Grid>
-            </Stack>
-          </Box>
+                      {hasMonthlyLimit && (
+                        <Box>
+                          <LabelAndKeyPair
+                            label="Monthly Limit"
+                            value={usage.month.limit.toLocaleString()}
+                          ></LabelAndKeyPair>
+                        </Box>
+                      )}
+                    </Inline>
+                  </Grid.Column>
+                </Grid>
+              </Stack>
+            </Box>
+          </Stack>
         )}
       </Layout.Section>
     </>
