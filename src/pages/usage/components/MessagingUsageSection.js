@@ -62,7 +62,7 @@ export default function MessagingUsageSection({
           <Stack space="0">
             <Panel mb="-1px">
               <Panel.Section>
-                <MessagingUsageChart data={messagingUsageHistory} />
+                <MessagingUsageChart data={messagingUsageHistory} usage={usage} />
               </Panel.Section>
             </Panel>
             <Box padding="400" backgroundColor="gray.1000">
