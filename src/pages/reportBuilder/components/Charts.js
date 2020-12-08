@@ -34,7 +34,7 @@ export function ChartGroups(props) {
 
   if (!hasComparisons) {
     return (
-      <Panel.Section>
+      <Panel.Section padding="0">
         <Charts
           activeChart={activeChart}
           setActiveChart={setActiveChart}
@@ -134,29 +134,31 @@ export function Charts(props) {
   }
 
   return (
-    <Stack>
-      {charts.map((chart, index) => (
-        <Box key={`chart-${index}`} onMouseOver={() => setActiveChart(`${id}_chart_${index}`)}>
-          <LineChart
-            height={height}
-            syncId="summaryChart"
-            data={chartData}
-            precision={precision}
-            showTooltip={activeChart === `${id}_chart_${index}`}
-            lines={chart.metrics.map(({ name, label, stroke }) => ({
-              key: name,
-              dataKey: name,
-              name: label,
-              stroke,
-            }))}
-            {...formatters}
-            yTickFormatter={chart.yAxisFormatter}
-            yLabel={chart.label}
-            tooltipValueFormatter={chart.yAxisFormatter}
-            showXAxis={index === charts.length - 1}
-          />
-        </Box>
-      ))}
-    </Stack>
+    <Box padding={[400, null, 500]}>
+      <Stack>
+        {charts.map((chart, index) => (
+          <Box key={`chart-${index}`} onMouseOver={() => setActiveChart(`${id}_chart_${index}`)}>
+            <LineChart
+              height={height}
+              syncId="summaryChart"
+              data={chartData}
+              precision={precision}
+              showTooltip={activeChart === `${id}_chart_${index}`}
+              lines={chart.metrics.map(({ name, label, stroke }) => ({
+                key: name,
+                dataKey: name,
+                name: label,
+                stroke,
+              }))}
+              {...formatters}
+              yTickFormatter={chart.yAxisFormatter}
+              yLabel={chart.label}
+              tooltipValueFormatter={chart.yAxisFormatter}
+              showXAxis={index === charts.length - 1}
+            />
+          </Box>
+        ))}
+      </Stack>
+    </Box>
   );
 }
