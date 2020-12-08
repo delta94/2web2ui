@@ -2,54 +2,24 @@ import React from 'react';
 import {
   Bar,
   ComposedChart,
-  Line,
+  Area,
   Rectangle,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
+  ReferenceLine,
 } from 'recharts';
 import moment from 'moment';
-import styles from './LineChart.module.scss';
+import styles from './AreaChart.module.scss';
 import { tokens } from '@sparkpost/design-tokens-hibana';
-import { Box, Text } from 'src/components/matchbox';
-import { LegendCircle } from 'src/components';
+import _ from 'lodash';
 
 const identity = a => a;
 
 function orderDesc(a, b) {
   return b.value - a.value;
 }
-
-const CustomTooltip = ({ showTooltip, payload, label, labelFormatter, formatter }) => {
-  if (!showTooltip) {
-    return null;
-  }
-  return (
-    <Box borderRadius="200" padding="200" bg="gray.1000">
-      <Box fontSize="100" color="gray.200" mb="100">
-        {labelFormatter(label)}
-      </Box>
-      {payload.map(entry => (
-        <Box key={`report_chart_${entry.name}`} mb="100">
-          <Box justifyContent="space-between" alignItems="center" display="flex">
-            <Box display="inline-flex" alignItems="center">
-              <LegendCircle mr={tokens.spacing_300} color={entry.stroke} />
-              <Text as="span" fontSize="100" color="white">
-                {entry.name}
-              </Text>
-            </Box>
-            <Box ml="800">
-              <Text fontSize="100" textAlign="right" color="white">
-                {formatter(entry.value)}
-              </Text>
-            </Box>
-          </Box>
-        </Box>
-      ))}
-    </Box>
-  );
-};
 
 const Cursor = ({ data, height, points: [{ x, y }], width: chartWidth }) => {
   const sectionWidth = chartWidth / data.length;
@@ -61,19 +31,19 @@ const Cursor = ({ data, height, points: [{ x, y }], width: chartWidth }) => {
   );
 };
 
-export default function SpLineChart(props) {
-  const renderLines = () => {
-    const { lines = [] } = props;
-    return lines.map(line => {
-      const lineProps = {
+export default function AreaChart(props) {
+  const renderAreas = () => {
+    const { areas = [] } = props;
+    return areas.map(area => {
+      const areaProps = {
         strokeWidth: 2,
         animationDuration: 400,
         activeDot: false,
         dot: false,
         type: 'linear',
-        ...line,
+        ...area,
       };
-      return <Line {...lineProps} />;
+      return <Area {...areaProps} />;
     });
   };
 
@@ -125,18 +95,23 @@ export default function SpLineChart(props) {
     yScale = 'linear',
     tooltipLabelFormatter = identity,
     tooltipValueFormatter = identity,
+    xAxisKey = 'ts',
     showXAxis,
+    defs,
+    tooltip: CustomTooltip,
+    xAxisRefLines,
+    yAxisRefLines,
     yLabel,
   } = props;
 
   return (
-    <div className={styles.ChartWrapper}>
+    <div className={styles.AreaChart}>
       <ResponsiveContainer width="99%" height={height}>
         <ComposedChart syncId={syncId} barCategoryGap="3%" data={data}>
           <Bar key="noKey" dataKey="noKey" background={{ fill: tokens.color_gray_200 }} />
           <XAxis
             axisLine={false}
-            dataKey="ts"
+            dataKey={xAxisKey}
             height={30}
             hide={!showXAxis}
             interval="preserveStartEnd"
@@ -156,17 +131,46 @@ export default function SpLineChart(props) {
           />
           <Tooltip
             cursor={<Cursor data={data} />}
-            content={<CustomTooltip showTooltip={showTooltip} />}
+            content={CustomTooltip ? <CustomTooltip showTooltip={showTooltip} /> : null}
             wrapperStyle={{ zIndex: tokens.zIndex_overlay }}
             isAnimationActive={false}
             itemSorter={orderDesc}
             labelFormatter={tooltipLabelFormatter}
             formatter={tooltipValueFormatter}
           />
-          {renderLines()}
+          {xAxisRefLines.length &&
+            _.map(xAxisRefLines, (xAxisRefLine, index) => (
+              <ReferenceLine
+                key={`x-${index}`}
+                x={xAxisRefLine.x}
+                shapeRendering="crispEdges"
+                stroke={xAxisRefLine.stroke}
+                strokeWidth={xAxisRefLine.strokeWidth}
+                strokeDasharray={xAxisRefLine.strokeDasharray}
+                label={xAxisRefLine.label}
+              />
+            ))}
+          {yAxisRefLines.length &&
+            _.map(yAxisRefLines, (yAxisRefLine, index) => (
+              <ReferenceLine
+                key={`y-${index}`}
+                y={yAxisRefLine.y}
+                shapeRendering="crispEdges"
+                strokeWidth={yAxisRefLine.strokeWidth}
+                strokeDasharray={yAxisRefLine.strokeDasharray}
+                stroke={yAxisRefLine.stroke}
+              />
+            ))}
+          {defs ? defs : null}
+          {renderAreas()}
         </ComposedChart>
       </ResponsiveContainer>
       <span className="sp-linechart-yLabel">{yLabel}</span>
     </div>
   );
 }
+
+AreaChart.defaultProps = {
+  xAxisRefLines: [],
+  yAxisRefLines: [],
+};
