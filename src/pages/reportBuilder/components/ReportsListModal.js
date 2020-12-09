@@ -46,7 +46,7 @@ export function ReportsListModal({
   return (
     <Modal open={open} onClose={onClose} showCloseButton maxWidth="1300">
       <Modal.Header>Saved Reports</Modal.Header>
-      <Modal.Content>
+      <Modal.Content p="0">
         <ModalContentContainer>
           <Tabs
             tabs={[

@@ -78,12 +78,7 @@ export default function DashboardPageV2() {
       </ScreenReaderOnly>
 
       {isModalOpen && (
-        <ChangeReportModal
-          onDashboard={true}
-          open={isModalOpen}
-          onClose={closeModal}
-          reports={allReports}
-        />
+        <ChangeReportModal open={isModalOpen} onClose={closeModal} reports={allReports} />
       )}
 
       <Stack>

@@ -65,7 +65,7 @@ export function ChangeReportModal({ reports, open, onClose, currentUser }) {
   return (
     <Modal open={open} onClose={onClose} showCloseButton maxWidth="1300">
       <Modal.Header>Change Report</Modal.Header>
-      <Modal.Content>
+      <Modal.Content p="0">
         <ModalContentContainer>
           <Tabs
             tabs={[
