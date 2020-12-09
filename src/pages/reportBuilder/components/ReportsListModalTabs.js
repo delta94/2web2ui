@@ -1,12 +1,10 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { MoreHoriz } from '@sparkpost/matchbox-icons';
-import { Tabs, TableCollection, Subaccount } from 'src/components';
+import { TableCollection, Subaccount } from 'src/components';
 import {
   ActionList,
   Box,
   Button,
-  Modal,
   Popover,
   ScreenReaderOnly,
   Table,
@@ -14,8 +12,6 @@ import {
 } from 'src/components/matchbox';
 import { formatDateTime } from 'src/helpers/date';
 import { ButtonLink, PageLink } from 'src/components/links';
-import { selectCondition } from 'src/selectors/accessConditionState';
-import { isAccountUiOptionSet } from 'src/helpers/conditions/account';
 
 const allReportsColumns = [
   { label: 'Name', sortKey: 'name' },
@@ -65,29 +61,23 @@ const Actions = ({ id, handleDelete, handleEdit, reportType, report, ...rest }) 
   );
 };
 
-export function ReportsListModal(props) {
-  const {
-    reports,
-    open,
-    onClose,
-    currentUser,
-    handleDelete,
-    handleEdit,
-    isScheduledReportsEnabled,
-  } = props;
-  const handleReportChange = report => {
-    props.handleReportChange(report);
-    onClose();
-  };
-
+export const MyReportsTab = ({
+  reports,
+  currentUser,
+  handleReportChangeAndClose,
+  isScheduledReportsEnabled,
+  handleDelete,
+  handleEdit,
+}) => {
   const myReports = reports.filter(({ creator }) => creator === currentUser);
 
   const myReportsRows = report => {
     const { name, modified, isLast } = report;
+
     return [
       <ButtonLink
         onClick={() => {
-          handleReportChange(report);
+          handleReportChangeAndClose(report);
         }}
       >
         {name}
@@ -102,6 +92,34 @@ export function ReportsListModal(props) {
         isLast={isLast}
       />,
     ];
+  };
+  return (
+    <TableCollection
+      rows={myReports}
+      columns={myReportsColumns}
+      getRowData={myReportsRows}
+      wrapperComponent={Table}
+      filterBox={{
+        label: '',
+        show: true,
+        itemToStringKeys: ['name', 'modified'],
+        exampleModifiers: ['name', 'modified'],
+        maxWidth: '1250',
+        wrapper: FilterBoxWrapper,
+      }}
+    />
+  );
+};
+
+export const AllReportsTab = ({
+  reports,
+  handleReportChangeAndClose,
+  isScheduledReportsEnabled,
+  handleDelete,
+  handleEdit,
+}) => {
+  const getColumnsForAllReports = () => {
+    return allReportsColumns;
   };
 
   const allReportsRows = report => {
@@ -123,7 +141,7 @@ export function ReportsListModal(props) {
     return [
       <ButtonLink
         onClick={() => {
-          handleReportChange(report);
+          handleReportChangeAndClose(report);
         }}
       >
         {name}
@@ -136,57 +154,20 @@ export function ReportsListModal(props) {
       action,
     ];
   };
-
   return (
-    <Modal open={open} onClose={onClose} showCloseButton maxWidth="1300">
-      <Modal.Header>Saved Reports</Modal.Header>
-      <Modal.Content p="0">
-        {/* Use p instead of padding due to bug in matchbox 4.3.1*/}
-        <Tabs tabs={[{ content: 'My Reports' }, { content: 'All Reports' }]} forceRender fitted>
-          <Tabs.Item>
-            <TableCollection
-              rows={myReports}
-              columns={myReportsColumns}
-              getRowData={myReportsRows}
-              wrapperComponent={Table}
-              filterBox={{
-                label: '',
-                show: true,
-                itemToStringKeys: ['name', 'modified'],
-                exampleModifiers: ['name', 'modified'],
-                maxWidth: '1250',
-                wrapper: FilterBoxWrapper,
-              }}
-            />
-          </Tabs.Item>
-          <Tabs.Item>
-            <TableCollection
-              rows={reports}
-              columns={allReportsColumns}
-              getRowData={allReportsRows}
-              wrapperComponent={Table}
-              filterBox={{
-                label: '',
-                show: true,
-                itemToStringKeys: ['name', 'modified', 'creator'],
-                exampleModifiers: ['name', 'modified', 'creator'],
-                maxWidth: '1250',
-                wrapper: FilterBoxWrapper,
-              }}
-            />
-          </Tabs.Item>
-        </Tabs>
-      </Modal.Content>
-    </Modal>
+    <TableCollection
+      rows={reports}
+      columns={getColumnsForAllReports()}
+      getRowData={allReportsRows}
+      wrapperComponent={Table}
+      filterBox={{
+        label: '',
+        show: true,
+        itemToStringKeys: ['name', 'modified', 'creator'],
+        exampleModifiers: ['name', 'modified', 'creator'],
+        maxWidth: '1250',
+        wrapper: FilterBoxWrapper,
+      }}
+    />
   );
-}
-
-const mapStateToProps = state => {
-  return {
-    currentUser: state.currentUser.username,
-    isScheduledReportsEnabled: selectCondition(isAccountUiOptionSet('allow_scheduled_reports'))(
-      state,
-    ),
-  };
 };
-export default connect(mapStateToProps)(ReportsListModal);

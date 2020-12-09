@@ -1,13 +1,11 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { ReportsListModal } from '../ReportsListModal';
+import { ChangeReportModal } from '../ChangeReportModal';
 import TestApp from 'src/__testHelpers__/TestApp';
 
-describe('ReportsListModal', () => {
+describe('ChangeReportModal', () => {
   const defaults = {
     currentUser: 'Sparky McSparkFace',
-    handleDelete: jest.fn(),
-    handleEdit: jest.fn(),
     open: true,
     reports: [
       {
@@ -30,7 +28,7 @@ describe('ReportsListModal', () => {
   const subject = props => {
     render(
       <TestApp isHibanaEnabled={true}>
-        <ReportsListModal {...defaults} {...props} />
+        <ChangeReportModal {...defaults} {...props} />
       </TestApp>,
     );
   };
@@ -44,9 +42,7 @@ describe('ReportsListModal', () => {
     };
     const testSecondTab = texts => {
       texts.forEach(text => {
-        expect(screen.getAllByText(text)).toHaveLength(2);
-        expect(screen.getAllByText(text)[0]).not.toBeVisible();
-        expect(screen.getAllByText(text)[1]).toBeVisible();
+        expect(screen.getByText(text)).toBeVisible();
       });
     };
 
@@ -54,37 +50,22 @@ describe('ReportsListModal', () => {
     expect(screen.getByText('All Reports')).toBeVisible();
     testFirstTab(['Name', 'Last Modification', 'My Saved Report', /Sep [123] 2020/]);
     expect(screen.queryByText('Someone Elses Report')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('radio')).toHaveLength(1);
 
     screen.getByText('All Reports').click();
+    expect(screen.getAllByRole('radio')).toHaveLength(2);
     testSecondTab(['Name', 'Last Modification', 'My Saved Report', /Sep [123] 2020/]);
     expect(screen.getByText('Created By')).toBeVisible();
     expect(screen.getByText('Sparky McSparkFace')).toBeVisible();
+
+    expect(screen.getByRole('button', { name: 'Change Report' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeVisible();
   });
 
-  it('does not render action list for not editable reports', () => {
+  it('does not render action list for reports', () => {
     subject();
     screen.getByText('All Reports').click();
-    expect(screen.queryByTestId('popover-allreports-0')).toBeInTheDocument();
+    expect(screen.queryByTestId('popover-allreports-0')).not.toBeInTheDocument();
     expect(screen.queryByTestId('popover-allreports-1')).not.toBeInTheDocument();
-  });
-
-  it('handles delete when clicking delete in the actionlist', () => {
-    subject();
-    screen.getByText('All Reports').click();
-    screen.getByTestId('popover-allreports-0').click();
-    screen.getByText('Delete').click();
-    expect(defaults.handleDelete).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 0, name: 'My Saved Report' }),
-    );
-  });
-
-  it('handles edit when clicking edit in the actionlist', () => {
-    subject();
-    screen.getByText('All Reports').click();
-    screen.getByTestId('popover-allreports-0').click();
-    screen.getByText('Edit').click();
-    expect(defaults.handleEdit).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 0, name: 'My Saved Report' }),
-    );
   });
 });
