@@ -1,7 +1,7 @@
 import sparkpostApiRequest, { refreshing, refreshTokensUsed } from '../sparkpostApiRequest';
-import SparkpostApiError from '../sparkpostApiError';
 import { createMockStore } from 'src/__testHelpers__/mockStore';
 import * as axiosMocks from 'src/helpers/axiosInstances';
+import SparkpostApiError from 'src/helpers/sparkpostApiError';
 import * as authMock from 'src/actions/auth';
 import * as globalAlertMock from 'src/actions/globalAlert';
 import * as httpHelpersMock from 'src/helpers/http';

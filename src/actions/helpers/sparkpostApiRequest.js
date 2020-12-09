@@ -6,7 +6,6 @@ import { useRefreshToken } from 'src/helpers/http';
 import { resolveOnCondition } from 'src/helpers/promise';
 import _ from 'lodash';
 import { sparkpost as sparkpostAxios } from 'src/helpers/axiosInstances';
-import SparkpostApiError from './sparkpostApiError';
 import ErrorTracker from 'src/helpers/errorTracker';
 
 const maxRefreshRetries = 3;
@@ -41,12 +40,8 @@ const sparkpostRequest = requestHelperFactory({
 
     return meta.onSuccess ? dispatch(meta.onSuccess({ results })) : results;
   },
-  onFail: ({ types, err, dispatch, meta, action, getState }) => {
-    // TODO: Move this error transformation into an axios interceptor in the
-    // sparkpost axios instance, so all sparkpost API errors look the same
-    // (even those that don't use this helper because the request is not authenticated)
-    const apiError = new SparkpostApiError(err);
-    const { message, response = {} } = apiError;
+  onFail: ({ types, err: error, dispatch, meta, action, getState }) => {
+    const { message, response = {} } = error;
     const { auth } = getState();
     const { retries = 0, showErrorAlert = true } = meta;
 
@@ -100,7 +95,7 @@ const sparkpostRequest = requestHelperFactory({
     // any other API error should automatically fail, to be handled in the reducers/components
     dispatch({
       type: types.FAIL,
-      payload: { error: apiError, message, response },
+      payload: { error, message, response },
       meta,
     });
 
@@ -118,7 +113,7 @@ const sparkpostRequest = requestHelperFactory({
     }
 
     // TODO: Remove this once we unchain all actions
-    ErrorTracker.addRequestContextAndThrow(types.FAIL, response, apiError);
+    ErrorTracker.addRequestContextAndThrow(types.FAIL, response, error);
   },
 });
 

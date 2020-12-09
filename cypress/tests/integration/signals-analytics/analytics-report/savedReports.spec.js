@@ -291,10 +291,7 @@ if (IS_HIBANA_ENABLED) {
           cy.findByText('Your Sending Report').should('not.be.visible');
           //Check that it shows all reports
           cy.findByRole('tab', { name: 'All Reports' }).click();
-          cy.findAllByText('My Bounce Report').should('have.length', 2); //For both tabs
-          cy.findAllByText('My Bounce Report')
-            .first()
-            .should('be.hidden');
+          cy.findAllByText('My Bounce Report').should('have.length', 1); //For both tabs
           cy.findAllByText('My Bounce Report')
             .last()
             .should('be.visible');

@@ -6,8 +6,12 @@ function SparkpostApiError(error) {
 
   this.name = 'SparkpostApiError';
   this.stack = error.stack; // must manually assign prototype value
-  this.message = apiError.description || apiError.message ||
-    (error.response ? error.message : 'You may be having network issues or an adblocker may be blocking part of the app.');
+  this.message =
+    apiError.description ||
+    apiError.message ||
+    (error.response
+      ? error.message
+      : 'You may be having network issues or an adblocker may be blocking part of the app.');
 
   // Intentionally assigning additional properties
   Object.assign(this, error);
