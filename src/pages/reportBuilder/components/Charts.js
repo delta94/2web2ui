@@ -15,6 +15,7 @@ import { REPORT_BUILDER_FILTER_KEY_MAP } from 'src/constants';
 import { useReportBuilderContext } from '../context/ReportBuilderContext';
 import { ApiErrorBanner } from 'src/components';
 import Loading from 'src/components/loading/PanelLoading';
+import { Heading } from 'src/components/text';
 const DEFAULT_UNIT = 'number';
 
 function getUniqueUnits(metrics) {
@@ -57,17 +58,21 @@ export function ChartGroups(props) {
         ];
         return (
           <Panel.Section key={`chart_group_${index}`}>
-            <Box>
-              <Panel.Header>{compareFilter.value}</Panel.Header>
-            </Box>
-            <Box>
-              <Charts
-                activeChart={activeChart}
-                setActiveChart={setActiveChart}
-                id={`chart_group_${index}`}
-                reportOptions={{ ...reportOptions, filters: comparedFilters }}
-              />
-            </Box>
+            <Stack>
+              <Box>
+                <Heading looksLike="h5" as="h3">
+                  {compareFilter.value}
+                </Heading>
+              </Box>
+              <Box>
+                <Charts
+                  activeChart={activeChart}
+                  setActiveChart={setActiveChart}
+                  id={`chart_group_${index}`}
+                  reportOptions={{ ...reportOptions, filters: comparedFilters }}
+                />
+              </Box>{' '}
+            </Stack>
           </Panel.Section>
         );
       })}
