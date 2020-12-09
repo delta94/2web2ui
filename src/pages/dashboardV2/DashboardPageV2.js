@@ -30,9 +30,9 @@ import Sidebar from './components/Sidebar';
 import { LINKS } from 'src/constants';
 import { useModal } from 'src/hooks';
 import ChangeReportModal from './components/ChangeReportModal';
-import AggregateMetricsSection from 'src/pages/reportBuilder/components/AggregateMetricsSection';
 import moment from 'moment';
 import { getMetricsFromKeys } from 'src/helpers/metrics';
+import { CompareByAggregatedMetrics, AggregatedMetrics } from '../reportBuilder/components';
 const OnboardingImg = styled(Picture.Image)`
   vertical-align: bottom;
 `;
@@ -114,14 +114,17 @@ export default function DashboardPageV2() {
                   <Panel.Section>
                     <ChartGroups reportOptions={pinnedReport.options} p="0" />
                   </Panel.Section>
-                  <AggregateMetricsSection
-                    dateValue={dateValue}
-                    processedMetrics={getMetricsFromKeys(pinnedReport?.options?.metrics)}
-                    updates={{
-                      ...pinnedReport.options,
-                      filters: pinnedReport?.options?.filters,
-                    }}
-                  />
+                  {pinnedReport.options.comparisons.length > 0 ? (
+                    <CompareByAggregatedMetrics
+                      date={dateValue}
+                      reportOptions={pinnedReport.options}
+                    />
+                  ) : (
+                    <AggregatedMetrics
+                      date={dateValue}
+                      processedMetrics={getMetricsFromKeys(pinnedReport?.options?.metrics)}
+                    />
+                  )}
                 </Dashboard.Panel>
               )}
               {onboarding === 'analyticsReportPromo' && (
