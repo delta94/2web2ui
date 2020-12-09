@@ -22,13 +22,16 @@ describe('SparkpostApiError', () => {
   });
 
   it('returns error message', () => {
-    const error = createTestError({ response: { status: 400 }});
+    const error = createTestError({ response: { status: 400 } });
     expect(error).toHaveProperty('message', 'Oh No!');
   });
 
   it('returns a network error if no axios response', () => {
     const error = createTestError();
-    expect(error).toHaveProperty('message', 'You may be having network issues or an adblocker may be blocking part of the app.');
+    expect(error).toHaveProperty(
+      'message',
+      'You may be having network issues or an adblocker may be blocking part of the app.',
+    );
   });
 
   it('returns api error message', () => {
@@ -37,11 +40,11 @@ describe('SparkpostApiError', () => {
         data: {
           errors: [
             {
-              message: 'Something specific!'
-            }
-          ]
-        }
-      }
+              message: 'Something specific!',
+            },
+          ],
+        },
+      },
     });
 
     expect(error).toHaveProperty('message', 'Something specific!');
@@ -53,11 +56,11 @@ describe('SparkpostApiError', () => {
         data: {
           errors: [
             {
-              description: 'Something really specific!'
-            }
-          ]
-        }
-      }
+              description: 'Something really specific!',
+            },
+          ],
+        },
+      },
     });
 
     expect(error).toHaveProperty('message', 'Something really specific!');
@@ -65,7 +68,7 @@ describe('SparkpostApiError', () => {
 
   it('returns extra properties', () => {
     const error = createTestError({
-      extra: 'shh'
+      extra: 'shh',
     });
     expect(error).toHaveProperty('extra');
   });
