@@ -107,6 +107,60 @@ export function _getAggregateData({ params, metrics, isCurrentGroupingAggregates
   };
 }
 
+export function _getAggregateDataReportBuilder(updates) {
+  return (dispatch, getState) => {
+    const state = getState();
+    const { summaryChart } = state;
+
+    // if new metrics are included, convert them to their full representation from config
+    if (updates.metrics) {
+      updates = { ...updates, metrics: getMetricsFromKeys(updates.metrics, true) };
+    }
+
+    // merge together states
+    const merged = {
+      ...summaryChart,
+      ...updates,
+      ...getRelativeDates(updates.relativeRange, { precision: updates.precision }),
+    };
+
+    const isCurrentGroupingAggregates = summaryChart.groupBy === 'aggregate';
+    const metrics = merged.metrics;
+
+    let params = getQueryFromOptionsV2(merged);
+
+    // Get selected metrics
+    const activeMetrics = metrics || state.summaryChart.metrics;
+
+    // Gets filters and metrics for params
+    if (!params) {
+      params = getQueryFromOptions({ ...state.reportOptions, metrics: activeMetrics });
+    }
+
+    const options = {
+      type: 'FETCH_AGGREGATE_DATA',
+      path: 'deliverability',
+      params,
+      context: {
+        metrics: activeMetrics,
+      },
+    };
+
+    return dispatch(fetchMetrics(options)).then(results => {
+      if (!isCurrentGroupingAggregates) {
+        return;
+      }
+      dispatch({
+        type: 'REFRESH_SUMMARY_TABLE',
+        payload: {
+          data: results,
+          metrics: activeMetrics,
+        },
+      });
+    });
+  };
+}
+
 export function _getChartData({ params, metrics }) {
   const options = {
     type: 'FETCH_CHART_DATA',

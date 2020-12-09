@@ -1,35 +1,33 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getRelativeDates, getLocalTimezone } from 'src/helpers/date';
-import { parseSearchNew } from 'src/helpers/reports';
+import { parseSearchNew as parseSearch } from 'src/helpers/reports';
 import { hydrateFilters } from 'src/pages/reportBuilder/helpers';
 import { PRESET_REPORT_CONFIGS } from 'src/pages/reportBuilder/constants';
 import _ from 'lodash';
-import qs from 'qs';
 import { list as listSubaccounts } from 'src/actions/subaccounts';
 import { getReports } from 'src/actions/reports';
+import { selectCondition } from 'src/selectors/accessConditionState';
+import { isUserUiOptionSet } from 'src/helpers/conditions/user';
 
 const defaultReportName = 'Summary Report';
 
 export default function usePinnedReport(onboarding) {
   const pinnedReport = { options: {}, name: '', linkToReportBuilder: '/' };
-  const excludeOptionsFromLink = ['isReady'];
   const dispatch = useDispatch();
-  const { reports = [] } = useSelector(state => state.reports.list);
-  const { subaccounts } = useSelector(state => state.subaccounts.list);
-  const pinnedReportId = null; //TODO: this is the id stored in user ui option "pinned_report_id"
+
+  const reports = useSelector(state => state.reports.list);
+  const subaccounts = useSelector(state => state.subaccounts.list);
+  const pinnedReportId = useSelector(state =>
+    selectCondition(isUserUiOptionSet('pinned_report_id'))(state),
+  );
+
   useEffect(() => {
     if (onboarding === 'analytics') {
       dispatch(listSubaccounts());
       dispatch(getReports());
     }
   }, [dispatch, onboarding]);
-  const getLinktoReportBuilder = newParams => {
-    const queryString = qs.stringify(newParams, {
-      arrayFormat: 'repeat',
-    });
-    return `/signals/analytics?${queryString}`;
-  };
   const getRelativeDateRange = ({ relativeRange, precision }) => {
     const { from, to } = getRelativeDates(relativeRange, {
       precision: precision,
@@ -42,11 +40,25 @@ export default function usePinnedReport(onboarding) {
       ...getRelativeDateRange(reportOptions),
     };
   };
+  let summaryReportQueryString = PRESET_REPORT_CONFIGS.find(x => x.name === defaultReportName)
+    .query_string;
+  const summaryReportOptions = parseSearch(summaryReportQueryString);
   const report = _.find(reports, { id: pinnedReportId });
-  if (!report) {
-    let summaryReportOptions = parseSearchNew(
-      PRESET_REPORT_CONFIGS.find(x => x.name === defaultReportName).query_string,
-    );
+  if (report) {
+    const options = parseSearch(report.query_string);
+    pinnedReport.name = report.name;
+    pinnedReport.options = reportOptionsWithDates({
+      timezone: getLocalTimezone(),
+      metrics: summaryReportOptions.metrics,
+      comparisons: [],
+      relativeRange: '7days',
+      precision: 'hour',
+      ...options,
+      isReady: true,
+      filters: hydrateFilters(options.filters, { subaccounts }),
+    });
+    pinnedReport.linkToReportBuilder = `/signals/analytics?${report.query_string}&report=${pinnedReportId}`;
+  } else {
     pinnedReport.name = defaultReportName;
     pinnedReport.options = reportOptionsWithDates({
       timezone: getLocalTimezone(),
@@ -57,9 +69,8 @@ export default function usePinnedReport(onboarding) {
       isReady: true,
       filters: hydrateFilters(summaryReportOptions.filters, { subaccounts }),
     });
-    pinnedReport.linkToReportBuilder = getLinktoReportBuilder(
-      _.omitBy(pinnedReport.options, (_value, key) => excludeOptionsFromLink.includes(key)),
-    );
+    pinnedReport.linkToReportBuilder = `/signals/analytics?${summaryReportQueryString}`;
   }
+
   return { pinnedReport };
 }

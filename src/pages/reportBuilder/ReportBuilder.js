@@ -203,9 +203,12 @@ export function ReportBuilder({
                   <Charts {...chart} metrics={processedMetrics} to={to} yScale="linear" />
 
                   {hasActiveComparisons ? (
-                    <CompareByAggregatedMetrics date={dateValue} />
+                    <CompareByAggregatedMetrics date={dateValue} reportOptions={reportOptions} />
                   ) : (
-                    <AggregatedMetrics date={dateValue} />
+                    <AggregatedMetrics
+                      date={dateValue}
+                      processedMetrics={selectors.selectSummaryMetricsProcessed}
+                    />
                   )}
                 </Tabs.Item>
 

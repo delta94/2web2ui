@@ -2,12 +2,9 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Box, Grid, Inline, LabelValue } from 'src/components/matchbox';
 import { Unit, LegendCircle } from 'src/components';
-import { useReportBuilderContext } from '../context/ReportBuilderContext';
 
-export default function AggregatedMetrics({ date }) {
+export default function AggregatedMetrics({ date, processedMetrics }) {
   const chart = useSelector(state => state.summaryChart);
-  const { selectors } = useReportBuilderContext();
-  const processedMetrics = selectors.selectSummaryMetricsProcessed;
 
   return (
     <Box padding="400" backgroundColor="gray.1000">
