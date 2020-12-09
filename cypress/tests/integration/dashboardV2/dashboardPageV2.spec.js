@@ -29,6 +29,7 @@ describe('Version 2 of the dashboard page', () => {
       cy.findByText('View Report').click();
       cy.findByRole('heading', { name: 'Analytics Report' });
     });
+
     it('renders the Analytics Report step with "Change Report" button which open the modal to change pinned report', () => {
       stubGrantsRequest({ role: 'admin' });
       stubAlertsReq();
@@ -64,6 +65,7 @@ describe('Version 2 of the dashboard page', () => {
       });
       cy.findByText('Pinned Report updated').should('be.visible');
     });
+
     it('renders the Analytics Report step with pinned report when last usage date is not null and a pinned report is present in account ui options', () => {
       stubGrantsRequest({ role: 'admin' });
       stubAlertsReq();
@@ -71,7 +73,7 @@ describe('Version 2 of the dashboard page', () => {
       stubUsageReq({ fixture: 'usage/200.get.messaging.json' });
       stubReportsRequest();
       cy.stubRequest({
-        url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+        url: `/api/v1/users/${USERNAME}`,
         fixture: `users/200.get.has-pinned-report.json`,
         requestAlias: 'userWithPinnedReport',
       });
@@ -111,6 +113,7 @@ describe('Version 2 of the dashboard page', () => {
       cy.findByText('Bounces').should('be.visible');
       cy.findByText('325K').should('be.visible');
     });
+
     it('Shows Helpful Shortcuts "invite team members" when admin', () => {
       stubGrantsRequest({ role: 'admin' });
       stubAlertsReq();

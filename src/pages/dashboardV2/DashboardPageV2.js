@@ -120,7 +120,7 @@ export default function DashboardPageV2() {
         <Layout>
           <Layout.Section>
             <Stack>
-              {onboarding === 'analytics' && (
+              {onboarding === 'done' && (
                 <Dashboard.Panel>
                   <Panel.Header>
                     <Panel.Headline>{pinnedReport.name}</Panel.Headline>

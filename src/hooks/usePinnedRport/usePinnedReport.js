@@ -18,7 +18,7 @@ export default function usePinnedReport(onboarding) {
   const isFirstRender = useRef(true);
 
   useEffect(() => {
-    if (onboarding === 'analytics') {
+    if (onboarding === 'done') {
       isFirstRender.current = false; //used this to prevent triggering the getAggregateTable action on first render since loading state is false in reducer initially
       dispatch(listSubaccounts());
       dispatch(getReports());
