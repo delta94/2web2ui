@@ -1,5 +1,6 @@
 import React from 'react';
-import { MoreHoriz } from '@sparkpost/matchbox-icons';
+import { MoreHoriz, PushPin } from '@sparkpost/matchbox-icons';
+import styled from 'styled-components';
 import { TableCollection, Subaccount } from 'src/components';
 import {
   ActionList,
@@ -9,23 +10,17 @@ import {
   ScreenReaderOnly,
   Table,
   Tag,
+  Tooltip,
 } from 'src/components/matchbox';
 import { formatDateTime } from 'src/helpers/date';
 import { ButtonLink, PageLink } from 'src/components/links';
 
-const allReportsColumns = [
-  { label: 'Name', sortKey: 'name' },
-  { label: 'Last Modification', width: '25%', sortKey: 'modified' },
-  { label: 'Created By', sortKey: 'creator' },
-  {},
-  {},
-];
-
-const myReportsColumns = [
-  { label: 'Name', sortKey: 'name' },
-  { label: 'Last Modification', sortKey: 'modified' },
-  {},
-];
+const PinToDashboardAction = styled(ActionList.Action)`
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
 
 const FilterBoxWrapper = props => (
   <Box borderBottom="400" padding="400">
@@ -33,7 +28,24 @@ const FilterBoxWrapper = props => (
   </Box>
 );
 
-const Actions = ({ id, handleDelete, handleEdit, reportType, report, ...rest }) => {
+const Icons = ({ report, pinnedReport }) => {
+  let icons = [];
+  if (pinnedReport && pinnedReport.id === report.id) {
+    icons.push(
+      <Tooltip content="Pinned to Dashboard">
+        <PushPin label="pinned-to-dashboard" />
+      </Tooltip>,
+    );
+  }
+  return icons;
+};
+
+const Actions = ({ id, handleDelete, handleEdit, handlePin, reportType, report, ...rest }) => {
+  let reportIsPinned = false;
+  if (rest.pinnedReport) {
+    reportIsPinned = rest.pinnedReport.id === report.id;
+  }
+
   return (
     <Popover
       left
@@ -55,6 +67,15 @@ const Actions = ({ id, handleDelete, handleEdit, reportType, report, ...rest }) 
             as={PageLink}
           />
         )}
+        {rest.allowDashboardV2 && (
+          <PinToDashboardAction
+            content="Pin to Dashboard"
+            is="button"
+            onClick={() => (reportIsPinned ? '' : handlePin(report, rest.pinnedReport))}
+            disabled={reportIsPinned}
+            tabIndex={reportIsPinned ? '-1' : false}
+          />
+        )}
         <ActionList.Action content="Edit" onClick={() => handleEdit(report)} />
       </ActionList>
     </Popover>
@@ -66,15 +87,27 @@ export const MyReportsTab = ({
   currentUser,
   handleReportChangeAndClose,
   isScheduledReportsEnabled,
+  handlePin,
   handleDelete,
   handleEdit,
+  pinnedReport,
+  allowDashboardV2,
 }) => {
   const myReports = reports.filter(({ creator }) => creator === currentUser);
 
-  const myReportsRows = report => {
+  const myReportColumnHeaders = [
+    { label: 'Name', sortKey: 'name' },
+    { label: 'Last Modification', sortKey: 'modified' },
+    {},
+  ];
+  if (allowDashboardV2) {
+    myReportColumnHeaders.push({});
+  }
+
+  const myReportsColumns = report => {
     const { name, modified, isLast } = report;
 
-    return [
+    const myColumns = [
       <ButtonLink
         onClick={() => {
           handleReportChangeAndClose(report);
@@ -83,21 +116,28 @@ export const MyReportsTab = ({
         {name}
       </ButtonLink>,
       <div>{formatDateTime(modified)}</div>,
+      allowDashboardV2 ? <Icons report={report} pinnedReport={pinnedReport}></Icons> : undefined,
       <Actions
         isScheduledReportsEnabled={isScheduledReportsEnabled}
         id={`popover-myreports-${report.id}`}
+        handlePin={handlePin}
         handleDelete={handleDelete}
         handleEdit={handleEdit}
         report={report}
+        pinnedReport={pinnedReport}
+        allowDashboardV2={allowDashboardV2}
         isLast={isLast}
       />,
     ];
+
+    return myColumns.filter(Boolean);
   };
+
   return (
     <TableCollection
       rows={myReports}
-      columns={myReportsColumns}
-      getRowData={myReportsRows}
+      columns={myReportColumnHeaders}
+      getRowData={myReportsColumns}
       wrapperComponent={Table}
       filterBox={{
         label: '',
@@ -115,30 +155,47 @@ export const AllReportsTab = ({
   reports,
   handleReportChangeAndClose,
   isScheduledReportsEnabled,
+  handlePin,
   handleDelete,
   handleEdit,
+  pinnedReport,
+  allowDashboardV2,
 }) => {
+  const allReportColumnHeaders = [
+    { label: 'Name', sortKey: 'name' },
+    { label: 'Last Modification', width: '25%', sortKey: 'modified' },
+    { label: 'Created By', sortKey: 'creator' },
+    {},
+    {},
+  ];
+  if (allowDashboardV2) {
+    allReportColumnHeaders.push({});
+  }
+
   const getColumnsForAllReports = () => {
-    return allReportsColumns;
+    return allReportColumnHeaders;
   };
 
-  const allReportsRows = report => {
+  const allReportsColumns = report => {
     const { name, modified, creator, subaccount_id, current_user_can_edit, isLast } = report;
-    //conditionally render the actionlist
+
     const action = current_user_can_edit ? (
       <Actions
         isScheduledReportsEnabled={isScheduledReportsEnabled}
         id={`popover-allreports-${report.id}`}
+        handlePin={handlePin}
         handleDelete={handleDelete}
         handleEdit={handleEdit}
         report={report}
+        pinnedReport={pinnedReport}
+        allowDashboardV2={allowDashboardV2}
         isLast={isLast}
       />
     ) : (
       ''
     );
 
-    return [
+    const allColumns = [
       <ButtonLink
         onClick={() => {
           handleReportChangeAndClose(report);
@@ -151,14 +208,17 @@ export const AllReportsTab = ({
       <Tag>
         <Subaccount id={subaccount_id} master={subaccount_id === 0} shrinkLength={12} />
       </Tag>,
+      allowDashboardV2 ? <Icons report={report} pinnedReport={pinnedReport}></Icons> : undefined,
       action,
     ];
+
+    return allColumns.filter(Boolean);
   };
   return (
     <TableCollection
       rows={reports}
       columns={getColumnsForAllReports()}
-      getRowData={allReportsRows}
+      getRowData={allReportsColumns}
       wrapperComponent={Table}
       filterBox={{
         label: '',
