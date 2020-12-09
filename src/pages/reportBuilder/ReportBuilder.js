@@ -132,15 +132,18 @@ export function ReportBuilder({
     return bounceTabMetrics.map(({ key }) => key).includes(key);
   });
   const hasBounceTab = hasBounceMetrics && !hasActiveComparisons;
-  const hasRejectionTab = processedMetrics.some(({ key }) => {
+  const hasRejectionMetrics = processedMetrics.some(({ key }) => {
     return rejectionTabMetrics.map(({ key }) => key).includes(key);
   });
-  const hasDelayTab = processedMetrics.some(({ key }) => {
+  const hasRejectionTab = hasRejectionMetrics && !hasActiveComparisons;
+  const hasDelayMetrics = processedMetrics.some(({ key }) => {
     return delayTabMetrics.map(({ key }) => key).includes(key);
   });
-  const hasLinksTab = processedMetrics.some(({ key }) => {
+  const hasDelayTab = hasDelayMetrics && !hasActiveComparisons;
+  const hasLinksMetrics = processedMetrics.some(({ key }) => {
     return linksTabMetrics.map(({ key }) => key).includes(key);
   });
+  const hasLinksTab = hasLinksMetrics && !hasActiveComparisons;
 
   const tabs = useMemo(
     () =>
@@ -150,10 +153,13 @@ export function ReportBuilder({
         hasRejectionTab && { content: 'Rejection Reason', onClick: () => setShowTable(false) },
         hasDelayTab && { content: 'Delay Reason', onClick: () => setShowTable(false) },
         hasLinksTab && { content: 'Links', onClick: () => setShowTable(false) },
-        ...reportOptions.comparisons.map(comparison => ({
-          content: comparison.value,
-          onClick: () => setShowTable(false),
-        })),
+        // TODO: a new set of these needs to be rendered for each type of relevant metric that is selected
+        ...reportOptions.comparisons.map(comparison => {
+          return {
+            content: comparison.value,
+            onClick: () => setShowTable(false),
+          };
+        }),
       ].filter(Boolean),
     [hasBounceTab, hasRejectionTab, hasDelayTab, hasLinksTab, reportOptions.comparisons],
   );
