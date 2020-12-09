@@ -13,7 +13,8 @@ import {
 } from 'src/helpers/metrics';
 import { REPORT_BUILDER_FILTER_KEY_MAP } from 'src/constants';
 import { useReportBuilderContext } from '../context/ReportBuilderContext';
-import { Loading, Empty } from 'src/components';
+import { ApiErrorBanner } from 'src/components';
+import Loading from 'src/components/loading/PanelLoading';
 const DEFAULT_UNIT = 'number';
 
 function getUniqueUnits(metrics) {
@@ -33,7 +34,7 @@ export function ChartGroups(props) {
 
   if (!hasComparisons) {
     return (
-      <Panel.Section padding="0">
+      <Panel.Section>
         <Charts
           activeChart={activeChart}
           setActiveChart={setActiveChart}
@@ -55,7 +56,7 @@ export function ChartGroups(props) {
           { AND: { [filterType]: { eq: [compareFilter] } } },
         ];
         return (
-          <Panel.Section key={`chart_group_${index}`} p="0">
+          <Panel.Section key={`chart_group_${index}`}>
             <Box>
               <Panel.Header>{compareFilter.value}</Panel.Header>
             </Box>
@@ -88,7 +89,7 @@ export function Charts(props) {
   const { precision, to } = formattedOptions;
 
   // API request
-  const { data: rawChartData, status: chartStatus } = useSparkPostQuery(
+  const { data: rawChartData, status: chartStatus, refetch: refetchChart } = useSparkPostQuery(
     () => {
       return getTimeSeriesDeliverabilityMetrics(formattedOptions);
     },
@@ -121,15 +122,22 @@ export function Charts(props) {
   }
 
   if (chartStatus === 'loading' || chartStatus === 'idle') {
-    return <Loading minHeight="200px" />;
+    return <Loading as={Box} minHeight="200px" />;
   }
 
   if (chartStatus === 'error') {
-    return <Empty message="Unable to load report" description="Please try again" />;
+    return (
+      <ApiErrorBanner
+        reload={refetchChart}
+        status="muted"
+        title="Unable to load report"
+        message="Please try again"
+      />
+    );
   }
 
   return (
-    <Box padding={[400, null, 500]}>
+    <Box>
       <Stack>
         {charts.map((chart, index) => (
           <Box key={`chart-${index}`} onMouseOver={() => setActiveChart(`${id}_chart_${index}`)}>
