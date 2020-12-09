@@ -13,8 +13,9 @@ import {
 } from 'src/helpers/metrics';
 import { REPORT_BUILDER_FILTER_KEY_MAP } from 'src/constants';
 import { useReportBuilderContext } from '../context/ReportBuilderContext';
+import { ApiErrorBanner } from 'src/components';
+import Loading from 'src/components/loading/PanelLoading';
 import { Heading } from 'src/components/text';
-import { Loading } from 'src/components';
 const DEFAULT_UNIT = 'number';
 
 function getUniqueUnits(metrics) {
@@ -59,7 +60,7 @@ export function ChartGroups(props) {
           <Panel.Section key={`chart_group_${index}`}>
             <Stack>
               <Box>
-                <Heading data-id={`heading_${index}`} as="h3" looksLike="h4">
+                <Heading looksLike="h5" as="h3">
                   {compareFilter.value}
                 </Heading>
               </Box>
@@ -70,7 +71,7 @@ export function ChartGroups(props) {
                   id={`chart_group_${index}`}
                   reportOptions={{ ...reportOptions, filters: comparedFilters }}
                 />
-              </Box>
+              </Box>{' '}
             </Stack>
           </Panel.Section>
         );
@@ -93,7 +94,7 @@ export function Charts(props) {
   const { precision, to } = formattedOptions;
 
   // API request
-  const { data: rawChartData, status: chartStatus } = useSparkPostQuery(
+  const { data: rawChartData, status: chartStatus, refetch: refetchChart } = useSparkPostQuery(
     () => {
       return getTimeSeriesDeliverabilityMetrics(formattedOptions);
     },
@@ -126,33 +127,46 @@ export function Charts(props) {
   }
 
   if (chartStatus === 'loading' || chartStatus === 'idle') {
-    return <Loading minHeight="200px" />;
+    return <Loading as={Box} minHeight="200px" />;
+  }
+
+  if (chartStatus === 'error') {
+    return (
+      <ApiErrorBanner
+        reload={refetchChart}
+        status="muted"
+        title="Unable to load report"
+        message="Please try again"
+      />
+    );
   }
 
   return (
-    <Stack>
-      {charts.map((chart, index) => (
-        <Box key={`chart-${index}`} onMouseOver={() => setActiveChart(`${id}_chart_${index}`)}>
-          <LineChart
-            height={height}
-            syncId="summaryChart"
-            data={chartData}
-            precision={precision}
-            showTooltip={activeChart === `${id}_chart_${index}`}
-            lines={chart.metrics.map(({ name, label, stroke }) => ({
-              key: name,
-              dataKey: name,
-              name: label,
-              stroke,
-            }))}
-            {...formatters}
-            yTickFormatter={chart.yAxisFormatter}
-            yLabel={chart.label}
-            tooltipValueFormatter={chart.yAxisFormatter}
-            showXAxis={index === charts.length - 1}
-          />
-        </Box>
-      ))}
-    </Stack>
+    <Box>
+      <Stack>
+        {charts.map((chart, index) => (
+          <Box key={`chart-${index}`} onMouseOver={() => setActiveChart(`${id}_chart_${index}`)}>
+            <LineChart
+              height={height}
+              syncId="summaryChart"
+              data={chartData}
+              precision={precision}
+              showTooltip={activeChart === `${id}_chart_${index}`}
+              lines={chart.metrics.map(({ name, label, stroke }) => ({
+                key: name,
+                dataKey: name,
+                name: label,
+                stroke,
+              }))}
+              {...formatters}
+              yTickFormatter={chart.yAxisFormatter}
+              yLabel={chart.label}
+              tooltipValueFormatter={chart.yAxisFormatter}
+              showXAxis={index === charts.length - 1}
+            />
+          </Box>
+        ))}
+      </Stack>
+    </Box>
   );
 }

@@ -28,11 +28,11 @@ function HibanaEmpty({ description, message }) {
       size="100%"
     >
       <Stack space="0">
-        <Text color="gray.900" fontSize="400" fontWeight="500">
+        <Text color="gray.900" fontSize="400" fontWeight="medium">
           {message}
         </Text>
         {description && (
-          <Text color="gray.900" fontSize="400" fontWeight="500">
+          <Text color="gray.900" fontSize="400" fontWeight="normal">
             {description}
           </Text>
         )}

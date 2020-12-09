@@ -29,7 +29,7 @@ export default function useSparkPostQuery(queryFn, config = {}) {
 }
 
 function handleError({ error, method, queryCache, auth, dispatch }) {
-  const { response } = error;
+  const { response = {} } = error;
 
   if (response.status === 401 && auth.refreshToken) {
     // Invalidate any in-progress queries
