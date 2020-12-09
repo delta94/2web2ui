@@ -6,19 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from 'src/hooks';
 import _ from 'lodash';
 
-const MetricDefinition = ({ label, children }) => {
-  return (
-    <LabelValue>
-      <LabelValue.Label>
-        <Box color="gray.600">{label}</Box>
-      </LabelValue.Label>
-      <LabelValue.Value>
-        <Box color="white">{children}</Box>
-      </LabelValue.Value>
-    </LabelValue>
-  );
-};
-
 export default function AggregateMetricsSection({ dateValue, updates, processedMetrics }) {
   const dispatch = useDispatch();
   const chart = useSelector(state => state.summaryChart);
@@ -32,11 +19,13 @@ export default function AggregateMetricsSection({ dateValue, updates, processedM
     <Box padding="400" backgroundColor="gray.1000">
       <Grid>
         <Grid.Column sm={3}>
-          <Box id="date">
-            <MetricDefinition label="Date">
+          <LabelValue dark>
+            <LabelValue.Label>Date</LabelValue.Label>
+
+            <LabelValue.Value>
               <Unit value={dateValue} />
-            </MetricDefinition>
-          </Box>
+            </LabelValue.Value>
+          </LabelValue>
         </Grid.Column>
         <Grid.Column sm={9}>
           <Inline space="600">
@@ -44,14 +33,19 @@ export default function AggregateMetricsSection({ dateValue, updates, processedM
               const stroke = processedMetrics.find(({ key: newKey }) => {
                 return newKey === key;
               })?.stroke;
+
               return (
-                <Box marginRight="600" key={key}>
-                  <MetricDefinition label={label}>
-                    <Box display="flex" alignItems="center">
-                      {stroke && <LegendCircle marginRight="200" color={stroke} />}
-                      <Unit value={value} unit={unit} />
-                    </Box>
-                  </MetricDefinition>
+                <Box key={`aggregated-metric-${key}`}>
+                  <LabelValue dark>
+                    <LabelValue.Label>{label}</LabelValue.Label>
+
+                    <LabelValue.Value>
+                      <Box display="flex" alignItems="center">
+                        {stroke && <LegendCircle marginRight="200" color={stroke} />}
+                        <Unit value={value} unit={unit} />
+                      </Box>
+                    </LabelValue.Value>
+                  </LabelValue>
                 </Box>
               );
             })}

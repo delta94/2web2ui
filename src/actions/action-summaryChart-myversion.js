@@ -43,12 +43,10 @@ export function refreshSummaryReport(
   };
 }
 
-export function refreshReportBuilder(
-  updates = {},
-  { getTableData = _getTableDataReportBuilder, getAggregateData = _getAggregateData } = {},
-) {
+export function _getAggregateDataReportBuilder(updates) {
   return (dispatch, getState) => {
-    const { summaryChart } = getState();
+    const state = getState();
+    const { summaryChart } = state;
 
     // if new metrics are included, convert them to their full representation from config
     if (updates.metrics) {
@@ -62,18 +60,10 @@ export function refreshReportBuilder(
       ...getRelativeDates(updates.relativeRange, { precision: updates.precision }),
     };
 
-    const params = getQueryFromOptionsV2(merged);
     const isCurrentGroupingAggregates = summaryChart.groupBy === 'aggregate';
-    return Promise.all([
-      dispatch(getAggregateData({ params, metrics: merged.metrics, isCurrentGroupingAggregates })),
-      !isCurrentGroupingAggregates && dispatch(getTableData({ params, metrics: merged.metrics })),
-    ]);
-  };
-}
+    const metrics = merged.metrics;
 
-export function _getAggregateData({ params, metrics, isCurrentGroupingAggregates }) {
-  return (dispatch, getState) => {
-    const state = getState();
+    let params = getQueryFromOptionsV2(merged);
 
     // Get selected metrics
     const activeMetrics = metrics || state.summaryChart.metrics;
@@ -107,27 +97,9 @@ export function _getAggregateData({ params, metrics, isCurrentGroupingAggregates
   };
 }
 
-export function _getAggregateDataReportBuilder(updates) {
+export function _getAggregateData({ params, metrics, isCurrentGroupingAggregates }) {
   return (dispatch, getState) => {
     const state = getState();
-    const { summaryChart } = state;
-
-    // if new metrics are included, convert them to their full representation from config
-    if (updates.metrics) {
-      updates = { ...updates, metrics: getMetricsFromKeys(updates.metrics, true) };
-    }
-
-    // merge together states
-    const merged = {
-      ...summaryChart,
-      ...updates,
-      ...getRelativeDates(updates.relativeRange, { precision: updates.precision }),
-    };
-
-    const isCurrentGroupingAggregates = summaryChart.groupBy === 'aggregate';
-    const metrics = merged.metrics;
-
-    let params = getQueryFromOptionsV2(merged);
 
     // Get selected metrics
     const activeMetrics = metrics || state.summaryChart.metrics;

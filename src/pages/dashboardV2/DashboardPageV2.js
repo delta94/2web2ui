@@ -30,8 +30,7 @@ import Sidebar from './components/Sidebar';
 import { LINKS } from 'src/constants';
 import { useModal } from 'src/hooks';
 import ChangeReportModal from './components/ChangeReportModal';
-
-import AggregateMetricsSection from '../../components/reportBuilder/AggregateMetricsSection';
+import AggregateMetricsSection from 'src/pages/reportBuilder/components/AggregateMetricsSection';
 import moment from 'moment';
 import { getMetricsFromKeys } from 'src/helpers/metrics';
 const OnboardingImg = styled(Picture.Image)`
