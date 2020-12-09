@@ -461,9 +461,6 @@ if (IS_HIBANA_ENABLED) {
         });
 
         cy.findByRole('button', { name: 'View All Reports' }).click();
-        //Avoid flakey test by waiting for modal to render. Might be some other issue as well.
-        /* eslint-disable-next-line */
-        cy.wait(250);
 
         cy.withinModal(() => {
           cy.get('table').within(() => {
@@ -475,10 +472,6 @@ if (IS_HIBANA_ENABLED) {
               });
           });
         });
-
-        //Avoid flakey test by waiting for modal to render. Might be some other issue as well.
-        /* eslint-disable-next-line */
-        cy.wait(250);
 
         cy.withinModal(() => {
           cy.findByText('Delete').click({ force: true });
