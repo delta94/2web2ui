@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
+import { useHistory } from 'react-router-dom';
 import { Code, ChatBubble, LightbulbOutline, ShowChart, Sync } from '@sparkpost/matchbox-icons';
 import SendingMailWebp from '@sparkpost/matchbox-media/images/Sending-Mail.webp';
 import SendingMail from '@sparkpost/matchbox-media/images/Sending-Mail@medium.jpg';
@@ -55,6 +56,7 @@ export default function DashboardPageV2() {
   } = useDashboardContext();
   const allReports = reports.map(report => ({ ...report, key: report.id }));
   const hasSetupDocumentationPanel = isAnAdmin || isDev;
+  const history = useHistory();
 
   useEffect(() => {
     getAccount();
@@ -96,7 +98,7 @@ export default function DashboardPageV2() {
                 <Dashboard.Panel>
                   <Panel.Header>
                     <Panel.Headline>{pinnedReport.name}</Panel.Headline>
-                    <Panel.Action to={pinnedReport.linkToReportBuilder}>
+                    <Panel.Action onClick={() => history.push(pinnedReport.linkToReportBuilder)}>
                       <TranslatableText>View Report</TranslatableText> <ShowChart size={25} />
                     </Panel.Action>
                     <Panel.Action onClick={openModal}>
