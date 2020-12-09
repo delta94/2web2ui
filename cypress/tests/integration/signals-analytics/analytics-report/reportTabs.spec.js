@@ -4,22 +4,9 @@ import { stubDeliverability, stubTimeSeries } from './helpers';
 
 if (IS_HIBANA_ENABLED) {
   describe('Analytics Report bounce and rejection tables', () => {
-    beforeEach(() => {
-      cy.stubAuth();
-      cy.login({ isStubbed: true });
-      cy.stubRequest({
-        url: '/api/v1/subaccounts',
-        fixture: '/subaccounts/200.get.json',
-        requestAlias: 'getSubaccounts',
-      });
-      stubDeliverability();
-      stubTimeSeries();
-      cy.visit(PAGE_URL);
-      cy.findByText('Add Metrics').click();
-    });
-
     describe('the bounce reason table', () => {
       beforeEach(() => {
+        commonBeforeSteps();
         cy.withinDrawer(() => {
           // Uncheck defaults, and check a metric that renders the "Rejection Reason" table
           cy.findByLabelText('Targeted').uncheck({ force: true });
@@ -94,6 +81,7 @@ if (IS_HIBANA_ENABLED) {
 
     describe('the rejection reason table', () => {
       beforeEach(() => {
+        commonBeforeSteps();
         cy.withinDrawer(() => {
           cy.findByLabelText('Targeted').uncheck({ force: true });
           cy.findByLabelText('Accepted').uncheck({ force: true });
@@ -173,6 +161,7 @@ if (IS_HIBANA_ENABLED) {
 
     describe('the delay reason table', () => {
       beforeEach(() => {
+        commonBeforeSteps();
         cy.withinDrawer(() => {
           cy.findByLabelText('Targeted').uncheck({ force: true });
           cy.findByLabelText('Accepted').uncheck({ force: true });
@@ -249,6 +238,7 @@ if (IS_HIBANA_ENABLED) {
 
     describe('the links table', () => {
       beforeEach(() => {
+        commonBeforeSteps();
         cy.withinDrawer(() => {
           cy.findByLabelText('Targeted').uncheck({ force: true });
           cy.findByLabelText('Accepted').uncheck({ force: true });
@@ -384,5 +374,63 @@ if (IS_HIBANA_ENABLED) {
         cy.findByText('No links to report').should('be.visible');
       });
     });
+
+    describe('the bounce reason comparison (AKA compare by) tables', () => {
+      beforeEach(() => {
+        commonBeforeSteps();
+        cy.withinDrawer(() => {
+          // Uncheck defaults, and check a metric that renders the "Rejection Reason" table
+          cy.findByLabelText('Targeted').uncheck({ force: true });
+          cy.findByLabelText('Accepted').uncheck({ force: true });
+          cy.findByLabelText('Bounces').uncheck({ force: true });
+          cy.findByLabelText('Bounces').check({ force: true });
+          cy.findByRole('button', { name: 'Apply Metrics' }).click();
+
+          cy.wait(['@getDeliverability', '@getTimeSeries']);
+        });
+      });
+
+      it('renders additional tabs when comparisons are enabled', () => {
+        cy.findByRole('button', { name: 'Add Comparison' }).click();
+        cy.withinDrawer(() => {
+          cy.findByLabelText('Type').select('Subaccount');
+          cy.findAllByLabelText('Subaccount')
+            .eq(0)
+            .type('sub');
+          cy.wait('@getSubaccounts');
+          cy.findByRole('option', { name: 'Fake Subaccount 1 (ID 101)' }).click();
+          cy.findAllByLabelText('Subaccount')
+            .eq(1)
+            .type('sub');
+          cy.wait('@getSubaccounts');
+          cy.findByRole('option', { name: 'Fake Subaccount 2 (ID 102)' }).click();
+          cy.findByRole('button', { name: 'Compare' }).click();
+        });
+
+        cy.wait(['@getDeliverability', '@getTimeSeries']);
+
+        cy.findByRole('tab', { name: 'Bounce Reason' }).should('not.exist');
+        cy.findByRole('tab', { name: 'Fake Subaccount 1 (ID 101)' }).should('be.visible');
+        cy.findByRole('tab', { name: 'Fake Subaccount 2 (ID 102)' }).should('be.visible');
+      });
+    });
   });
+}
+
+function commonBeforeSteps() {
+  cy.stubAuth();
+  cy.login({ isStubbed: true });
+  cy.stubRequest({
+    url: '/api/v1/subaccounts',
+    fixture: '/subaccounts/200.get.json',
+    requestAlias: 'getSubaccounts',
+  });
+  cy.stubRequest({
+    url: '/api/v1/account',
+    fixture: 'account/200.get.has-compare-by.json',
+  });
+  stubDeliverability();
+  stubTimeSeries();
+  cy.visit(PAGE_URL);
+  cy.findByRole('button', { name: 'Add Metrics' }).click();
 }
