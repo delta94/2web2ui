@@ -13,12 +13,9 @@ const ENCODED_QUERY_FILTERS =
 
 if (IS_HIBANA_ENABLED) {
   describe('Analytics Report', () => {
-    beforeEach(() => {
+    it('renders the initial state of the page', () => {
       commonBeforeSteps();
       cy.visit(PAGE_URL);
-    });
-
-    it('renders the initial state of the page', () => {
       // cy.title().should('include', 'Analytics Report'); // TODO: Once OG theme is removed, adjust title and re-introduce test
       cy.findByRole('heading', { name: 'Analytics Report' }).should('be.visible');
 
@@ -41,12 +38,14 @@ if (IS_HIBANA_ENABLED) {
     });
 
     it('should render error state for charts', () => {
+      commonBeforeSteps();
       cy.stubRequest({
         url: '/api/v1/metrics/deliverability/time-series**/**',
         fixture: 'metrics/deliverability/time-series/400.get.json',
         statusCode: 400,
         requestAlias: 'newGetTimeSeries',
       });
+      cy.visit(PAGE_URL);
       // Wait for request + 3 retries
       cy.wait(['@newGetTimeSeries']);
       cy.wait(['@newGetTimeSeries']);
@@ -54,9 +53,20 @@ if (IS_HIBANA_ENABLED) {
       cy.wait(['@newGetTimeSeries']);
 
       cy.findByText('Unable to load report').should('be.visible');
+      cy.stubRequest({
+        url: '/api/v1/metrics/deliverability/time-series**/**',
+        fixture: 'metrics/deliverability/time-series/200.get.json',
+        requestAlias: 'getTimeSeries',
+      });
+      cy.findByRole('button', { name: 'Try Again' })
+        .should('be.visible')
+        .click();
+      cy.wait(['@getTimeSeries']);
+      cy.findByText('Unable to load report').should('not.be.visible');
     });
 
     it('renders the initial page based on query params', () => {
+      commonBeforeSteps();
       cy.visit(`${PAGE_URL}&filters=Recipient Domain%3Atest.com`);
       cy.withinMainContent(() => {
         cy.findAllByText('Sent').should('have.length', 2);
@@ -73,6 +83,8 @@ if (IS_HIBANA_ENABLED) {
     });
 
     it('filters by metric', () => {
+      commonBeforeSteps();
+      cy.visit(PAGE_URL);
       // 1. Open the drawer, uncheck default metrics, check all metrics
       cy.findByRole('button', { name: 'Add Metrics' }).click();
 
@@ -130,6 +142,8 @@ if (IS_HIBANA_ENABLED) {
     });
 
     it('removes currently active metrics when clicking the close button within metric tags', () => {
+      commonBeforeSteps();
+      cy.visit(PAGE_URL);
       function verifyMetricTagDismiss(tagContent) {
         const deliverabilityAlias = `getDeliverability${tagContent}`;
         const timeSeriesAlias = `getTimeSeries${tagContent}`;
@@ -271,6 +285,8 @@ if (IS_HIBANA_ENABLED) {
     });
 
     it('closes the drawer when clicking the close button', () => {
+      commonBeforeSteps();
+      cy.visit(PAGE_URL);
       cy.findByText('Add Filters').click();
 
       cy.withinDrawer(() => {
