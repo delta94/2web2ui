@@ -2,8 +2,8 @@ import requestHelperFactory from './requestHelperFactory';
 import _ from 'lodash';
 import { zuora as zuoraAxios } from 'src/helpers/axiosInstances';
 import ErrorTracker from 'src/helpers/errorTracker';
+import ZuoraApiError from 'src/helpers/zuoraApiError';
 import { showAlert } from 'src/actions/globalAlert';
-import ZuoraApiError from './zuoraApiError';
 
 const onFail = ({ types, err, dispatch, meta }) => {
   const apiError = new ZuoraApiError(err);
