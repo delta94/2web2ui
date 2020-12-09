@@ -13,7 +13,6 @@ import {
 } from 'src/helpers/metrics';
 import { REPORT_BUILDER_FILTER_KEY_MAP } from 'src/constants';
 import { useReportBuilderContext } from '../context/ReportBuilderContext';
-import { Heading } from 'src/components/text';
 import { Loading, Empty } from 'src/components';
 const DEFAULT_UNIT = 'number';
 
@@ -56,24 +55,18 @@ export function ChartGroups(props) {
           { AND: { [filterType]: { eq: [compareFilter] } } },
         ];
         return (
-          <Panel.Section key={`chart_group_${index}`}>
-            <Stack>
-              <Box>
-                <Panel.Header>
-                  <Heading data-id={`heading_${index}`} as="h3" looksLike="h4">
-                    {compareFilter.value}
-                  </Heading>
-                </Panel.Header>
-              </Box>
-              <Box>
-                <Charts
-                  activeChart={activeChart}
-                  setActiveChart={setActiveChart}
-                  id={`chart_group_${index}`}
-                  reportOptions={{ ...reportOptions, filters: comparedFilters }}
-                />
-              </Box>
-            </Stack>
+          <Panel.Section key={`chart_group_${index}`} p="0">
+            <Box>
+              <Panel.Header>{compareFilter.value}</Panel.Header>
+            </Box>
+            <Box>
+              <Charts
+                activeChart={activeChart}
+                setActiveChart={setActiveChart}
+                id={`chart_group_${index}`}
+                reportOptions={{ ...reportOptions, filters: comparedFilters }}
+              />
+            </Box>
           </Panel.Section>
         );
       })}
