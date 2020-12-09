@@ -14,7 +14,7 @@ import { showAlert } from 'src/actions/globalAlert';
 import { selectCondition } from 'src/selectors/accessConditionState';
 import { isAccountUiOptionSet } from 'src/helpers/conditions/account';
 import { useReportBuilderContext } from '../../context/ReportBuilderContext';
-import { ReportsListModal } from '../ReportsListModal';
+import ReportsListModal from '../ReportsListModal';
 
 export const SavedReportsSection = props => {
   /* eslint-disable no-unused-vars */

@@ -29,7 +29,7 @@ import Dashboard from './components/Dashboard';
 import Sidebar from './components/Sidebar';
 import { LINKS } from 'src/constants';
 import { useModal } from 'src/hooks';
-import { ChangeReportModal } from './components/ChangeReportModal';
+import ChangeReportModal from './components/ChangeReportModal';
 
 const OnboardingImg = styled(Picture.Image)`
   vertical-align: bottom;
