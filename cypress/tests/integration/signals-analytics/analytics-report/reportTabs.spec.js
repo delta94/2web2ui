@@ -410,8 +410,12 @@ if (IS_HIBANA_ENABLED) {
         cy.wait(['@getDeliverability', '@getTimeSeries']);
 
         cy.findByRole('tab', { name: 'Bounce Reason' }).should('not.exist');
-        cy.findByRole('tab', { name: 'Fake Subaccount 1 (ID 101)' }).should('be.visible');
-        cy.findByRole('tab', { name: 'Fake Subaccount 2 (ID 102)' }).should('be.visible');
+        cy.findByRole('tab', { name: 'Bounce Reason Fake Subaccount 1 (ID 101)' }).should(
+          'be.visible',
+        );
+        cy.findByRole('tab', { name: 'Bounce Reason Fake Subaccount 2 (ID 102)' }).should(
+          'be.visible',
+        );
       });
     });
   });

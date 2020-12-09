@@ -145,24 +145,67 @@ export function ReportBuilder({
   });
   const hasLinksTab = hasLinksMetrics && !hasActiveComparisons;
 
-  const tabs = useMemo(
-    () =>
-      [
-        { content: 'Report', onClick: () => setShowTable(true) },
-        hasBounceTab && { content: 'Bounce Reason', onClick: () => setShowTable(false) },
-        hasRejectionTab && { content: 'Rejection Reason', onClick: () => setShowTable(false) },
-        hasDelayTab && { content: 'Delay Reason', onClick: () => setShowTable(false) },
-        hasLinksTab && { content: 'Links', onClick: () => setShowTable(false) },
-        // TODO: a new set of these needs to be rendered for each type of relevant metric that is selected
-        ...reportOptions.comparisons.map(comparison => {
+  const tabs = useMemo(() => {
+    function getComparisonTabs() {
+      if (!hasActiveComparisons) return [];
+
+      if (hasBounceMetrics) {
+        return reportOptions.comparisons.map(comparison => {
           return {
-            content: comparison.value,
+            content: `Bounce Reason ${comparison.value}`,
             onClick: () => setShowTable(false),
           };
-        }),
-      ].filter(Boolean),
-    [hasBounceTab, hasRejectionTab, hasDelayTab, hasLinksTab, reportOptions.comparisons],
-  );
+        });
+      }
+
+      if (hasRejectionMetrics) {
+        return reportOptions.comparisons.map(comparison => {
+          return {
+            content: `Rejection Reason ${comparison.value}`,
+            onClick: () => setShowTable(false),
+          };
+        });
+      }
+
+      if (hasDelayMetrics) {
+        return reportOptions.comparisons.map(comparison => {
+          return {
+            content: `Delay Reason ${comparison.value}`,
+            onClick: () => setShowTable(false),
+          };
+        });
+      }
+
+      if (hasLinksMetrics) {
+        return reportOptions.comparisons.map(comparison => {
+          return {
+            content: `Links ${comparison.value}`,
+            onClick: () => setShowTable(false),
+          };
+        });
+      }
+    }
+
+    return [
+      { content: 'Report', onClick: () => setShowTable(true) },
+      hasBounceTab && { content: 'Bounce Reason', onClick: () => setShowTable(false) },
+      hasRejectionTab && { content: 'Rejection Reason', onClick: () => setShowTable(false) },
+      hasDelayTab && { content: 'Delay Reason', onClick: () => setShowTable(false) },
+      hasLinksTab && { content: 'Links', onClick: () => setShowTable(false) },
+      ...getComparisonTabs(),
+    ].filter(Boolean);
+  }, [
+    hasBounceMetrics,
+    hasRejectionMetrics,
+    hasDelayMetrics,
+    hasLinksMetrics,
+    hasBounceTab,
+    hasRejectionTab,
+    hasDelayTab,
+    hasLinksTab,
+    hasActiveComparisons,
+    reportOptions.comparisons,
+  ]);
 
   useEffect(() => {
     setShowTable(true);
@@ -213,64 +256,62 @@ export function ReportBuilder({
         {isEmpty ? (
           <Empty message="No Data" description="Must select at least one metric." />
         ) : (
-          <>
-            <div data-id="summary-chart">
-              <Tabs defaultTabIndex={0} forceRender tabs={tabs}>
+          <div data-id="summary-chart">
+            <Tabs defaultTabIndex={0} forceRender tabs={tabs}>
+              <Tabs.Item>
+                <Charts {...chart} metrics={processedMetrics} to={to} yScale="linear" />
+
+                {hasActiveComparisons ? (
+                  <CompareByAggregatedMetrics date={dateValue} reportOptions={reportOptions} />
+                ) : (
+                  <AggregatedMetrics
+                    date={dateValue}
+                    processedMetrics={selectors.selectSummaryMetricsProcessed}
+                  />
+                )}
+              </Tabs.Item>
+
+              {hasBounceTab && (
                 <Tabs.Item>
-                  <Charts {...chart} metrics={processedMetrics} to={to} yScale="linear" />
-
-                  {hasActiveComparisons ? (
-                    <CompareByAggregatedMetrics date={dateValue} reportOptions={reportOptions} />
-                  ) : (
-                    <AggregatedMetrics
-                      date={dateValue}
-                      processedMetrics={selectors.selectSummaryMetricsProcessed}
-                    />
-                  )}
+                  <BounceReasonsTable />
                 </Tabs.Item>
+              )}
 
-                {hasBounceTab && (
-                  <Tabs.Item>
-                    <BounceReasonsTable />
-                  </Tabs.Item>
-                )}
+              {hasRejectionTab && (
+                <Tabs.Item>
+                  <RejectionReasonsTable />
+                </Tabs.Item>
+              )}
 
-                {hasRejectionTab && (
-                  <Tabs.Item>
-                    <RejectionReasonsTable />
-                  </Tabs.Item>
-                )}
+              {hasDelayTab && (
+                <Tabs.Item>
+                  <DelayReasonsTable />
+                </Tabs.Item>
+              )}
 
-                {hasDelayTab && (
-                  <Tabs.Item>
-                    <DelayReasonsTable />
-                  </Tabs.Item>
-                )}
+              {hasLinksTab && (
+                <Tabs.Item>
+                  <LinksTable />
+                </Tabs.Item>
+              )}
 
-                {hasLinksTab && (
-                  <Tabs.Item>
-                    <LinksTable />
-                  </Tabs.Item>
-                )}
+              {hasActiveComparisons
+                ? reportOptions.comparisons.map((comparison, comparisonIndex) => {
+                    return (
+                      <Tabs.Item key={`tab-${comparison.value}-${comparisonIndex}`}>
+                        {hasBounceMetrics ? <BounceReasonsTable /> : null}
 
-                {hasActiveComparisons
-                  ? reportOptions.comparisons.map((comparison, comparisonIndex) => {
-                      return (
-                        <Tabs.Item key={`tab-${comparison.value}-${comparisonIndex}`}>
-                          {hasBounceMetrics ? <BounceReasonsTable /> : null}
+                        {hasRejectionTab ? <RejectionReasonsTable /> : null}
 
-                          {hasRejectionTab ? <RejectionReasonsTable /> : null}
+                        {hasDelayTab ? <DelayReasonsTable /> : null}
 
-                          {hasDelayTab ? <DelayReasonsTable /> : null}
-
-                          {hasLinksTab ? <DelayReasonsTable /> : null}
-                        </Tabs.Item>
-                      );
-                    })
-                  : null}
-              </Tabs>
-            </div>
-          </>
+                        {hasLinksTab ? <DelayReasonsTable /> : null}
+                      </Tabs.Item>
+                    );
+                  })
+                : null}
+            </Tabs>
+          </div>
         )}
       </Panel>
 
