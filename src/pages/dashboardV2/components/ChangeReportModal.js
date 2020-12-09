@@ -6,7 +6,7 @@ import { showAlert } from 'src/actions/globalAlert';
 import {
   MyReportsTabWithSelectableRows,
   AllReportsTabWithSelectableRows,
-} from './ReportsListModalTabs';
+} from './ChangeReportModalTabs';
 export function ChangeReportModal({ reports, open, onClose, currentUser }) {
   const dispatch = useDispatch();
 

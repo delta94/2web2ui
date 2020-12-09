@@ -9,11 +9,12 @@ import SaveReportModal from './SaveReportModal';
 import { deleteReport, getReports } from 'src/actions/reports';
 import useModal from 'src/hooks/useModal';
 import ScheduledReportsModal from './ScheduledReportsModal';
-import { DeleteModal, ReportsListModal } from 'src/components';
+import { DeleteModal } from 'src/components';
 import { showAlert } from 'src/actions/globalAlert';
 import { selectCondition } from 'src/selectors/accessConditionState';
 import { isAccountUiOptionSet } from 'src/helpers/conditions/account';
 import { useReportBuilderContext } from '../../context/ReportBuilderContext';
+import { ReportsListModal } from '../ReportsListModal';
 
 export const SavedReportsSection = props => {
   /* eslint-disable no-unused-vars */
