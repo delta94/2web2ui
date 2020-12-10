@@ -6,6 +6,7 @@ import { HIBANA_METRICS_COLORS, REPORT_BUILDER_FILTER_KEY_MAP } from 'src/consta
 import { getRelativeDates } from 'src/helpers/date';
 import { dehydrateFilters } from 'src/pages/reportBuilder/helpers';
 import { safeDivide, safeRate } from './math';
+import { REPORT_BUILDER_FILTER_TYPE_COLLECTION } from '../constants';
 
 const {
   metricsPrecisionMap: precisionMap,
@@ -381,10 +382,13 @@ export function rate(item, keys = []) {
  */
 export function getComparisonArguments(comparison) {
   const comparisonObj = REPORT_BUILDER_FILTER_TYPE_COLLECTION.find(
-    comparisonConfig => comparisonConfig.label === comparison.type,
+    filter => filter.label === comparison.type,
   );
 
-  if (!comparisonObj) return {};
+  if (!comparisonObj)
+    throw new Error(
+      `Invalid comparison ${comparison} - please supply a valid comparison to "useComparisonArguments".`,
+    );
 
   return {
     [comparisonObj.value]: comparisonObj.value === 'subaccounts' ? comparison.id : comparison.value, // Subaccount formatting means different data must be passed to the request

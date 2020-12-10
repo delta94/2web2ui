@@ -36,12 +36,11 @@ export default function BounceReasonComparisonTab({ comparison }) {
     );
   }
 
-  // This re-structuring is a holdover from Redux - could we refactor these selectors to be less opinionated?
-  const formattedData = {
-    bounceReport: { reasons: reasonsQuery.data, aggregates: aggregatesQuery.data },
-  };
-  const reasons = selectReasons(formattedData);
-  const aggregates = selectFormattedAggregates(formattedData);
+  // This re-structuring using the `bounceReport` key is a holdover from Redux - could we refactor these selectors to be less opinionated?
+  const reasons = selectReasons({ bounceReport: { reasons: reasonsQuery.data } });
+  const aggregates = selectFormattedAggregates({
+    bounceReport: { aggregates: aggregatesQuery.data[0] },
+  });
 
   return <BounceReasonTable reasons={reasons} aggregates={aggregates} tableLoading={false} />;
 }
