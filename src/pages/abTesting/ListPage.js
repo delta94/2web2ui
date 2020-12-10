@@ -1,10 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-
-// Actions
-import { listAbTests, deleteAbTest, cancelAbTest } from 'src/actions/abTesting';
-import { showAlert } from 'src/actions/globalAlert';
-
 // Components
 import { Page } from 'src/components/matchbox';
 import { Loading, ApiErrorBanner, DeleteModal, ConfirmationModal } from 'src/components';
@@ -19,10 +13,6 @@ export class ListPage extends Component {
     testToDelete: {},
     testToCancel: {},
   };
-
-  componentDidMount() {
-    this.props.listAbTests();
-  }
 
   toggleDelete = (id, subaccount_id) => {
     this.setState({
@@ -60,7 +50,7 @@ export class ListPage extends Component {
     const { error, listAbTests } = this.props;
     return (
       <ApiErrorBanner
-        message={'Sorry, we seem to have had some trouble loading your A/B tests.'}
+        message="Sorry, we seem to have had some trouble loading your A/B tests."
         errorDetails={error.message}
         reload={listAbTests}
       />
@@ -132,17 +122,3 @@ export class ListPage extends Component {
     );
   }
 }
-
-function mapStateToProps({ abTesting }) {
-  return {
-    abTests: abTesting.list,
-    loading: abTesting.listLoading,
-    deletePending: abTesting.deletePending,
-    cancelPending: abTesting.cancelPending,
-    error: abTesting.listError,
-  };
-}
-
-export default connect(mapStateToProps, { listAbTests, deleteAbTest, cancelAbTest, showAlert })(
-  ListPage,
-);
