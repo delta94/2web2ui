@@ -40,14 +40,14 @@ describe('Date Time Section on Summary Report & Report Builder', () => {
         );
       });
       cy.wait('@getTimeSeries').should(xhr => {
-        expect(xhr.url).to.contain('precision=15min');
+        expect(xhr.url).to.contain('precision=hour');
         expect(xhr.url).to.contain(`from=${dayAgo.local().format('YYYY-MM-DDTHH:mm')}`);
       });
     });
 
     it('changing date picker values changes the precision correctly (OG)', () => {
       cy.visit(PAGE_URL_OG);
-      cy.findByLabelText('Precision').should('have.value', '15min');
+      cy.findByLabelText('Precision').should('have.value', 'hour');
       cy.findByLabelText('Narrow Date Range').click();
 
       //Check mouseover
@@ -57,7 +57,7 @@ describe('Date Time Section on Summary Report & Report Builder', () => {
 
       //Check clicking picks current precision if available
       cy.get('[aria-label="Tue Jan 28 2020"]').click({ force: true });
-      cy.findByLabelText('Precision').should('have.value', '15min');
+      cy.findByLabelText('Precision').should('have.value', 'hour');
       cy.findByText('Cancel').click({ force: true });
 
       //Check date-range; picks recommended precision if current precision in unavailable
@@ -119,7 +119,7 @@ describe('Date Time Section on Summary Report & Report Builder', () => {
       cy.findByLabelText('Precision').select('week', { force: true }); //Change precision so that it's no longer an option for "last 24 hours"
       cy.findByLabelText('Date Range').click();
       cy.findByText('Last 24 Hours').click({ force: true });
-      cy.findByLabelText('Precision').should('have.value', '15min');
+      cy.findByLabelText('Precision').should('have.value', 'hour');
       const dayAgo = Cypress.moment(timestamp)
         .startOf('hour')
         .subtract(1, 'day');
@@ -133,7 +133,7 @@ describe('Date Time Section on Summary Report & Report Builder', () => {
       });
       cy.findByText('Apply').click({ force: true });
       cy.wait('@getTimeSeries2').should(xhr => {
-        expect(xhr.url).to.contain('precision=15min');
+        expect(xhr.url).to.contain('precision=hour');
         expect(xhr.url).to.contain(`from=${dayAgo.local().format('YYYY-MM-DDTHH:mm')}`);
       });
     });

@@ -69,6 +69,14 @@ const reducer = (state, action) => {
   }
 };
 
+const getInitialState = comparisons => {
+  if (!comparisons || !comparisons.length) {
+    return initialState;
+  }
+
+  return { filterType: REPORT_BUILDER_FILTER_KEY_MAP[comparisons[0].type], filters: comparisons };
+};
+
 function CompareByForm({
   // reportOptions,
   fetchMetricsDomains,
@@ -83,27 +91,19 @@ function CompareByForm({
 }) {
   const { state: reportOptions } = useReportBuilderContext();
   const { comparisons } = reportOptions;
-
-  const getInitialState = compareFilters => {
-    if (!compareFilters || !compareFilters.length) {
-      return initialState;
-    }
-
-    return { filterType: REPORT_BUILDER_FILTER_KEY_MAP[comparisons[0].type], filters: comparisons };
-  };
   const [state, dispatch] = useReducer(reducer, getInitialState(comparisons));
   const { filters, filterType, error } = state;
 
   function handleFormSubmit(e) {
     e.preventDefault();
 
-    const cleanedFilters = filters.filter(filter => filter !== null); //filters the filter filters
+    const formattedFilters = filters.filter(filter => filter !== null);
 
-    if (cleanedFilters.length < 2 && cleanedFilters.length > 0) {
+    if (formattedFilters.length < 2 && formattedFilters.length > 0) {
       return dispatch({ type: 'SET_ERROR', error: 'Select more than one item to compare' });
     }
-    // eslint-disable-next-line
-    handleSubmit({ comparisons: cleanedFilters });
+
+    return handleSubmit({ comparisons: formattedFilters });
   }
 
   const FILTER_TYPES = [

@@ -166,8 +166,24 @@ if (IS_HIBANA_ENABLED) {
         cy.findByRole('button', { name: 'Compare' }).click();
       });
       cy.wait(['@getDeliverability', '@getTimeSeries']);
+
+      cy.get('.recharts-wrapper').should('have.length', 2);
       cy.findByRole('heading', { name: 'Fake Subaccount 1 (ID 101)' }).should('be.visible');
       cy.findByRole('heading', { name: 'Fake Subaccount 3 (ID 103)' }).should('be.visible');
+
+      // TODO: When we have access to `cy.intercept()` we can separately stub each request and produce different results
+      cy.findByDataId('compare-by-aggregated-metrics').within(() => {
+        cy.findByText('Fake Subaccount 1 (ID 101)').should('be.visible');
+        cy.findByText('Fake Subaccount 3 (ID 103)').should('be.visible');
+        cy.findAllByText('Sent').should('have.length', 2);
+        cy.findAllByText('325K').should('have.length', 2);
+        cy.findAllByText('Unique Confirmed Opens').should('have.length', 2);
+        cy.findAllByText('250K').should('have.length', 2);
+        cy.findAllByText('Accepted').should('have.length', 2);
+        cy.findAllByText('200K').should('have.length', 2);
+        cy.findAllByText('Unique Clicks').should('have.length', 2);
+        cy.findAllByText('150K').should('have.length', 2);
+      });
     });
 
     it('Shows form error if form contains less than 2 filters', () => {

@@ -9,7 +9,7 @@ import { TableCollection, Unit, PanelLoading } from 'src/components';
 import GroupByOption from './GroupByOption';
 import { Empty } from 'src/components';
 import { Panel, Table, Box } from 'src/components/matchbox';
-import { GROUP_CONFIG } from '../constants/tableConfig';
+import { GROUP_BY_CONFIG } from '../constants';
 import { useReportBuilderContext } from '../context/ReportBuilderContext';
 import AddFilterLink from './AddFilterLink';
 
@@ -32,7 +32,7 @@ export const ReportTable = () => {
   const hasSubaccounts = useSelector(hasSubaccountsSelector);
   const subaccounts = useSelector(state => state.subaccounts.list);
   const { groupBy, tableData = [], tableLoading } = useSelector(state => state.summaryChart);
-  const group = GROUP_CONFIG[groupBy];
+  const group = GROUP_BY_CONFIG[groupBy];
 
   const getColumnHeaders = () => {
     const primaryCol = {

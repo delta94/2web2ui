@@ -2,10 +2,18 @@ import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import usePageFilters from 'src/hooks/usePageFilters';
 import { useHistory } from 'react-router-dom';
-import { getReport, updateScheduledReport, getScheduledReport } from 'src/actions/reports';
+import {
+  deleteScheduledReport,
+  getReport,
+  updateScheduledReport,
+  getScheduledReport,
+} from 'src/actions/reports';
 import { showAlert } from 'src/actions/globalAlert';
-import { Page } from 'src/components/matchbox';
+import { Button, Layout, Page, Panel } from 'src/components/matchbox';
 import { Loading } from 'src/components/loading';
+import { DeleteModal } from 'src/components/modals';
+import { useModal } from 'src/hooks';
+
 import { selectUsers } from 'src/selectors/users';
 import { listUsers } from 'src/actions/users';
 import { formatFormValues, getDefaultValuesMemoized } from './helpers/scheduledReports';
@@ -17,16 +25,21 @@ export default function ScheduledReportEditPage() {
     filters: { reportId, scheduleId },
   } = usePageFilters(initFilters);
   const history = useHistory();
-  const { getScheduledReportStatus, report, loading, scheduledReport = {} } = useSelector(
-    state => state.reports,
-  );
   const users = useSelector(state => selectUsers(state));
   const usersLoading = useSelector(state => state.users.loading);
   const isPendingUpdate = useSelector(
     ({ reports }) => reports.updateScheduledReportStatus === 'loading',
   );
 
+  const {
+    deleteSchedulePending,
+    getScheduledReportStatus,
+    report,
+    loading,
+    scheduledReport = {},
+  } = useSelector(state => state.reports);
   const dispatch = useDispatch();
+  const { closeModal, openModal, isModalOpen } = useModal();
 
   useEffect(() => {
     dispatch(listUsers());
@@ -59,20 +72,67 @@ export default function ScheduledReportEditPage() {
     });
   };
 
+  const handleDelete = () => {
+    dispatch(deleteScheduledReport(reportId, scheduleId)).then(() => {
+      dispatch(
+        showAlert({
+          type: 'success',
+          message: `Successfully deleted ${scheduledReport.name}`,
+        }),
+      );
+      history.push('/signals/analytics');
+    });
+  };
+
   if (loading || getScheduledReportStatus === 'loading' || usersLoading) {
     return <Loading />;
   }
 
   return (
-    <Page title="Schedule Report">
-      {/*See comments in component on why a wrapper is needed*/}
-      <ScheduledEditFormWrapper
-        defaultValues={defaultValues}
-        disabled={isPendingUpdate}
-        onSubmit={onSubmit}
-        report={report}
-        users={users}
+    <>
+      <Page title="Schedule Report">
+        {/*See comments in component on why a wrapper is needed*/}
+        <ScheduledEditFormWrapper
+          defaultValues={defaultValues}
+          disabled={isPendingUpdate}
+          onSubmit={onSubmit}
+          report={report}
+          users={users}
+        />
+        <Layout>
+          <Layout.Section annotated>
+            <Layout.SectionTitle>Delete Scheduled Report</Layout.SectionTitle>
+          </Layout.Section>
+          <Layout.Section>
+            <Panel accent="red">
+              <Panel.Section>
+                <p>
+                  Make sure you absolutely want to delete this item before proceeding. This action
+                  cannot be undone.
+                </p>
+              </Panel.Section>
+              <Panel.Section>
+                <Button variant="destructive" onClick={openModal}>
+                  Delete Item
+                </Button>
+              </Panel.Section>
+            </Panel>
+          </Layout.Section>
+        </Layout>
+      </Page>
+      <DeleteModal
+        title="Are you sure you want to delete this scheduled report?"
+        open={isModalOpen}
+        content={
+          <p>
+            Are you sure you want to permanently remove {scheduledReport?.name}? This cannot be
+            undone.
+          </p>
+        }
+        isPending={deleteSchedulePending}
+        onConfirm={handleDelete}
+        onCancel={closeModal}
       />
-    </Page>
+    </>
   );
 }

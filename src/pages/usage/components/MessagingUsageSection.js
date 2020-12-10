@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Grid, Inline, Layout, Stack, Panel } from 'src/components/matchbox';
-import { ExternalLink, PageLink } from 'src/components/links';
+import { ExternalLink, PageLink, SubduedLink } from 'src/components/links';
 import { Heading, SubduedText } from 'src/components/text';
 import { formatDate } from 'src/helpers/date';
 import config from 'src/config';
@@ -30,7 +30,9 @@ export default function MessagingUsageSection({
         <Stack>
           <Stack space="100">
             <SubduedText>All message injections count toward messaging usage.</SubduedText>
-            <ExternalLink to={LINKS.DAILY_USAGE}>Messaging Usage Definition</ExternalLink>
+            <SubduedLink as={ExternalLink} to={LINKS.DAILY_USAGE}>
+              Messaging Usage Definition
+            </SubduedLink>
           </Stack>
 
           <Stack space="100">
@@ -40,7 +42,9 @@ export default function MessagingUsageSection({
             <SubduedText>
               Each SparkPost account has a daily and monthly quota based on the current plan level
             </SubduedText>
-            <ExternalLink to={LINKS.DAILY_MONTHLY_QUOTA_LIMIT_DOC}>Quota Limits</ExternalLink>
+            <SubduedLink as={ExternalLink} to={LINKS.DAILY_MONTHLY_QUOTA_LIMIT_DOC}>
+              Quota Limits
+            </SubduedLink>
           </Stack>
 
           {(isNearingMonthlyLimit || isNearingDailyLimit) && (

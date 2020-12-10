@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from './ReportTable.module.scss';
 import useUniqueId from 'src/hooks/useUniqueId';
 import { Box, Grid, Checkbox, Select } from 'src/components/matchbox';
-import { GROUP_CONFIG } from '../constants/tableConfig';
+import { GROUP_BY_CONFIG } from '../constants';
 
 export default function GroupByOption(props) {
   const { disabled, groupBy, hasSubaccounts, onChange } = props;
@@ -25,7 +25,7 @@ export default function GroupByOption(props) {
   };
 
   const getSelectOptions = () => {
-    const filteredOptionsKeys = Object.keys(GROUP_CONFIG).filter(key => {
+    const filteredOptionsKeys = Object.keys(GROUP_BY_CONFIG).filter(key => {
       return !(
         (key === 'subaccount' && !hasSubaccounts) ||
         (key === 'domain' && topDomainsOnly) ||
@@ -35,7 +35,7 @@ export default function GroupByOption(props) {
 
     const options = filteredOptionsKeys.map(key => ({
       value: key,
-      label: GROUP_CONFIG[key].label,
+      label: GROUP_BY_CONFIG[key].label,
     }));
 
     return options;
@@ -67,7 +67,7 @@ export default function GroupByOption(props) {
           label="Break Down By"
           id={selectId}
           options={getSelectOptions()}
-          value={GROUP_CONFIG[groupBy] ? groupBy : 'placeholder'}
+          value={GROUP_BY_CONFIG[groupBy] ? groupBy : 'placeholder'}
           disabled={disabled}
           onChange={handleGroupChange}
           placeholder="Select Resource"

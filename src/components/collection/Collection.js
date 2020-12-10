@@ -7,6 +7,11 @@ import Pagination from './Pagination';
 import FilterBox from './FilterBox';
 import { Empty } from 'src/components';
 import { objectSortMatch } from 'src/helpers/sortMatch';
+import styled from 'styled-components';
+
+const StyledTd = styled.td`
+  padding: 0;
+`;
 
 const PassThroughWrapper = props => props.children;
 const NullComponent = () => null;
@@ -55,7 +60,7 @@ export class Collection extends Component {
 
   handleFilterChange = pattern => {
     const { rows, filterBox, sortColumn, sortDirection } = this.props;
-    const { keyMap, itemToStringKeys, matchThreshold } = filterBox;
+    const { keyMap, itemToStringKeys, matchThreshold, onChange } = filterBox;
     const update = {
       currentPage: 1,
       filteredRows: null,
@@ -80,6 +85,7 @@ export class Collection extends Component {
     }
 
     this.setState(update);
+    if (onChange) onChange(pattern);
   };
 
   debouncedHandleFilterChange = _.debounce(this.handleFilterChange, 300);
@@ -160,9 +166,9 @@ export class Collection extends Component {
         <BodyWrapper>
           {visibleRows.length === 0 ? (
             <tr>
-              <td colSpan="100%" style={{ padding: 0 }}>
+              <StyledTd colSpan="100%">
                 <Empty message="No results found." />
-              </td>
+              </StyledTd>
             </tr>
           ) : (
             visibleRows.map((row, i) => (

@@ -29,12 +29,7 @@ export default function useSparkPostQuery(queryFn, config = {}) {
 }
 
 function handleError({ error, method, queryCache, auth, dispatch }) {
-  const { response } = error;
-  const apiError = _.get(response, 'data.errors[0]', {});
-  const message =
-    apiError.description ||
-    apiError.message ||
-    'You may be having network issues or an adblocker may be blocking part of the app.';
+  const { response = {} } = error;
 
   if (response.status === 401 && auth.refreshToken) {
     // Invalidate any in-progress queries
@@ -93,7 +88,7 @@ function handleError({ error, method, queryCache, auth, dispatch }) {
     showAlert({
       type: 'error',
       message: 'Something went wrong.',
-      details: message,
+      details: error.message,
     }),
   );
 }

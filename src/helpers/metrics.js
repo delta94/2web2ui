@@ -13,8 +13,6 @@ const {
   apiDateFormat,
   chartColors = [],
 } = config;
-const indexedPrecisions = _.keyBy(precisionMap, 'value');
-
 const DELIMITERS = ',;:+~`!@#$%^*()-={}[]"\'<>?./|\\'.split('');
 
 export function getQueryFromOptions({
@@ -50,7 +48,7 @@ export function getQueryFromOptions({
   return options;
 }
 
-// TODO: Replace original once original theme removed.
+// TODO: Replace original once OG theme is removed
 export function getQueryFromOptionsV2({
   from,
   to,
@@ -182,7 +180,14 @@ export function getMomentPrecisionByPrecision(precision) {
 }
 
 export function getPrecisionType(precision) {
-  return indexedPrecisions[precision].time <= 60 * 24 * 2 ? 'hour' : precision;
+  switch (precision) {
+    case '1min':
+    case '5min':
+    case '15min':
+      return 'hour';
+    default:
+      return precision;
+  }
 }
 
 // We are forced to use UTC for any precision greater or equal to 'day'
@@ -296,8 +301,17 @@ export function getValidDateRange({
   throw new Error('Invalid date range selected');
 }
 
+/**
+ * Retrieve metrics configuration information based on the passed in key
+ * @param {string} metricKey relevant key based on available metrics
+ */
+export function getMetricFromKey(metricKey) {
+  return METRICS_LIST.find(metric => metric.key === metricKey);
+}
+
 export function _getMetricsFromKeys(keys = [], isHibanaEnabled) {
   const metricsColors = isHibanaEnabled ? HIBANA_METRICS_COLORS : chartColors;
+
   return keys.map((metric, i) => {
     const found = METRICS_LIST.find(M => M.key === metric || M.key === metric.key);
 

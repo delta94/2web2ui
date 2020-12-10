@@ -31,10 +31,7 @@ const formatUnit = (value, unit) => {
 };
 
 // Formats numerical value to a readable format for its provided unit
-const Unit = ({ value, unit }) => <Fragment>{ formatUnit(value, unit) }</Fragment>;
+const Unit = ({ value, unit }) => <Fragment>{formatUnit(value, unit)}</Fragment>;
 Unit.displayName = 'Unit';
 
-export {
-  Unit,
-  formatUnit
-};
+export { Unit, formatUnit };

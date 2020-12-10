@@ -10,11 +10,11 @@ const StyledPanel = styled.div`
 `;
 
 const PanelLoading = props => {
-  const { minHeight, accent, title } = props;
+  const { minHeight, accent, title, as = Panel.LEGACY } = props;
 
   return (
     <StyledPanel
-      as={Panel.LEGACY}
+      as={as}
       className={styles.Loading}
       accent={accent}
       data-id="panel-loading"
