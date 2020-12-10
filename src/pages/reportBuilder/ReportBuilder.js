@@ -33,9 +33,9 @@ import {
 import {
   BounceReasonTab,
   BounceReasonComparisonTab,
-  DelayReasonsTable,
-  LinksTable,
-  RejectionReasonsTable,
+  DelayReasonsTab,
+  LinksTab,
+  RejectionReasonsTab,
 } from './components/tabs';
 import { useReportBuilderContext } from './context/ReportBuilderContext';
 import { PRESET_REPORT_CONFIGS } from './constants';
@@ -280,19 +280,19 @@ export function ReportBuilder({
 
               {hasRejectionTab && (
                 <Tabs.Item>
-                  <RejectionReasonsTable />
+                  <RejectionReasonsTab />
                 </Tabs.Item>
               )}
 
               {hasDelayTab && (
                 <Tabs.Item>
-                  <DelayReasonsTable />
+                  <DelayReasonsTab />
                 </Tabs.Item>
               )}
 
               {hasLinksTab && (
                 <Tabs.Item>
-                  <LinksTable />
+                  <LinksTab />
                 </Tabs.Item>
               )}
 
@@ -304,11 +304,11 @@ export function ReportBuilder({
                           <BounceReasonComparisonTab comparison={comparison} />
                         ) : null}
 
-                        {hasRejectionTab ? <RejectionReasonsTable /> : null}
+                        {hasRejectionTab ? <RejectionReasonsTab /> : null}
 
-                        {hasDelayTab ? <DelayReasonsTable /> : null}
+                        {hasDelayTab ? <DelayReasonsTab /> : null}
 
-                        {hasLinksTab ? <DelayReasonsTable /> : null}
+                        {hasLinksTab ? <DelayReasonsTab /> : null}
                       </Tabs.Item>
                     );
                   })

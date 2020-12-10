@@ -1,5 +1,5 @@
 export { default as BounceReasonTab } from './BounceReasonTab';
 export { default as BounceReasonComparisonTab } from './BounceReasonComparisonTab';
-export { default as DelayReasonsTable } from './DelayReasonsTable';
-export { default as LinksTable } from './LinksTable';
-export { default as RejectionReasonsTable } from './RejectionReasonsTable';
+export { default as DelayReasonsTab } from './DelayReasonsTab';
+export { default as LinksTab } from './LinksTab';
+export { default as RejectionReasonsTab } from './RejectionReasonsTab';
