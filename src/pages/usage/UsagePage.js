@@ -27,7 +27,8 @@ export default function UsagePage() {
   } = useSparkPostQuery(getSubscription);
 
   // API Status Handling
-  const statuses = [accountStatus, usageStatus, usageHistoryStatus, subscriptionStatus];
+  // History is intentionally omitted from this array
+  const statuses = [accountStatus, usageStatus, subscriptionStatus];
   const isLoading = statuses.includes('loading');
   const isError = statuses.includes('error');
 
@@ -59,7 +60,7 @@ export default function UsagePage() {
   const accountSubscription = data.account.subscription;
   const billingSubscription = data.subscription;
   const rvUsage = data.usage.recipient_validation;
-  const rvUsageHistory = data.usageHistory.recipient_validation;
+  const rvUsageHistory = data?.usageHistory?.recipient_validation;
 
   return (
     <Page title="Usage">
@@ -78,7 +79,11 @@ export default function UsagePage() {
 
       {rvUsage ? (
         <Layout>
-          <RVUsageSection rvUsage={rvUsage} rvUsageHistory={rvUsageHistory} />
+          <RVUsageSection
+            rvUsage={rvUsage}
+            rvUsageHistory={rvUsageHistory}
+            rvUsageHistoryStatus={usageHistoryStatus}
+          />
         </Layout>
       ) : null}
     </Page>

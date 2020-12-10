@@ -16,7 +16,6 @@ import { useReportBuilderContext } from '../context/ReportBuilderContext';
 import { ApiErrorBanner } from 'src/components';
 import Loading from 'src/components/loading/PanelLoading';
 import { Heading } from 'src/components/text';
-import { Loading } from 'src/components';
 import CustomTooltip from './Tooltip';
 const DEFAULT_UNIT = 'number';
 

@@ -21,9 +21,9 @@ describe('RVUsageSection', () => {
     },
   };
 
-  const instance = shallow(<RVUsageSection {...defaultProps} />);
-
   it('renders correct label and value pairs', () => {
+    const instance = shallow(<RVUsageSection {...defaultProps} usageHistoryStatus="success" />);
+
     expect(instance).toHaveTextContent('Date Range');
     expect(instance).toHaveTextContent(
       `${formatDate(defaultProps.rvUsage.month.start)} - ${formatDate(
@@ -33,5 +33,16 @@ describe('RVUsageSection', () => {
     expect(instance).toHaveTextContent('Current Cycle Validations');
     expect(instance).toHaveTextContent(defaultProps.rvUsage.month.used.toLocaleString());
     expect(instance).toHaveTextContent('Current Cycle Expenses');
+    expect(instance.find('[data-id="rv-usage-chart"]')).toExist();
+  });
+
+  it('should not render chart if loading', () => {
+    const instance = shallow(<RVUsageSection {...defaultProps} usageHistoryStatus="loading" />);
+    expect(instance.find('[data-id="rv-usage-chart"]')).not.toExist();
+  });
+
+  it('should not render chart if there is an error', () => {
+    const instance = shallow(<RVUsageSection {...defaultProps} usageHistoryStatus="error" />);
+    expect(instance.find('[data-id="rv-usage-chart"]')).not.toExist();
   });
 });

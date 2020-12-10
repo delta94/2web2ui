@@ -8,8 +8,22 @@ import totalRecipientValidationCost from 'src/helpers/recipientValidation';
 import { LabelAndKeyPair } from '.';
 import RVUsageChart from './RVUsageChart';
 
-export default function RVUsageSection({ rvUsage, rvUsageHistory }) {
+export default function RVUsageSection({ rvUsage, rvUsageHistory, usageHistoryStatus }) {
   const volumeUsed = _.get(rvUsage, 'month.used', 0);
+
+  const usageChart = React.useMemo(() => {
+    if (usageHistoryStatus === 'loading' || usageHistoryStatus === 'error') {
+      return null;
+    }
+
+    return (
+      <Panel mb="-1px" data-id="rv-usage-chart">
+        <Panel.Section>
+          <RVUsageChart data={rvUsageHistory} />
+        </Panel.Section>
+      </Panel>
+    );
+  }, [usageHistoryStatus, rvUsageHistory]);
 
   return (
     <>
@@ -21,11 +35,7 @@ export default function RVUsageSection({ rvUsage, rvUsageHistory }) {
         </SubduedText>
       </Layout.Section>
       <Layout.Section>
-        <Panel mb="-1px">
-          <Panel.Section>
-            <RVUsageChart data={rvUsageHistory} />
-          </Panel.Section>
-        </Panel>
+        {usageChart}
         <Box padding="400" backgroundColor="gray.1000">
           <Grid>
             <Grid.Column sm={3}>
