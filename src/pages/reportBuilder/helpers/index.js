@@ -354,7 +354,7 @@ export function dehydrateFilters(groupings) {
  *
  * @param {Object} comparison - passed in comparison when the user selects comparisons via "compare by"
  */
-export function getRequestArgumentsFromComparison(comparison) {
+export function getComparisonArguments(comparison) {
   const comparisonObj = FILTER_TYPES.find(
     comparisonConfig => comparisonConfig.label === comparison.type,
   );
