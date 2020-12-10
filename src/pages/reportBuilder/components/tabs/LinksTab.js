@@ -29,7 +29,7 @@ const columns = [
   { label: 'Percent of Total', sortKey: 'percentage_clicked' },
 ];
 
-export function LinksTable(props) {
+export function LinksTab(props) {
   const { state: reportOptions } = useReportBuilderContext();
   const { loading, links, refreshEngagementReport, totalClicks } = props;
 
@@ -86,4 +86,4 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
   refreshEngagementReport,
 };
-export default connect(mapStateToProps, mapDispatchToProps)(LinksTable);
+export default connect(mapStateToProps, mapDispatchToProps)(LinksTab);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { DelayReasonsTable } from '../DelayReasonsTable';
+import { DelayReasonsTab } from '../DelayReasonsTab';
 import TestApp from 'src/__testHelpers__/TestApp';
 import { useReportBuilderContext } from 'src/pages/reportBuilder/context/ReportBuilderContext';
 jest.mock('src/pages/reportBuilder/context/ReportBuilderContext');
@@ -12,7 +12,7 @@ useReportBuilderContext.mockImplementation(() => ({
   },
 }));
 
-describe('Delay Reasons Table', () => {
+describe('DelayReasonsTab', () => {
   const mockGetData = jest.fn();
   const defaultProps = {
     loading: false,
@@ -30,7 +30,7 @@ describe('Delay Reasons Table', () => {
   const subject = props =>
     render(
       <TestApp>
-        <DelayReasonsTable {...defaultProps} {...props} />
+        <DelayReasonsTab {...defaultProps} {...props} />
       </TestApp>,
     );
   it('renders with the correct row information', () => {

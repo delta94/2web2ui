@@ -28,7 +28,7 @@ const columns = [
   { label: 'Domain', sortKey: 'domain' },
 ];
 
-export function RejectionReasonsTable(props) {
+export function RejectionReasonsTab(props) {
   const { state: reportOptions } = useReportBuilderContext();
   const { loading, reasons, refreshRejectionReport } = props;
 
@@ -75,4 +75,4 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   refreshRejectionReport,
 };
-export default connect(mapStateToProps, mapDispatchToProps)(RejectionReasonsTable);
+export default connect(mapStateToProps, mapDispatchToProps)(RejectionReasonsTab);

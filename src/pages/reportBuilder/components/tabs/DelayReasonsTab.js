@@ -28,7 +28,7 @@ const columns = [
   { label: 'Domain', sortKey: 'domain' },
 ];
 
-export function DelayReasonsTable(props) {
+export function DelayReasonsTab(props) {
   const { state: reportOptions } = useReportBuilderContext();
   const { loading, reasons, totalAccepted, refreshDelayReport } = props;
 
@@ -86,4 +86,4 @@ const mapDispatchToProps = {
   refreshDelayReport,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(DelayReasonsTable);
+export default connect(mapStateToProps, mapDispatchToProps)(DelayReasonsTab);
