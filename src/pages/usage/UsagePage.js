@@ -63,7 +63,7 @@ export default function UsagePage() {
   const accountSubscription = data.account.subscription;
   const billingSubscription = data.subscription;
   const rvUsage = data.usage.recipient_validation;
-  const messagingUsageHistory = data.usageHistory.messaging;
+  const messagingUsageHistory = data?.usageHistory?.messaging;
 
   return (
     <Page title="Usage">

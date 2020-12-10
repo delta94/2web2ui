@@ -62,7 +62,14 @@ export default function MessagingUsageSection({
           <Stack space="0">
             <Panel mb="-1px">
               <Panel.Section>
-                <MessagingUsageChart data={messagingUsageHistory} usage={usage} overage={overage} />
+                <MessagingUsageChart
+                  data={messagingUsageHistory}
+                  dailyLimit={hasDailyLimit && usage.day.limit.toLocaleString()}
+                  planVolume={subscription.plan_volume}
+                  overage={overage}
+                  start={startOfBillingPeriod}
+                  end={endOfBillingPeriod}
+                />
               </Panel.Section>
             </Panel>
             <Box padding="400" backgroundColor="gray.1000">

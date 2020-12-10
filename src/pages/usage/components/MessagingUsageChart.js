@@ -3,13 +3,18 @@ import AreaChart from 'src/components/charts/AreaChart';
 import { Box, Text } from 'src/components/matchbox';
 import { tokens } from '@sparkpost/design-tokens-hibana';
 import { formatNumber } from 'src/helpers/units';
+import { fillByDate } from 'src/helpers/date';
 import { getTimeTickFormatter, getTooltipLabelFormatter } from 'src/helpers/chart.js';
 
 function MessagingUsageChart(props) {
-  const { data, usage, overage } = props;
+  const { data = [], planVolume, overage, dailyLimit, start, end } = props;
+
+  const filledData = React.useMemo(() => {
+    return fillByDate({ dataSet: data, from: start, to: end });
+  }, [data, start, end]);
 
   const thresholdIndex = data.findIndex(item => {
-    return item.usage >= usage.month.limit;
+    return item.usage >= planVolume;
   });
 
   const thresholdPercentage = (thresholdIndex / data.length) * 100;
@@ -39,20 +44,22 @@ function MessagingUsageChart(props) {
             </Box>
           </Box>
         ))}
-        <Box key="report_chart_dailylimit" mb="100">
-          <Box justifyContent="space-between" alignItems="center" display="flex">
-            <Box display="inline-flex" alignItems="center">
-              <Text as="span" fontSize="100" color="white">
-                Daily Limit
-              </Text>
-            </Box>
-            <Box ml="800">
-              <Text fontSize="100" textAlign="right" color="white">
-                {usage.day.limit.toLocaleString()}
-              </Text>
+        {dailyLimit && (
+          <Box key="report_chart_dailylimit" mb="100">
+            <Box justifyContent="space-between" alignItems="center" display="flex">
+              <Box display="inline-flex" alignItems="center">
+                <Text as="span" fontSize="100" color="white">
+                  Daily Limit
+                </Text>
+              </Box>
+              <Box ml="800">
+                <Text fontSize="100" textAlign="right" color="white">
+                  {dailyLimit}
+                </Text>
+              </Box>
             </Box>
           </Box>
-        </Box>
+        )}
         <Box key="report_chart_dailylimit" mb="100">
           <Box justifyContent="space-between" alignItems="center" display="flex">
             <Box display="inline-flex" alignItems="center">
@@ -95,7 +102,7 @@ function MessagingUsageChart(props) {
       <AreaChart
         height={200}
         areas={[{ dataKey: 'usage', stroke: 'url(#strokeColor)', fill: 'url(#fillColor)' }]}
-        data={data}
+        data={filledData}
         showXAxis
         showTooltip
         tooltip={CustomTooltip}
@@ -105,7 +112,7 @@ function MessagingUsageChart(props) {
         defs={renderCustomDefs()}
         yAxisRefLines={[
           {
-            y: usage.month.limit,
+            y: planVolume,
             stroke: tokens.color_gray_300,
             strokeDasharray: '3 3',
           },

@@ -34,13 +34,14 @@ const Cursor = ({ data, height, points: [{ x, y }], width: chartWidth }) => {
 export default function AreaChart(props) {
   const renderAreas = () => {
     const { areas = [] } = props;
-    return areas.map(area => {
+    return areas.map((area, index) => {
       const areaProps = {
         strokeWidth: 2,
         animationDuration: 400,
         activeDot: false,
         dot: false,
         type: 'linear',
+        key: `area-${index}`,
         ...area,
       };
       return <Area {...areaProps} />;
@@ -121,9 +122,9 @@ export default function AreaChart(props) {
           />
           <YAxis
             axisLine={false}
-            domain={['dataMin', 'dataMax']}
+            domain={['dataMin', dataMax => Math.max(dataMax, ...yAxisRefLines.map(({ y }) => y))]}
             interval="preserveStartEnd"
-            padding={{ top: 8, bottom: 8 }}
+            padding={{ top: 8, bottom: 0 }}
             scale={yScale}
             tickFormatter={yTickFormatter}
             tickLine={false}
