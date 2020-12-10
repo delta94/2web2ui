@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { getDeliverabilityMetrics } from 'src/helpers/api';
+import { getDeliverability } from 'src/helpers/api/metrics';
 import {
   getMetricsFromKeys,
   getQueryFromOptionsV2 as getQueryFromOptions,
@@ -64,7 +64,7 @@ function ComparisonRow({ comparison, hasDivider, reportOptions }) {
     ...formattedOptions,
     [comparisonObj.value]: comparisonObj.value === 'subaccounts' ? comparison.id : comparison.value, // Subaccount formatting means different data must be passed to the request
   };
-  const { data, status } = useSparkPostQuery(() => getDeliverabilityMetrics(requestOptions), {
+  const { data, status } = useSparkPostQuery(() => getDeliverability(requestOptions), {
     refetchOnWindowFocus: false,
   });
 

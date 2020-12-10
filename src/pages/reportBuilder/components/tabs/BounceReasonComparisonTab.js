@@ -6,10 +6,7 @@ import {
   getMetricsFromKeys,
   getQueryFromOptionsV2 as getQueryFromOptions,
 } from 'src/helpers/metrics';
-import {
-  getBounceReasonsByDomainDeliverabilityMetrics,
-  getDeliverabilityMetrics,
-} from 'src/helpers/api';
+import { getBounceReasonByDomain, getDeliverability } from 'src/helpers/api/metrics';
 import { selectReasons, selectFormattedAggregates } from 'src/selectors/bounceReport';
 import { getRequestArgumentsFromComparison } from '../../helpers';
 import { BounceReasonTable } from '../tables';
@@ -17,10 +14,8 @@ import { usePrepareQuery } from '../../hooks';
 
 export default function BounceReasonComparisonTab({ comparison }) {
   const [reasonsArgs, aggregatesArgs] = useRequestArguments(comparison);
-  const reasonsQuery = useSparkPostQuery(() =>
-    getBounceReasonsByDomainDeliverabilityMetrics(reasonsArgs),
-  );
-  const aggregatesQuery = useSparkPostQuery(() => getDeliverabilityMetrics(aggregatesArgs));
+  const reasonsQuery = useSparkPostQuery(() => getBounceReasonByDomain(reasonsArgs));
+  const aggregatesQuery = useSparkPostQuery(() => getDeliverability(aggregatesArgs));
   const isPending = reasonsQuery.status === 'loading' || aggregatesQuery.status === 'loading';
   const isError = reasonsQuery.status === 'error' || aggregatesQuery.status === 'error';
 
