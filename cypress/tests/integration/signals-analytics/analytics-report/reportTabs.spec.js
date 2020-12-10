@@ -376,37 +376,10 @@ if (IS_HIBANA_ENABLED) {
     });
 
     describe('the bounce reason comparison (AKA compare by) tables', () => {
-      beforeEach(() => {
-        commonBeforeSteps();
-        cy.withinDrawer(() => {
-          // Uncheck defaults, and check a metric that renders the "Rejection Reason" table
-          cy.findByLabelText('Targeted').uncheck({ force: true });
-          cy.findByLabelText('Accepted').uncheck({ force: true });
-          cy.findByLabelText('Bounces').uncheck({ force: true });
-          cy.findByLabelText('Bounces').check({ force: true });
-          cy.findByRole('button', { name: 'Apply Metrics' }).click();
-
-          cy.wait(['@getDeliverability', '@getTimeSeries']);
-        });
-      });
-
       it('renders additional tabs when comparisons are enabled', () => {
-        cy.findByRole('button', { name: 'Add Comparison' }).click();
-        cy.withinDrawer(() => {
-          cy.findByLabelText('Type').select('Subaccount');
-          cy.findAllByLabelText('Subaccount')
-            .eq(0)
-            .type('sub');
-          cy.wait('@getSubaccounts');
-          cy.findByRole('option', { name: 'Fake Subaccount 1 (ID 101)' }).click();
-          cy.findAllByLabelText('Subaccount')
-            .eq(1)
-            .type('sub');
-          cy.wait('@getSubaccounts');
-          cy.findByRole('option', { name: 'Fake Subaccount 2 (ID 102)' }).click();
-          cy.findByRole('button', { name: 'Compare' }).click();
-        });
-
+        commonBeforeSteps();
+        applyBounceMetrics();
+        applySubaccountComparisons();
         cy.wait(['@getDeliverability', '@getTimeSeries']);
 
         cy.findByRole('tab', { name: 'Bounce Reason' }).should('not.exist');
@@ -416,7 +389,97 @@ if (IS_HIBANA_ENABLED) {
         cy.findByRole('tab', { name: 'Bounce Reason Fake Subaccount 2 (ID 102)' }).should(
           'be.visible',
         );
+
+        cy.stubRequest({
+          url: '/api/v1/metrics/deliverability/bounce-reason/domain**/*',
+          fixture: 'metrics/deliverability/bounce-reason/domain/200.get.json',
+          requestAlias: 'getBounceReasons',
+        });
+        cy.findByRole('tab', { name: 'Bounce Reason Fake Subaccount 1 (ID 101)' }).click();
+        cy.wait(['@getDeliverability', '@getBounceReasons']).then(xhrs => {
+          const [deliverabilityReq, bounceReasonsReq] = xhrs;
+
+          cy.wrap(deliverabilityReq.url).should('include', 'subaccounts=101');
+          cy.wrap(bounceReasonsReq.url).should('include', 'subaccounts=101');
+        });
+
+        cy.get('table')
+          .should('be.visible')
+          .within(() => {
+            cy.get('tbody tr')
+              .eq(0)
+              .within(() => {
+                cy.get('td')
+                  .eq(0)
+                  .should('have.text', '0%');
+                cy.get('td')
+                  .eq(1)
+                  .should('have.text', 'Mail Block');
+                cy.get('td')
+                  .eq(2)
+                  .should('have.text', 'Block');
+                cy.get('td')
+                  .eq(3)
+                  .should('have.text', 'This is the bounce reason. For real.');
+                cy.get('td')
+                  .eq(4)
+                  .should('have.text', 'gmail.com');
+              });
+          });
       });
+    });
+
+    it('renders an error when one or both API requests fail', () => {
+      commonBeforeSteps();
+      applyBounceMetrics();
+      applySubaccountComparisons();
+
+      cy.stubRequest({
+        url: '/api/v1/metrics/deliverability/bounce-reason/domain**/*',
+        fixture: '400.json',
+        statusCode: 400,
+        requestAlias: 'getBounceReasonsFail',
+      });
+
+      cy.findByRole('tab', { name: 'Bounce Reason Fake Subaccount 1 (ID 101)' }).click();
+      cy.wait(['@getBounceReasonsFail', '@getDeliverability']);
+      cy.wait('@getBounceReasonsFail');
+      cy.wait('@getBounceReasonsFail');
+      cy.wait('@getBounceReasonsFail');
+
+      cy.findByText('An error occurred').should('be.visible');
+      cy.findByText('Sorry, there was an issue.').should('be.visible');
+
+      cy.stubRequest({
+        url: '/api/v1/metrics/deliverability/bounce-reason/domain**/*',
+        fixture: 'metrics/deliverability/bounce-reason/domain/200.get.json',
+        requestAlias: 'getBounceReasons',
+      });
+      cy.findByRole('button', { name: 'Try Again' }).click();
+      cy.wait('@getBounceReasons');
+      cy.get('table')
+        .should('be.visible')
+        .within(() => {
+          cy.get('tbody tr')
+            .eq(0)
+            .within(() => {
+              cy.get('td')
+                .eq(0)
+                .should('have.text', '0%');
+              cy.get('td')
+                .eq(1)
+                .should('have.text', 'Mail Block');
+              cy.get('td')
+                .eq(2)
+                .should('have.text', 'Block');
+              cy.get('td')
+                .eq(3)
+                .should('have.text', 'This is the bounce reason. For real.');
+              cy.get('td')
+                .eq(4)
+                .should('have.text', 'gmail.com');
+            });
+        });
     });
   });
 }
@@ -437,4 +500,35 @@ function commonBeforeSteps() {
   stubTimeSeries();
   cy.visit(PAGE_URL);
   cy.findByRole('button', { name: 'Add Metrics' }).click();
+}
+
+function applyBounceMetrics() {
+  cy.withinDrawer(() => {
+    // Uncheck defaults, and check a metric that renders the "Rejection Reason" table
+    cy.findByLabelText('Targeted').uncheck({ force: true });
+    cy.findByLabelText('Accepted').uncheck({ force: true });
+    cy.findByLabelText('Bounces').uncheck({ force: true });
+    cy.findByLabelText('Bounces').check({ force: true });
+    cy.findByRole('button', { name: 'Apply Metrics' }).click();
+
+    cy.wait(['@getDeliverability', '@getTimeSeries']);
+  });
+}
+
+function applySubaccountComparisons() {
+  cy.findByRole('button', { name: 'Add Comparison' }).click();
+  cy.withinDrawer(() => {
+    cy.findByLabelText('Type').select('Subaccount');
+    cy.findAllByLabelText('Subaccount')
+      .eq(0)
+      .type('sub');
+    cy.wait('@getSubaccounts');
+    cy.findByRole('option', { name: 'Fake Subaccount 1 (ID 101)' }).click();
+    cy.findAllByLabelText('Subaccount')
+      .eq(1)
+      .type('sub');
+    cy.wait('@getSubaccounts');
+    cy.findByRole('option', { name: 'Fake Subaccount 2 (ID 102)' }).click();
+    cy.findByRole('button', { name: 'Compare' }).click();
+  });
 }
