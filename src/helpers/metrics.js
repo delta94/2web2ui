@@ -373,3 +373,20 @@ export function average(item, keys = []) {
 export function rate(item, keys = []) {
   return safeRate(item[keys[0]], item[keys[1]]);
 }
+
+/**
+ * Prepares request options/params based on the current state of the page and the passed in comparison object.
+ *
+ * @param {Object} comparison - passed in comparison when the user selects comparisons via "compare by"
+ */
+export function getComparisonArguments(comparison) {
+  const comparisonObj = REPORT_BUILDER_FILTER_TYPE_COLLECTION.find(
+    comparisonConfig => comparisonConfig.label === comparison.type,
+  );
+
+  if (!comparisonObj) return {};
+
+  return {
+    [comparisonObj.value]: comparisonObj.value === 'subaccounts' ? comparison.id : comparison.value, // Subaccount formatting means different data must be passed to the request
+  };
+}

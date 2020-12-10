@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import { REPORT_BUILDER_FILTER_KEY_MAP } from 'src/constants';
-import { FILTER_TYPES } from '../constants';
 
 /**
  * Returns the relevant object/key pair within the REPORT_BUILDER_FILTER_KEY_MAP object based on the passed in value
@@ -347,21 +346,4 @@ export function dehydrateFilters(groupings) {
       }, {}),
     };
   });
-}
-
-/**
- * Prepares request options/params based on the current state of the page and the passed in comparison object.
- *
- * @param {Object} comparison - passed in comparison when the user selects comparisons via "compare by"
- */
-export function getComparisonArguments(comparison) {
-  const comparisonObj = FILTER_TYPES.find(
-    comparisonConfig => comparisonConfig.label === comparison.type,
-  );
-
-  if (!comparisonObj) return {};
-
-  return {
-    [comparisonObj.value]: comparisonObj.value === 'subaccounts' ? comparison.id : comparison.value, // Subaccount formatting means different data must be passed to the request
-  };
 }

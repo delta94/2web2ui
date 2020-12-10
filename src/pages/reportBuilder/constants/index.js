@@ -82,34 +82,3 @@ export const GROUP_BY_CONFIG = {
     keyName: 'ip_pool',
   },
 };
-
-export const FILTER_TYPES = [
-  {
-    label: 'Recipient Domain',
-    value: 'domains',
-  },
-  {
-    label: 'Sending IP',
-    value: 'sending_ips',
-  },
-  {
-    label: 'IP Pool',
-    value: 'ip_pools',
-  },
-  {
-    label: 'Campaign',
-    value: 'campaigns',
-  },
-  {
-    label: 'Template',
-    value: 'templates',
-  },
-  {
-    label: 'Sending Domain',
-    value: 'sending_domains',
-  },
-  {
-    label: 'Subaccount',
-    value: 'subaccounts',
-  },
-];

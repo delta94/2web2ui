@@ -5,10 +5,10 @@ import { Panel } from 'src/components/matchbox';
 import {
   getMetricsFromKeys,
   getQueryFromOptionsV2 as getQueryFromOptions,
+  getComparisonArguments,
 } from 'src/helpers/metrics';
 import { getBounceReasonByDomain, getDeliverability } from 'src/helpers/api/metrics';
 import { selectReasons, selectFormattedAggregates } from 'src/selectors/bounceReport';
-import { getComparisonArguments } from '../../helpers';
 import { BounceReasonTable } from '../tables';
 import { usePrepareQuery } from '../../hooks';
 

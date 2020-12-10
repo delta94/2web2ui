@@ -253,4 +253,35 @@ export const REPORT_BUILDER_FILTER_KEY_MAP = {
   'Sending Domain': 'sending_domains',
 };
 
+export const REPORT_BUILDER_FILTER_TYPE_COLLECTION = [
+  {
+    label: 'Recipient Domain',
+    value: 'domains',
+  },
+  {
+    label: 'Sending IP',
+    value: 'sending_ips',
+  },
+  {
+    label: 'IP Pool',
+    value: 'ip_pools',
+  },
+  {
+    label: 'Campaign',
+    value: 'campaigns',
+  },
+  {
+    label: 'Template',
+    value: 'templates',
+  },
+  {
+    label: 'Sending Domain',
+    value: 'sending_domains',
+  },
+  {
+    label: 'Subaccount',
+    value: 'subaccounts',
+  },
+];
+
 export { ROLES, SUBACCOUNT_ROLES, ROLE_LABELS } from './users';

@@ -1,14 +1,10 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { getDeliverability } from 'src/helpers/api/metrics';
-import {
-  getMetricsFromKeys,
-  getQueryFromOptionsV2 as getQueryFromOptions,
-} from 'src/helpers/metrics';
+import { getMetricsFromKeys, getComparisonArguments } from 'src/helpers/metrics';
 import { LegendCircle, Unit } from 'src/components';
 import Divider from 'src/components/divider';
 import { Box, Column, Columns, Inline, LabelValue, Stack } from 'src/components/matchbox';
-import { useSparkPostQuery } from 'src/hooks';
-import { FILTER_TYPES } from '../../pages/reportBuilder/constants';
+import { useSparkPostQuery, usePrepareReportBuilderQuery } from 'src/hooks';
 
 export default function CompareByAggregatedMetrics({ date, reportOptions }) {
   const { comparisons } = reportOptions;
@@ -45,26 +41,14 @@ export default function CompareByAggregatedMetrics({ date, reportOptions }) {
   );
 }
 
-function ComparisonRow({ comparison, hasDivider, reportOptions }) {
-  const { metrics } = reportOptions;
-  const comparisonObj = FILTER_TYPES.find(
-    comparisonConfig => comparisonConfig.label === comparison.type,
-  );
-  // Prepares params for request
-  const formattedMetrics = useMemo(() => {
-    return getMetricsFromKeys(metrics, true);
-  }, [metrics]);
-  const formattedOptions = useMemo(() => {
-    return getQueryFromOptions({
-      ...reportOptions,
-      metrics: formattedMetrics,
-    });
-  }, [reportOptions, formattedMetrics]);
-  const requestOptions = {
-    ...formattedOptions,
-    [comparisonObj.value]: comparisonObj.value === 'subaccounts' ? comparison.id : comparison.value, // Subaccount formatting means different data must be passed to the request
+function ComparisonRow({ comparison, reportOptions, hasDivider }) {
+  const sharedArguments = usePrepareReportBuilderQuery(reportOptions);
+  const comparisonArguments = getComparisonArguments(comparison);
+  const aggregatesArgs = {
+    ...sharedArguments,
+    ...comparisonArguments,
   };
-  const { data, status } = useSparkPostQuery(() => getDeliverability(requestOptions), {
+  const { data, status } = useSparkPostQuery(() => getDeliverability(aggregatesArgs), {
     refetchOnWindowFocus: false,
   });
 
@@ -78,7 +62,7 @@ function ComparisonRow({ comparison, hasDivider, reportOptions }) {
       ...metric,
     };
   });
-  const hasMetrics = Boolean(formattedMetrics.length);
+  const hasMetrics = Boolean(aggregatedMetrics.length);
 
   return (
     <Stack>
