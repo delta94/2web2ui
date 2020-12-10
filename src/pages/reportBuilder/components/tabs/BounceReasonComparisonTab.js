@@ -41,7 +41,7 @@ export default function BounceReasonComparisonTab({ comparison }) {
     );
   }
 
-  // This re-structuring is a holdover from Redux - could we refactor selectors to be less opinionated?
+  // This re-structuring is a holdover from Redux - could we refactor these selectors to be less opinionated?
   const formattedData = {
     bounceReport: { reasons: reasonsQuery.data, aggregates: aggregatesQuery.data },
   };
@@ -57,6 +57,8 @@ export default function BounceReasonComparisonTab({ comparison }) {
  * @param {Object} comparison - passed in comparison set by the user via the "Compare By" feature
  */
 function useRequestArguments(comparison) {
+  // I borrowed this logic from `src/actions/bounceReport`
+  // But does the comparison value influence which metrics are valid for this request?
   const deliverabilityMetrics = getMetricsFromKeys([
     'count_bounce',
     'count_inband_bounce',

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { BounceReasonsTable } from '../BounceReasonsTable';
+import { BounceReasonTab } from '../BounceReasonTab';
 import TestApp from 'src/__testHelpers__/TestApp';
 import { useReportBuilderContext } from 'src/pages/reportBuilder/context/ReportBuilderContext';
 jest.mock('src/pages/reportBuilder/context/ReportBuilderContext');
@@ -12,7 +12,7 @@ useReportBuilderContext.mockImplementation(() => ({
   },
 }));
 
-describe('Bounce Reason Table', () => {
+describe('BounceReasonTab', () => {
   const mockGetData = jest.fn();
   const defaultProps = {
     loading: false,
@@ -43,7 +43,7 @@ describe('Bounce Reason Table', () => {
   const subject = props =>
     render(
       <TestApp>
-        <BounceReasonsTable {...defaultProps} {...props} />
+        <BounceReasonTab {...defaultProps} {...props} />
       </TestApp>,
     );
   it('renders with the correct row information', () => {
