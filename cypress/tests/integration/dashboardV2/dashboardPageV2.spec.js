@@ -75,6 +75,14 @@ describe('Version 2 of the dashboard page', () => {
         fixture: `users/200.get.has-pinned-report.json`,
         requestAlias: 'userWithPinnedReport',
       });
+
+      cy.stubRequest({
+        method: 'GET',
+        url: '/api/v1/metrics/deliverability**/**',
+        fixture: 'metrics/deliverability/200.get.pinned-report.json',
+        requestAlias: 'dataGetDeliverability',
+      });
+
       cy.stubRequest({
         method: 'GET',
         url: '/api/v1/metrics/deliverability/time-series**/**',
@@ -82,9 +90,26 @@ describe('Version 2 of the dashboard page', () => {
         requestAlias: 'dataGetTimeSeries',
       });
 
+      cy.stubRequest({
+        url: '/api/v1/subaccounts',
+        fixture: 'subaccounts/200.get.json',
+        requestAlias: 'getSubaccounts',
+      });
+
       cy.visit(PAGE_URL);
-      cy.wait(['@alertsReq', '@accountReq', '@usageReq', '@getReports', '@userWithPinnedReport']);
-      cy.findByText('My Bounce Report');
+      cy.wait([
+        '@alertsReq',
+        '@accountReq',
+        '@usageReq',
+        '@getReports',
+        '@userWithPinnedReport',
+        '@dataGetDeliverability',
+        '@dataGetTimeSeries',
+        '@getSubaccounts',
+      ]);
+      cy.findByText('My Bounce Report').should('be.visible');
+      cy.findByText('Bounces').should('be.visible');
+      cy.findByText('325K').should('be.visible');
     });
     it('Shows Helpful Shortcuts "invite team members" when admin', () => {
       stubGrantsRequest({ role: 'admin' });
