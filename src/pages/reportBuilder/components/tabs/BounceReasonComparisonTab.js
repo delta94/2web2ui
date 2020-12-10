@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSparkPostQuery } from 'src/hooks';
 import { ApiErrorBanner, Loading } from 'src/components';
+import { Panel } from 'src/components/matchbox';
 import {
   getMetricsFromKeys,
   getQueryFromOptionsV2 as getQueryFromOptions,
@@ -10,42 +11,44 @@ import {
   getDeliverabilityMetrics,
 } from 'src/helpers/api';
 import { selectReasons, selectFormattedAggregates } from 'src/selectors/bounceReport';
+import { getRequestArgumentsFromComparison } from '../../helpers';
 import { BounceReasonTable } from '../tables';
-import { usePrepareRequest, usePrepareComparisonRequest } from '../../hooks';
+import { usePrepareQuery } from '../../hooks';
 
 export default function BounceReasonComparisonTab({ comparison }) {
-  const { bounceReasonOptions, aggregatesOptions } = usePrepareRequestParameters(comparison);
-  const reasons = useSparkPostQuery(() =>
-    getBounceReasonsByDomainDeliverabilityMetrics(bounceReasonOptions),
+  const [reasonsArgs, aggregatesArgs] = useRequestArguments(comparison);
+  const reasonsQuery = useSparkPostQuery(() =>
+    getBounceReasonsByDomainDeliverabilityMetrics(reasonsArgs),
   );
-  const aggregates = useSparkPostQuery(() => getDeliverabilityMetrics(aggregatesOptions));
+  const aggregatesQuery = useSparkPostQuery(() => getDeliverabilityMetrics(aggregatesArgs));
+  const isPending = reasonsQuery.status === 'loading' || aggregatesQuery.status === 'loading';
+  const isError = reasonsQuery.status === 'error' || aggregatesQuery.status === 'error';
 
-  {
-    /* TODO: Do I need to incorporate the wrapper? */
+  function handleReload() {
+    reasonsQuery.refetch();
+    aggregatesQuery.refetch();
   }
-  if (reasons.status === 'loading' || aggregates.status === 'loading') {
+
+  if (isPending) {
     return <Loading minHeight="300px" />;
   }
 
-  {
-    /* TODO: handle reload */
-  }
-  if (aggregates.status === 'error' || aggregates.status === 'error') {
-    return <ApiErrorBanner status="muted" />;
+  if (isError) {
+    return (
+      <Panel.Section>
+        <ApiErrorBanner reload={handleReload} status="muted" />
+      </Panel.Section>
+    );
   }
 
-  // TODO: This re-structuring is a holdover from Redux
-  const formattedData = { bounceReport: { reasons: reasons.data, aggregates: aggregates.data } };
-  const formattedReasons = selectReasons(formattedData);
-  const formattedAggregates = selectFormattedAggregates(formattedData);
+  // This re-structuring is a holdover from Redux - could we refactor selectors to be less opinionated?
+  const formattedData = {
+    bounceReport: { reasons: reasonsQuery.data, aggregates: aggregatesQuery.data },
+  };
+  const reasons = selectReasons(formattedData);
+  const aggregates = selectFormattedAggregates(formattedData);
 
-  return (
-    <BounceReasonTable
-      reasons={formattedReasons}
-      aggregates={formattedAggregates}
-      tableLoading={false}
-    />
-  );
+  return <BounceReasonTable reasons={reasons} aggregates={aggregates} tableLoading={false} />;
 }
 
 /**
@@ -53,29 +56,24 @@ export default function BounceReasonComparisonTab({ comparison }) {
  *
  * @param {Object} comparison - passed in comparison set by the user via the "Compare By" feature
  */
-function usePrepareRequestParameters(comparison) {
-  const formattedOptions = usePrepareRequest();
-  const formattedOptionsWithComparison = usePrepareComparisonRequest({
-    formattedOptions,
-    comparison,
-  });
-  const REASON_METRICS = getMetricsFromKeys(['count_bounce']);
-  const DELIVERABILITY_METRICS = getMetricsFromKeys([
-    'count_sent',
+function useRequestArguments(comparison) {
+  const deliverabilityMetrics = getMetricsFromKeys([
     'count_bounce',
     'count_inband_bounce',
     'count_outofband_bounce',
     'count_admin_bounce',
-    'count_targeted',
   ]);
-  const bounceReasonOptions = getQueryFromOptions({
-    ...formattedOptionsWithComparison,
-    metrics: REASON_METRICS,
-  });
-  const aggregatesOptions = getQueryFromOptions({
-    ...formattedOptionsWithComparison,
-    metrics: DELIVERABILITY_METRICS,
-  });
+  const bounceReasonMetrics = getMetricsFromKeys(['count_bounce']);
+  const sharedArguments = usePrepareQuery();
+  const comparisonArguments = getRequestArgumentsFromComparison(comparison);
+  const aggregatesArgs = {
+    ...getQueryFromOptions({ ...sharedArguments, metrics: deliverabilityMetrics }),
+    ...comparisonArguments,
+  };
+  const bounceReasonArgs = {
+    ...getQueryFromOptions({ ...sharedArguments, metrics: bounceReasonMetrics }),
+    ...comparisonArguments,
+  };
 
-  return { bounceReasonOptions, aggregatesOptions };
+  return [aggregatesArgs, bounceReasonArgs];
 }
