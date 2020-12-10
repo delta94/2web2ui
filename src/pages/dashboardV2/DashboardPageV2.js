@@ -33,7 +33,7 @@ import { useModal } from 'src/hooks';
 import ChangeReportModal from './components/ChangeReportModal';
 import moment from 'moment';
 import { getMetricsFromKeys } from 'src/helpers/metrics';
-import { CompareByAggregatedMetrics, AggregatedMetrics } from '../reportBuilder/components';
+import { CompareByAggregatedMetrics, AggregatedMetrics } from 'src/components';
 import { _getAggregateDataReportBuilder } from 'src/actions/summaryChart';
 import { usePrevious } from 'src/hooks';
 

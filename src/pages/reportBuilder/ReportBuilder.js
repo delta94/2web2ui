@@ -7,7 +7,13 @@ import { refreshReportBuilder } from 'src/actions/summaryChart';
 import { getSubscription } from 'src/actions/billing';
 import { list as getSubaccountsList } from 'src/actions/subaccounts';
 import { getReports } from 'src/actions/reports';
-import { Empty, Tabs, Loading } from 'src/components';
+import {
+  Empty,
+  Tabs,
+  Loading,
+  AggregatedMetrics,
+  CompareByAggregatedMetrics,
+} from 'src/components';
 import { Box, Button, Page, Panel, Tooltip } from 'src/components/matchbox';
 import {
   bounceTabMetrics,
@@ -16,14 +22,7 @@ import {
   linksTabMetrics,
 } from 'src/config/metrics';
 import { parseSearchNew as parseSearch } from 'src/helpers/reports';
-import {
-  Charts,
-  AggregatedMetrics,
-  CompareByAggregatedMetrics,
-  ReportOptions,
-  ReportTable,
-  SaveReportModal,
-} from './components';
+import { Charts, ReportOptions, ReportTable, SaveReportModal } from './components';
 import {
   BounceReasonsTable,
   DelayReasonsTable,

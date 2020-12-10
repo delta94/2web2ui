@@ -8,7 +8,7 @@ import { LegendCircle, Unit } from 'src/components';
 import Divider from 'src/components/divider';
 import { Box, Column, Columns, Inline, LabelValue, Stack } from 'src/components/matchbox';
 import { useSparkPostQuery } from 'src/hooks';
-import { FILTER_TYPES } from '../constants';
+import { FILTER_TYPES } from '../../pages/reportBuilder/constants';
 
 export default function CompareByAggregatedMetrics({ date, reportOptions }) {
   const { comparisons } = reportOptions;
