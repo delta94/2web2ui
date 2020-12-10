@@ -53,7 +53,7 @@ export function CustomTooltip(props) {
 }
 
 function RVUsageChart(props) {
-  const { data, end, start } = props;
+  const { data = [], end, start } = props;
 
   const filledData = React.useMemo(() => {
     return fillByDate({ dataSet: data, from: start, to: end });
