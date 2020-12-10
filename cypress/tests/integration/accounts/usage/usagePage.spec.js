@@ -56,6 +56,7 @@ describe('The usage page', () => {
       cy.findByText('Messaging Usage').should('be.visible');
       cy.findByText('Feature Usage').should('be.visible');
       cy.findByText('Recipient Validation Usage').should('be.visible');
+      cy.findByText('Feb 4th').should('be.visible');
     });
 
     it('does not render recipient validation section when the user has no RV usage', () => {
@@ -76,6 +77,25 @@ describe('The usage page', () => {
       cy.findByRole('heading', { name: 'Messaging Usage' }).should('be.visible');
       cy.findByRole('heading', { name: 'Feature Usage' }).should('be.visible');
       cy.findByRole('heading', { name: 'Recipient Validation Usage' }).should('not.be.visible');
+    });
+
+    it('does not render recipient validation usage chart when the request fails', () => {
+      cy.stubRequest({
+        url: '/api/v1/usage',
+        fixture: 'usage/200.get.no-results.json',
+        requestAlias: 'usageReq',
+      });
+
+      cy.stubRequest({
+        url: '/api/v1/usage/history',
+        statusCode: 400,
+        fixture: '400.json',
+        requestAlias: 'usageHistoryReq',
+      });
+
+      cy.visit(PAGE_URL);
+      cy.wait(['@usageReq', '@usageHistoryReq', '@subscriptionReq', '@accountReq']);
+      cy.findByText('Aug 18th').should('not.be.visible');
     });
 
     it('renders an error when a request fails, allowing the user to retry', () => {

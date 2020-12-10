@@ -3,6 +3,7 @@ import { Box, Text } from 'src/components/matchbox';
 import { tokens } from '@sparkpost/design-tokens-hibana';
 import { LegendCircle } from 'src/components';
 import { formatNumber } from 'src/helpers/units';
+import { fillByDate } from 'src/helpers/date';
 import totalRecipientValidationCost from 'src/helpers/recipientValidation';
 import { getTimeTickFormatter, getTooltipLabelFormatter } from 'src/helpers/chart.js';
 import LineChart from 'src/components/charts/LineChart';
@@ -52,13 +53,17 @@ export function CustomTooltip(props) {
 }
 
 function RVUsageChart(props) {
-  const { data } = props;
+  const { data, end, start } = props;
+
+  const filledData = React.useMemo(() => {
+    return fillByDate({ dataSet: data, from: start, to: end });
+  }, [data, start, end]);
 
   return (
     <LineChart
       height={200}
       lines={[{ dataKey: 'usage', stroke: tokens.color_blue_700 }]}
-      data={data}
+      data={filledData}
       showXAxis
       showTooltip
       xAxisKey="date"

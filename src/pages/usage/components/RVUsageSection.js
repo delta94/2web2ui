@@ -19,11 +19,11 @@ export default function RVUsageSection({ rvUsage, rvUsageHistory, usageHistorySt
     return (
       <Panel mb="-1px" data-id="rv-usage-chart">
         <Panel.Section>
-          <RVUsageChart data={rvUsageHistory} />
+          <RVUsageChart data={rvUsageHistory} start={rvUsage.month.start} end={rvUsage.month.end} />
         </Panel.Section>
       </Panel>
     );
-  }, [usageHistoryStatus, rvUsageHistory]);
+  }, [usageHistoryStatus, rvUsageHistory, rvUsage.month.start, rvUsage.month.end]);
 
   return (
     <>
