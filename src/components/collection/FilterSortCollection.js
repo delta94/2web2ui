@@ -57,6 +57,7 @@ const OGFilterSortCollection = ({
       bodyWrapper={TableBody}
       headerComponent={HeaderComponent}
       rowComponent={RowComponent}
+      getRowData={getRowData}
       rows={sortedRows}
       sortColumn={sortColumn}
       filterBox={filterBoxConfig}
@@ -137,11 +138,13 @@ const HibanaFilterSortCollection = ({
   const RowComponent = rowComponent
     ? rowComponent
     : props => <Table.Row rowData={getRowData(props)} />;
+
   const HeaderComponent = headerComponent
     ? headerComponent
     : columns
     ? () => <TableHeader columns={columns} />
     : () => null;
+
   const sortedRows = sortColumn ? _.orderBy(rows, sortColumn, sortDirection) : rows;
 
   return (
@@ -149,6 +152,7 @@ const HibanaFilterSortCollection = ({
       outerWrapper={WrapperComponent}
       bodyWrapper={TableBody}
       headerComponent={HeaderComponent}
+      getRowData={getRowData}
       rowComponent={RowComponent}
       rows={sortedRows}
       sortColumn={sortColumn}

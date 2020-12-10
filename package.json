@@ -13,6 +13,7 @@
     "start-app-hibana": "REACT_APP_DEFAULT_TO_HIBANA=true npm run start-app",
     "serve-app": "npx serve -s build",
     "build": "node scripts/build.js",
+    "build-hibana": "REACT_APP_DEFAULT_TO_HIBANA=true node scripts/build.js",
     "build-ci": "INSTRUMENT_CODE=true npm run build",
     "build-ci-hibana": "REACT_APP_DEFAULT_TO_HIBANA=true npm run build-ci",
     "analyze": "source-map-explorer build/static/js/main.*",

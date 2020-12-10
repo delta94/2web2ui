@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
 import CollectionPropTypes from './Collection.propTypes';
 import qs from 'query-string';
@@ -8,6 +9,7 @@ import FilterBox from './FilterBox';
 import { Empty } from 'src/components';
 import { objectSortMatch } from 'src/helpers/sortMatch';
 import styled from 'styled-components';
+import { Table } from 'src/components/matchbox';
 
 const StyledTd = styled.td`
   padding: 0;
@@ -34,6 +36,8 @@ export class Collection extends Component {
     this.setState({
       perPage: defaultPerPage,
       currentPage: Number(qs.parse(location.search).page) || 1,
+      filteredRows: null,
+      pattern: undefined,
     });
 
     if (filterBox.show && filterBox.initialValue) {
@@ -148,7 +152,10 @@ export class Collection extends Component {
   }
 
   render() {
+    // const { perPage, currentPage, filteredRows } = this.state;
     const {
+      rows,
+      getRowData,
       rowComponent: RowComponent,
       rowKeyName = 'id',
       headerComponent: HeaderComponent = NullComponent,
@@ -159,6 +166,20 @@ export class Collection extends Component {
     } = this.props;
     const filterBox = this.renderFilterBox();
     const visibleRows = this.getVisibleRows();
+
+    // if (!perPage || !currentPage) {
+    //   return <></>;
+    // }
+
+    // let areEqual = function() {
+    //   console.log('areEqual: ', arguments);
+    // };
+    // let MemoRowComponent = React.memo(RowComponent, areEqual);
+
+    // Why is this render method being called ~5 times when the modal opens?
+    // eslint-disable-next-line no-console
+    console.log('visibleRows: ', visibleRows);
+    // console.log('state: ', this.state);
 
     const collection = (
       <OuterWrapper>
@@ -171,14 +192,9 @@ export class Collection extends Component {
               </StyledTd>
             </tr>
           ) : (
-            visibleRows.map((row, i) => (
-              <RowComponent
-                key={`${row[rowKeyName] || 'row'}-${i}`}
-                {...row}
-                index={i}
-                isLast={visibleRows.length === i + 1} //Temporary. Would like to update the hook to include pagination
-              />
-            ))
+            visibleRows.map((row, i) => {
+              return <RowComponent key={row[rowKeyName]} {...row} index={i} />;
+            })
           )}
         </BodyWrapper>
       </OuterWrapper>
@@ -202,3 +218,52 @@ export class Collection extends Component {
 Collection.propTypes = CollectionPropTypes;
 
 export default withRouter(Collection);
+
+// BREAKS!
+// visibleRows.map((row, i) => {
+//   console.log('collection row: ', row);
+//   return <RowComponent key={row[rowKeyName]} {...row} index={i} />;
+// })
+
+// BREAKS!
+// visibleRows.map((row, i) => {
+//   console.log('collection row: ', row);
+//   return <RowComponent key={`${row[rowKeyName] || 'row'}-${i}`} {...row} index={i} />;
+// })
+
+// BREAKS!
+// visibleRows.map((row, i) => (
+//   <RowComponent
+//     key={`${row[rowKeyName] || 'row'}-${i}`}
+//     {...row}
+//     index={i}
+//     isLast={visibleRows.length === i + 1} // Temporary. Would like to update the hook to include pagination
+//   />
+// ))
+
+// WORKS!
+// visibleRows.map(row => (
+//   <Table.Row key={row[rowKeyName]}>
+//     {getRowData(row).map(i => (
+//       <td>{i}</td>
+//     ))}
+//   </Table.Row>
+// ))
+
+// WORKS!
+// visibleRows.map((row, i) => (
+//   <Table.Row key={`${i}`} >
+//     {getRowData(row).map(i => (
+//       <td>{i}</td>
+//     ))}
+//   </Table.Row>
+// ))
+
+// WORKS!
+// visibleRows.map((row, i) => (
+//   <Table.Row key={`${i}`} rowData={getRowData(row)}></Table.Row>
+// ))
+
+// visibleRows.map((row, i) => {
+//   return <Table.Row key={`${i}`} rowData={getRowData(row)}></Table.Row>;
+// })

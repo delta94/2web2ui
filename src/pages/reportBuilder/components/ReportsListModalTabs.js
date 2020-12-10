@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { MoreHoriz, PushPin } from '@sparkpost/matchbox-icons';
 import styled from 'styled-components';
-import { TableCollection, Subaccount } from 'src/components';
+import { TableCollection, Collection, TmpCollection, Subaccount } from 'src/components';
 import {
   ActionList,
   Box,
@@ -137,6 +138,7 @@ export const MyReportsTab = ({
     <TableCollection
       rows={myReports}
       columns={myReportColumnHeaders}
+      rowComponenet={props => <Table.Row rowData={myReportsColumns(props)} />}
       getRowData={myReportsColumns}
       wrapperComponent={Table}
       filterBox={{
@@ -150,6 +152,58 @@ export const MyReportsTab = ({
     />
   );
 };
+
+/**
+ * PASSES:
+ <table>
+  <thead></thead>
+  <tbody>
+    {reports.map(report => {
+      return (
+        <tr id={`report-${report.id}`}>
+          {myReportsColumns(report).map(i => (
+            <td>{i}</td>
+          ))}
+        </tr>
+      );
+    })}
+  </tbody>
+</table>
+*/
+
+/**
+ * Detached from the Dom error:
+ <TmpCollection rowComponent={TableRow} rows={myReports} />
+
+ */
+
+/**
+ * Detached from the DOM error:
+<Collection
+      outerWrapper={Table}
+      bodyWrapper={TableBody}
+      rowComponent={TableRow}
+      rows={myReports}
+    />
+ */
+
+/**
+ * Detached from the DOM error:
+ <TableCollection
+  rows={myReports}
+  columns={myReportColumnHeaders}
+  getRowData={myReportsColumns}
+  wrapperComponent={Table}
+  filterBox={{
+    label: '',
+    show: true,
+    itemToStringKeys: ['name', 'modified'],
+    exampleModifiers: ['name', 'modified'],
+    maxWidth: '1250',
+    wrapper: FilterBoxWrapper,
+  }}
+/>
+*/
 
 export const AllReportsTab = ({
   reports,

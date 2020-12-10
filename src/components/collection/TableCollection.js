@@ -72,9 +72,22 @@ class TableCollection extends Component {
             sortDirection={sortDirection}
           />
         );
+
+    // original
     const TableRow = rowComponent
       ? rowComponent
       : props => <Table.Row rowData={getRowData(props)} />;
+
+    // without Table.Row (that doesnt seem to matter though)
+    // const TableRow = rowComponent
+    //   ? rowComponent
+    //   : props => (
+    //       <tr>
+    //         {getRowData(props).map(i => (
+    //           <td>{i}</td>
+    //         ))}
+    //       </tr>
+    //     );
 
     const sortedRows = sortColumn ? _.orderBy(rows, sortColumn, sortDirection) : rows;
 
@@ -84,6 +97,7 @@ class TableCollection extends Component {
         headerComponent={HeaderComponent}
         bodyWrapper={TableBody}
         rowComponent={TableRow}
+        getRowData={getRowData}
         {...this.props}
         rows={sortedRows}
         sortColumn={sortColumn}

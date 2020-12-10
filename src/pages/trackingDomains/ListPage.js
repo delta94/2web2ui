@@ -43,6 +43,7 @@ export class ListPage extends Component {
         <Collection
           rows={trackingDomains || []}
           rowComponent={props => <TrackingDomainRow {...props} verifying={verifying} />}
+          // getRowData={getRowData} // TODO:replace rowComponent
           rowKeyName="domain"
           outerWrapper={Panel.LEGACY}
           pagination={true}
