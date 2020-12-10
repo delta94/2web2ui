@@ -192,9 +192,9 @@ export class Collection extends Component {
               </StyledTd>
             </tr>
           ) : (
-            visibleRows.map((row, i) => {
-              return <RowComponent key={row[rowKeyName]} {...row} index={i} />;
-            })
+            visibleRows.map((row, i) => (
+              <Table.Row key={`${i}`} rowData={getRowData(row)}></Table.Row>
+            ))
           )}
         </BodyWrapper>
       </OuterWrapper>
