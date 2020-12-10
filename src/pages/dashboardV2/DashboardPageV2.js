@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { Code, ChatBubble, LightbulbOutline, ShowChart, Sync } from '@sparkpost/matchbox-icons';
 import SendingMailWebp from '@sparkpost/matchbox-media/images/Sending-Mail.webp';
 import SendingMail from '@sparkpost/matchbox-media/images/Sending-Mail@medium.jpg';
@@ -33,6 +34,9 @@ import ChangeReportModal from './components/ChangeReportModal';
 import moment from 'moment';
 import { getMetricsFromKeys } from 'src/helpers/metrics';
 import { CompareByAggregatedMetrics, AggregatedMetrics } from '../reportBuilder/components';
+import { _getAggregateDataReportBuilder } from 'src/actions/summaryChart';
+import { usePrevious } from 'src/hooks';
+
 const OnboardingImg = styled(Picture.Image)`
   vertical-align: bottom;
 `;
@@ -69,9 +73,24 @@ export default function DashboardPageV2() {
     getReports();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const dispatch = useDispatch();
+
   const { closeModal, openModal, isModalOpen } = useModal();
 
   const { pinnedReport } = usePinnedReport(onboarding);
+
+  const prevReportOptions = usePrevious(pinnedReport.options);
+
+  useEffect(() => {
+    if (!pinnedReport.loading && !_.isEqual(prevReportOptions, pinnedReport.options))
+      dispatch(
+        _getAggregateDataReportBuilder({
+          ...pinnedReport.options,
+          filters: pinnedReport.options.filters,
+        }),
+      );
+  }, [dispatch, pinnedReport.loading, pinnedReport.options, prevReportOptions]);
 
   const dateValue = `${moment(pinnedReport?.options?.from).format('MMM Do')} - ${moment(
     pinnedReport?.options?.to,
@@ -111,9 +130,11 @@ export default function DashboardPageV2() {
                       <TranslatableText>Change Report</TranslatableText> <Sync size={25} />
                     </Panel.Action>
                   </Panel.Header>
-                  <Panel.Section>
-                    <ChartGroups reportOptions={pinnedReport.options} p="0" />
-                  </Panel.Section>
+                  {!pinnedReport.loading && (
+                    <Panel.Section>
+                      <ChartGroups reportOptions={pinnedReport.options} p="0" />
+                    </Panel.Section>
+                  )}
                   {pinnedReport.options.comparisons.length > 0 ? (
                     <CompareByAggregatedMetrics
                       date={dateValue}
