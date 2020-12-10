@@ -31,7 +31,8 @@ import {
 } from './components';
 
 import {
-  BounceReasonsTable,
+  BounceReasonTab,
+  BounceReasonComparisonTab,
   DelayReasonsTable,
   LinksTable,
   RejectionReasonsTable,
@@ -273,7 +274,7 @@ export function ReportBuilder({
 
               {hasBounceTab && (
                 <Tabs.Item>
-                  <BounceReasonsTable />
+                  <BounceReasonTab />
                 </Tabs.Item>
               )}
 
@@ -299,7 +300,9 @@ export function ReportBuilder({
                 ? reportOptions.comparisons.map((comparison, comparisonIndex) => {
                     return (
                       <Tabs.Item key={`tab-${comparison.value}-${comparisonIndex}`}>
-                        {hasBounceMetrics ? <BounceReasonsTable /> : null}
+                        {hasBounceMetrics ? (
+                          <BounceReasonComparisonTab comparison={comparison} />
+                        ) : null}
 
                         {hasRejectionTab ? <RejectionReasonsTable /> : null}
 

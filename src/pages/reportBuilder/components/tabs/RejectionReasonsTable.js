@@ -8,7 +8,7 @@ import {
   LoadingWrapper,
   TableCollectionBody,
   TableWrapper,
-} from './Wrappers';
+} from '../Wrappers';
 import { useReportBuilderContext } from '../../context/ReportBuilderContext';
 
 const filterBoxConfig = {
