@@ -5,6 +5,7 @@ import { Loading, ApiErrorBanner, DeleteModal, ConfirmationModal } from 'src/com
 import { Setup } from 'src/components/images';
 import { PageLink } from 'src/components/links';
 import TestCollection from './components/TestCollection';
+import InfoBanner from './components/InfoBanner';
 
 export class ListPage extends Component {
   state = {
@@ -90,6 +91,7 @@ export class ListPage extends Component {
           content: <p>Create and run A/B tests to boost your engagement.</p>,
         }}
       >
+        <InfoBanner />
         {error ? this.renderError() : this.renderCollection()}
         <DeleteModal
           open={this.state.showDeleteModal}
