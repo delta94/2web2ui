@@ -110,5 +110,24 @@ describe('The usage page', () => {
       cy.findByRole('heading', { name: 'Feature Usage' }).should('be.visible');
       cy.findByRole('heading', { name: 'Recipient Validation Usage' }).should('be.visible');
     });
+
+    it('renders the messaging usage chart correctly', () => {
+      cy.stubRequest({
+        url: '/api/v1/usage',
+        fixture: 'usage/200.get.json',
+        requestAlias: 'usageReq',
+      });
+
+      cy.stubRequest({
+        url: '/api/v1/usage/history',
+        fixture: 'usage/history/200.get.json',
+        requestAlias: 'usageHistoryReq',
+      });
+
+      cy.visit(PAGE_URL);
+      cy.wait(['@usageReq', '@usageHistoryReq', '@subscriptionReq', '@accountReq']);
+      cy.findByText('Dec 29th').should('be.visible');
+      cy.findByText('80K').should('be.visible');
+    });
   }
 });
