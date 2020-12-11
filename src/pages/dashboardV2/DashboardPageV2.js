@@ -104,9 +104,7 @@ export default function DashboardPageV2() {
         <Heading as="h1">Dashboard</Heading>
       </ScreenReaderOnly>
 
-      {isModalOpen && (
-        <ChangeReportModal open={isModalOpen} onClose={closeModal} reports={allReports} />
-      )}
+      <ChangeReportModal open={isModalOpen} onClose={closeModal} reports={allReports} />
 
       <Stack>
         {currentUser?.first_name && (
@@ -143,7 +141,7 @@ export default function DashboardPageV2() {
                   ) : (
                     <AggregatedMetrics
                       date={dateValue}
-                      processedMetrics={getMetricsFromKeys(pinnedReport?.options?.metrics)}
+                      processedMetrics={getMetricsFromKeys(pinnedReport.options.metrics, true)}
                     />
                   )}
                 </Dashboard.Panel>
