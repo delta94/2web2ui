@@ -23,7 +23,11 @@ import {
 } from 'src/components/matchbox';
 import { Bold, Heading, TranslatableText } from 'src/components/text';
 import { ExternalLink, PageLink, SupportTicketLink } from 'src/components/links';
-import { ChartGroups } from 'src/pages/reportBuilder/components/Charts';
+import {
+  ChartGroups,
+  CompareByAggregatedMetrics,
+  AggregatedMetrics,
+} from 'src/components/reportBuilder';
 import { usePinnedReport } from 'src/hooks';
 import useDashboardContext from './hooks/useDashboardContext';
 import Dashboard from './components/Dashboard';
@@ -33,7 +37,6 @@ import { useModal } from 'src/hooks';
 import ChangeReportModal from './components/ChangeReportModal';
 import moment from 'moment';
 import { getMetricsFromKeys } from 'src/helpers/metrics';
-import { CompareByAggregatedMetrics, AggregatedMetrics } from 'src/components';
 import { _getAggregateDataReportBuilder } from 'src/actions/summaryChart';
 import { usePrevious } from 'src/hooks';
 
