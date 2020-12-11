@@ -67,7 +67,10 @@ export default function usePinnedReport(onboarding) {
       isReady: true,
       filters: hydrateFilters(options.filters, { subaccounts }),
     });
-    pinnedReport.linkToReportBuilder = `/signals/analytics?${report.query_string}&report=${pinnedReportId}`;
+
+    pinnedReport.linkToReportBuilder = report.query_string.includes('report=')
+      ? `/signals/analytics?${report.query_string}`
+      : `/signals/analytics?${report.query_string}&report=${pinnedReportId}`;
   } else {
     pinnedReport.name = defaultReportName;
     pinnedReport.options = reportOptionsWithDates({

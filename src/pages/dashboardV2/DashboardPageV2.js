@@ -129,9 +129,7 @@ export default function DashboardPageV2() {
                     </Panel.Action>
                   </Panel.Header>
                   {!pinnedReport.loading && (
-                    <Panel.Section>
-                      <ChartGroups reportOptions={pinnedReport.options} p="0" />
-                    </Panel.Section>
+                    <ChartGroups reportOptions={pinnedReport.options} p="0" />
                   )}
                   {pinnedReport.options.comparisons.length > 0 ? (
                     <CompareByAggregatedMetrics
