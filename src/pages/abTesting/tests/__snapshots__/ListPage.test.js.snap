@@ -196,14 +196,7 @@ exports[`Page: A/B Test List should render error when it fails 1`] = `
   <ApiErrorBanner
     errorDetails="this failed"
     message="Sorry, we seem to have had some trouble loading your A/B tests."
-    reload={
-      [MockFunction] {
-        "calls": Array [
-          Array [],
-        ],
-        "results": undefined,
-      }
-    }
+    reload={[MockFunction]}
   />
   <DeleteModal
     content={
