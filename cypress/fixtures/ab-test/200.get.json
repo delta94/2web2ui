@@ -1,0 +1,136 @@
+{
+  "results": [
+    {
+      "id": "verify-create-stg",
+      "name": "Test stg save as draft",
+      "version": 1,
+      "status": "draft",
+      "metric": "count_unique_clicked",
+      "audience_selection": "sample_size",
+      "total_sample_size": "1",
+      "test_mode": "learning",
+      "confidence_level": 0.95,
+      "engagement_timeout": "1",
+      "default_template": {
+        "template_id": "winning-template2"
+      },
+      "created_at": "2018-07-31T21:49:48.276Z",
+      "updated_at": "2018-08-02T14:51:55.526Z",
+      "subaccount_id": 103
+    },
+    {
+      "id": "verificationtimeouts1",
+      "name": "AB_TEST",
+      "version": 1,
+      "status": "cancelled",
+      "metric": "count_unique_confirmed_opened",
+      "audience_selection": "percent",
+      "start_time": "2020-10-07T20:00:36.475Z",
+      "end_time": "2020-10-07T21:25:00.000Z",
+      "test_mode": "learning",
+      "confidence_level": 0.95,
+      "engagement_timeout": 1,
+      "default_template": {
+        "template_id": "default_1",
+        "count_accepted": 0,
+        "engagement_rate": 0,
+        "percent": 50.5,
+        "count_unique_confirmed_opened": 0
+      },
+      "variants": [
+        {
+          "template_id": "variant1",
+          "count_accepted": 0,
+          "engagement_rate": 0,
+          "percent": 25,
+          "count_unique_confirmed_opened": 0
+        },
+        {
+          "template_id": "variant2",
+          "count_accepted": 0,
+          "engagement_rate": 0,
+          "percent": 24.5,
+          "count_unique_confirmed_opened": 0
+        }
+      ],
+      "created_at": "2020-10-07T20:00:36.475Z",
+      "updated_at": "2020-10-07T20:01:13.129Z"
+    },
+    {
+      "id": "verificationtimeouts12",
+      "name": "AB_TEST",
+      "version": 1,
+      "status": "cancelled",
+      "metric": "count_unique_confirmed_opened",
+      "audience_selection": "percent",
+      "start_time": "2020-10-07T20:00:40.227Z",
+      "end_time": "2020-10-07T21:25:00.000Z",
+      "test_mode": "learning",
+      "confidence_level": 0.95,
+      "engagement_timeout": 1,
+      "default_template": {
+        "template_id": "default_1",
+        "count_accepted": 0,
+        "engagement_rate": 0,
+        "percent": 50.5,
+        "count_unique_confirmed_opened": 0
+      },
+      "variants": [
+        {
+          "template_id": "variant1",
+          "count_accepted": 0,
+          "engagement_rate": 0,
+          "percent": 25,
+          "count_unique_confirmed_opened": 0
+        },
+        {
+          "template_id": "variant2",
+          "count_accepted": 0,
+          "engagement_rate": 0,
+          "percent": 24.5,
+          "count_unique_confirmed_opened": 0
+        }
+      ],
+      "created_at": "2020-10-07T20:00:40.228Z",
+      "updated_at": "2020-10-07T20:01:10.720Z"
+    },
+    {
+      "id": "verificationtimeouts123",
+      "name": "AB_TEST",
+      "version": 1,
+      "status": "cancelled",
+      "metric": "count_unique_confirmed_opened",
+      "audience_selection": "percent",
+      "start_time": "2020-10-07T20:00:42.084Z",
+      "end_time": "2020-10-07T21:25:00.000Z",
+      "test_mode": "learning",
+      "confidence_level": 0.95,
+      "engagement_timeout": 1,
+      "default_template": {
+        "template_id": "default_1",
+        "count_accepted": 0,
+        "engagement_rate": 0,
+        "percent": 50.5,
+        "count_unique_confirmed_opened": 0
+      },
+      "variants": [
+        {
+          "template_id": "variant1",
+          "count_accepted": 0,
+          "engagement_rate": 0,
+          "percent": 25,
+          "count_unique_confirmed_opened": 0
+        },
+        {
+          "template_id": "variant2",
+          "count_accepted": 0,
+          "engagement_rate": 0,
+          "percent": 24.5,
+          "count_unique_confirmed_opened": 0
+        }
+      ],
+      "created_at": "2020-10-07T20:00:42.084Z",
+      "updated_at": "2020-10-07T20:01:08.223Z"
+    }
+  ]
+}

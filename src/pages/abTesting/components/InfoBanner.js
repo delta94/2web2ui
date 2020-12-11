@@ -4,7 +4,6 @@ import { Banner, Picture } from 'src/components/matchbox';
 import ConfigurationWebp from '@sparkpost/matchbox-media/images/Configuration.webp';
 import { updateUserUIOptions } from 'src/actions/currentUser';
 import { isUserUiOptionSet } from 'src/helpers/conditions/user';
-
 export default function InfoBanner() {
   const [dismiss, setDismiss] = useState(
     useSelector(state => isUserUiOptionSet('onboardingV2.abTestingBannerDismissed')(state)),
@@ -39,7 +38,7 @@ export default function InfoBanner() {
         external
         variant="outline"
       >
-        A/b Testing Documentation
+        A/B Testing Documentation
       </Banner.Action>
       <Banner.Media>
         <Picture seeThrough>
