@@ -38,4 +38,20 @@ describe('Banner', () => {
       expect(subject).toThrowError();
     });
   });
+  describe('Banner.Media', () => {
+    const subject = () => shallow(<Banner.Media />);
+
+    it('renders when Hibana is enabled', () => {
+      useHibana.mockImplementationOnce(() => [{ isHibanaEnabled: true }]);
+      const wrapper = subject();
+
+      expect(wrapper).toExist();
+    });
+
+    it('throws an error when Hibana is not enabled', () => {
+      useHibana.mockImplementationOnce(() => [{ isHibanaEnabled: false }]);
+
+      expect(subject).toThrowError();
+    });
+  });
 });

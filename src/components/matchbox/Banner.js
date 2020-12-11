@@ -66,12 +66,22 @@ function Action(props) {
   return <HibanaBanner.Action {...props} />;
 }
 
+function Media(props) {
+  const [state] = useHibana();
+  const { isHibanaEnabled } = state;
+
+  if (!isHibanaEnabled) throw new Error('Banner.Media can only be used when Hibana is enabled.');
+
+  return <HibanaBanner.Media {...props} />;
+}
 OGBanner.displayName = 'OGBanner';
 HibanaBanner.displayName = 'HibanaBanner';
 Actions.displayName = 'Banner.Actions';
 Action.displayName = 'Banner.Action';
+Media.displayName = 'Banner.Media';
 
 Banner.Actions = Actions;
 Banner.Action = Action;
+Banner.Media = Media;
 
 export default Banner;
