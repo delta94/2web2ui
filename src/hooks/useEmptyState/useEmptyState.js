@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import { segmentTrack, SEGMENT_EVENTS } from 'src/helpers/segment';
 
 export default function useEmptyState(isEmpty, Page, EmptyState) {
