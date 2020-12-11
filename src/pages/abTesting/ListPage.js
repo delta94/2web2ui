@@ -91,7 +91,7 @@ export class ListPage extends Component {
           content: <p>Create and run A/B tests to boost your engagement.</p>,
         }}
       >
-        <InfoBanner />
+        {this.props.isEmptyStateEnabled && this.props.isHibanaEnabled && <InfoBanner />}
         {error ? this.renderError() : this.renderCollection()}
         <DeleteModal
           open={this.state.showDeleteModal}
