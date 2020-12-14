@@ -106,14 +106,16 @@ export default function SendingAndBounceDomainSection({ domain, isSectionVisible
           <form onSubmit={handleSubmit(onSubmit)} id="sendingbounceForm">
             {!readyFor.dkim || !readyFor.bounce ? (
               <Panel.Section>
-                <span>Add the&nbsp;</span>
-                <Bold>TXT</Bold>
-                <span>&nbsp;and&nbsp;</span>
-                <Bold>{watchVerificationType}&nbsp;</Bold>
-                <span>
-                  records, Hostnames, and Values for this domain in the settings section of your DNS
-                  provider.
-                </span>
+                <p>
+                  <span>Add the&nbsp;</span>
+                  <Bold>TXT</Bold>
+                  <span>&nbsp;and&nbsp;</span>
+                  <Bold>{watchVerificationType}&nbsp;</Bold>
+                  <span>
+                    records, Hostnames, and Values for this domain in the settings section of your
+                    DNS provider.
+                  </span>
+                </p>
                 <Panel.Action
                   component={ExternalLink}
                   external="true"

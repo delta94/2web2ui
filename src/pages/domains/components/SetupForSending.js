@@ -78,14 +78,16 @@ export default function SetupForSending({ domain, isSectionVisible }) {
           <Panel mb="0">
             {!readyFor.dkim ? (
               <Panel.Section>
-                <span>Add these&nbsp;</span>
-                <Text as="span" fontWeight="semibold">
-                  TXT&nbsp;
-                </Text>
-                <span>
-                  records, Hostnames, and Values for this domain in the settings section of your DNS
-                  provider.
-                </span>
+                <p>
+                  <span>Add these&nbsp;</span>
+                  <Text as="span" fontWeight="semibold">
+                    TXT&nbsp;
+                  </Text>
+                  <span>
+                    records, Hostnames, and Values for this domain in the settings section of your
+                    DNS provider.
+                  </span>
+                </p>
                 <Panel.Action
                   component={ExternalLink}
                   external="true"

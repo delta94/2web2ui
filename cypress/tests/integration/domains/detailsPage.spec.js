@@ -330,6 +330,42 @@ describe('The domains details page', () => {
           cy.findByRole('heading', { name: 'Link Tracking Domain' }).should('not.be.visible');
           cy.findByRole('heading', { name: 'Delete Domain' }).should('be.visible');
           cy.findByRole('button', { name: 'Verify Domain' }).should('be.visible');
+
+          cy.get('p')
+            .contains(
+              'Add these TXT records, Hostnames, and Values for this domain in the settings section of your DNS provider.',
+            )
+            .should('be.visible');
+
+          cy.findByRole('button', { name: 'Verify Domain' }).click();
+
+          cy.findAllByText(
+            'Please confirm you have added the records to your DNS provider.',
+          ).should('be.visible');
+
+          cy.findAllByLabelText('The TXT record has been added to the DNS provider.').click({
+            force: true,
+          });
+
+          cy.findAllByText(
+            'Please confirm you have added the records to your DNS provider.',
+          ).should('not.be.visible');
+
+          cy.get('p')
+            .contains(
+              'Add the CNAME record, Hostname, and Value for this domain in the settings section of your DNS provider.',
+            )
+            .should('be.visible');
+
+          cy.findByRole('button', { name: 'Verify Bounce' }).click();
+
+          cy.findAllByLabelText('The CNAME record has been added to the DNS provider.').click({
+            force: true,
+          });
+
+          cy.findAllByText(
+            'Please confirm you have added the records to your DNS provider.',
+          ).should('not.be.visible');
         });
 
         it('unverified domain renders success message on Verifying Dkim for domain', () => {

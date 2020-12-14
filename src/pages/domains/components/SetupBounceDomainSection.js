@@ -84,14 +84,16 @@ export default function SetupBounceDomainSection({ domain, isSectionVisible, tit
         <Panel mb="0">
           {!readyFor.bounce ? (
             <Panel.Section>
-              <span>Add the&nbsp;</span>
-              <Text as="span" fontWeight="semibold">
-                CNAME&nbsp;
-              </Text>
-              <span>
-                record, Hostname and Value for this domain in the settings section of your DNS
-                provider.
-              </span>
+              <p>
+                <span>Add the&nbsp;</span>
+                <Text as="span" fontWeight="semibold">
+                  CNAME&nbsp;
+                </Text>
+                <span>
+                  record, Hostname, and Value for this domain in the settings section of your DNS
+                  provider.
+                </span>
+              </p>
               <Panel.Action
                 component={ExternalLink}
                 external="true"
