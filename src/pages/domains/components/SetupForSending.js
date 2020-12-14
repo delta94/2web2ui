@@ -127,7 +127,7 @@ export default function SetupForSending({ domain, isSectionVisible }) {
                       }
                       name="ack-checkbox-dkim"
                       ref={register({ required: true })}
-                      label={<>The TXT record has been added to the DNS provider</>}
+                      label="The TXT record has been added to the DNS provider."
                     />
                   </>
                 )}

@@ -87,7 +87,7 @@ export default function TrackingDnsSection({ domain, isSectionVisible, title }) 
                   mb="100"
                   name="ack-checkbox-tracking"
                   ref={register({ required: true })}
-                  label={<>The CNAME record has been added to the DNS provider</>}
+                  label={<>The CNAME record has been added to the DNS provider.</>}
                 />
               )}
             </Panel.Section>

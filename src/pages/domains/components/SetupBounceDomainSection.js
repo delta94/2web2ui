@@ -184,7 +184,7 @@ export default function SetupBounceDomainSection({ domain, isSectionVisible, tit
                     'Please confirm you have added the records to your DNS provider.'
                   }
                   name="ack-checkbox-bounce"
-                  label={`The ${watchVerificationType} record has been added to the DNS provider`}
+                  label={`The ${watchVerificationType} record has been added to the DNS provider.`}
                   disabled={verifyBounceLoading}
                   ref={register({ required: true })}
                 />
