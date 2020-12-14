@@ -49,11 +49,9 @@ describe('The verify sending domain page', () => {
 
         cy.wait(['@accountDomainsReq', '@unverifieddkimSendingDomains']);
 
-        cy.findAllByText('The TXT record has been added to the DNS provider').should('be.visible');
+        cy.findAllByText('The TXT record has been added to the DNS provider.').should('be.visible');
 
-        cy.findByRole('button', { name: 'Verify Domain' }).should('be.disabled');
-
-        cy.findByLabelText('The TXT record has been added to the DNS provider').check({
+        cy.findByLabelText('The TXT record has been added to the DNS provider.').check({
           force: true,
         });
 
