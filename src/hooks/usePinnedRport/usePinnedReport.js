@@ -17,6 +17,14 @@ export default function usePinnedReport(onboarding) {
   const dispatch = useDispatch();
   const isFirstRender = useRef(true);
 
+  useEffect(() => {
+    if (onboarding === 'analytics') {
+      isFirstRender.current = false; //used this to prevent triggering the getAggregateTable action on first render since loading state is false in reducer initially
+      dispatch(listSubaccounts());
+      dispatch(getReports());
+    }
+  }, [dispatch, onboarding]);
+
   const { list: reports, listLoading: reportsLoading } = useSelector(state => state.reports);
 
   const { list: subaccounts, listLoading: subaccountsLoading } = useSelector(
@@ -26,24 +34,13 @@ export default function usePinnedReport(onboarding) {
     selectCondition(isUserUiOptionSet('pinned_report_id'))(state),
   );
 
-  useEffect(() => {
-    if (onboarding === 'analytics') {
-      isFirstRender.current = false; //used this to prevent triggering the getAggregateTable action on first render since loading state is false in reducer initially
-      dispatch(listSubaccounts());
-      dispatch(getReports());
-    }
-  }, [dispatch, onboarding]);
-
-  const getRelativeDateRange = ({ relativeRange, precision }) => {
-    const { from, to } = getRelativeDates(relativeRange, {
-      precision: precision,
-    });
-    return { from, to };
-  };
   const reportOptionsWithDates = reportOptions => {
+    const { relativeRange, precision } = reportOptions;
+    const { from, to } = getRelativeDates(relativeRange, { precision });
     return {
       ...reportOptions,
-      ...getRelativeDateRange(reportOptions),
+      from,
+      to,
     };
   };
 
