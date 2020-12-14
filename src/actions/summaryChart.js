@@ -132,11 +132,6 @@ export function _getAggregateDataReportBuilder(updates) {
     // Get selected metrics
     const activeMetrics = metrics || state.summaryChart.metrics;
 
-    // Gets filters and metrics for params
-    if (!params) {
-      params = getQueryFromOptions({ ...state.reportOptions, metrics: activeMetrics });
-    }
-
     const options = {
       type: 'FETCH_AGGREGATE_DATA',
       path: 'deliverability',
