@@ -28,6 +28,7 @@ import {
   CompareByAggregatedMetrics,
   AggregatedMetrics,
 } from 'src/components/reportBuilder';
+import { getFormattedDateRangeForAggregateData } from 'src/helpers/date';
 import { usePinnedReport } from 'src/hooks';
 import useDashboardContext from './hooks/useDashboardContext';
 import Dashboard from './components/Dashboard';
@@ -35,7 +36,6 @@ import Sidebar from './components/Sidebar';
 import { LINKS } from 'src/constants';
 import { useModal } from 'src/hooks';
 import ChangeReportModal from './components/ChangeReportModal';
-import moment from 'moment';
 import { getMetricsFromKeys } from 'src/helpers/metrics';
 import { _getAggregateDataReportBuilder } from 'src/actions/summaryChart';
 import { usePrevious } from 'src/hooks';
@@ -95,10 +95,10 @@ export default function DashboardPageV2() {
       );
   }, [dispatch, pinnedReport.loading, pinnedReport.options, prevReportOptions]);
 
-  const dateValue = `${moment(pinnedReport?.options?.from).format('MMM Do')} - ${moment(
+  const dateValue = getFormattedDateRangeForAggregateData(
+    pinnedReport?.options?.from,
     pinnedReport?.options?.to,
-  ).format('MMM Do, YYYY')}`;
-
+  );
   if (pending) return <Loading />;
 
   return (

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import moment from 'moment';
 import { Error } from '@sparkpost/matchbox-icons';
 import { refreshReportBuilder } from 'src/actions/summaryChart';
 import { getSubscription } from 'src/actions/billing';
@@ -22,6 +21,7 @@ import {
   linksTabMetrics,
 } from 'src/config/metrics';
 import { parseSearchNew as parseSearch } from 'src/helpers/reports';
+import { getFormattedDateRangeForAggregateData } from 'src/helpers/date';
 import { Charts, ReportOptions, ReportTable, SaveReportModal } from './components';
 import {
   BounceReasonsTable,
@@ -151,7 +151,7 @@ export function ReportBuilder({
   }, [tabs]);
 
   const { to, from } = summarySearchOptions;
-  const dateValue = `${moment(from).format('MMM Do')} - ${moment(to).format('MMM Do, YYYY')}`;
+  const dateValue = getFormattedDateRangeForAggregateData(from, to);
 
   if (!reportOptions.isReady) {
     return <Loading />;
