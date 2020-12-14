@@ -50,10 +50,10 @@ describe('The verify sending/bounce domain page', () => {
         cy.findByRole('heading', { name: 'DNS Verification' }).should('be.visible');
         cy.findByRole('heading', { name: 'Add DKIM Record' }).should('be.visible');
         cy.findByRole('heading', { name: 'Add Bounce Record' }).should('be.visible');
-        cy.findByRole('button', { name: 'Authenticate Domain' }).should('be.visible');
+        cy.findByRole('button', { name: 'Verify Domain' }).should('be.visible');
       });
 
-      it('clicking on the Authenticate Domain renders success message on succesful verification of dkim and cname of domain and renders correct section titles after', () => {
+      it('clicking on the Verify Domain renders success message on succesful verification of dkim and cname of domain and renders correct section titles after', () => {
         cy.stubRequest({
           url: '/api/v1/sending-domains/sending-bounce.net',
           fixture: 'sending-domains/200.get.unverified-dkim-bounce.json',
@@ -68,10 +68,10 @@ describe('The verify sending/bounce domain page', () => {
 
         cy.visit('/domains/details/sending-bounce.net/verify-sending-bounce');
         cy.wait(['@accountDomainsReq', '@unverifiedDkimBounce']);
-        cy.findByLabelText('The TXT and CNAME records have been added to the DNS provider').check({
+        cy.findByLabelText('The TXT and CNAME records have been added to the DNS provider.').check({
           force: true,
         });
-        cy.findByRole('button', { name: 'Authenticate Domain' }).click();
+        cy.findByRole('button', { name: 'Verify Domain' }).click();
         cy.wait('@verifyDomain');
         cy.findAllByText('You have successfully verified DKIM record of sending-bounce.net').should(
           'be.visible',
@@ -83,7 +83,7 @@ describe('The verify sending/bounce domain page', () => {
         cy.findByRole('heading', { name: 'CNAME record for Bounce' }).should('be.visible');
       });
 
-      it('Authenticate Domain submit button is disabled until the user selects the confirmation checkbox', () => {
+      it('Verify Domain submit button is displays an error message until the user selects the confirmation checkbox', () => {
         cy.stubRequest({
           url: '/api/v1/sending-domains/sending-bounce.net',
           fixture: 'sending-domains/200.get.unverified-dkim-bounce.json',
@@ -93,21 +93,30 @@ describe('The verify sending/bounce domain page', () => {
         cy.visit('/domains/details/sending-bounce.net/verify-sending-bounce');
         cy.wait(['@accountDomainsReq', '@unverifiedDkimBounce']);
 
-        cy.findByRole('button', { name: 'Authenticate Domain' }).should('be.visible');
-        cy.findAllByText('The TXT and CNAME records have been added to the DNS provider').should(
+        cy.findByRole('button', { name: 'Verify Domain' }).should('be.visible');
+
+        cy.findAllByText('The TXT and CNAME records have been added to the DNS provider.').should(
           'be.visible',
         );
-        cy.findAllByText('The TXT and CNAME records have been added to the DNS provider').should(
+        cy.findAllByText('The TXT and CNAME records have been added to the DNS provider.').should(
           'not.be.checked',
         );
-        cy.findByRole('button', { name: 'Authenticate Domain' }).should('be.disabled');
 
-        cy.findByLabelText('The TXT and CNAME records have been added to the DNS provider').check({
+        cy.findByRole('button', { name: 'Verify Domain' }).click({ force: true });
+
+        cy.findAllByText('Please confirm you have added the records to your DNS provider.').should(
+          'be.visible',
+        );
+
+        cy.findByLabelText('The TXT and CNAME records have been added to the DNS provider.').check({
           force: true,
         });
 
-        cy.findByRole('button', { name: 'Authenticate Domain' }).should('not.be.disabled');
-        cy.findByRole('button', { name: 'Authenticate Domain' }).click();
+        cy.findAllByText('Please confirm you have added the records to your DNS provider.').should(
+          'not.be.visible',
+        );
+
+        cy.findByRole('button', { name: 'Verify Domain' }).click();
       });
     });
   }

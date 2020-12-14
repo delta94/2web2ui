@@ -202,7 +202,7 @@ export default function SendingAndBounceDomainSection({ domain, isSectionVisible
                 <Checkbox
                   ref={register({ required: true })}
                   name="addToDns"
-                  label="The TXT and CNAME records have been added to the DNS provider"
+                  label="The TXT and CNAME records have been added to the DNS provider."
                   error={
                     errors.addToDns &&
                     'Please confirm you have added the records to your DNS provider.'
