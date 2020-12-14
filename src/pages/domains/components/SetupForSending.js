@@ -131,7 +131,6 @@ export default function SetupForSending({ domain, isSectionVisible }) {
                     />
                   </>
                 )}
-                {/*API doesn't support it; Do we want to store this in ui option*/}
               </Stack>
             </Panel.Section>
             {!readyFor.dkim && (
