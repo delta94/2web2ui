@@ -321,6 +321,47 @@ if (IS_HIBANA_ENABLED) {
         });
       });
 
+      it('deletes a scheduled report', () => {
+        cy.visit(PAGE_URL);
+        cy.wait('@getSavedReports');
+        cy.withinMainContent(() => {
+          cy.findByLabelText('Report').type('engagement');
+          cy.findByText('Engagement Report').click({ force: true });
+        });
+
+        cy.stubRequest({
+          method: 'GET',
+          url: '/api/v1/reports/**/schedules',
+          fixture: 'reports/200.get.scheduled-reports',
+        });
+        cy.stubRequest({
+          method: 'DELETE',
+          url: '/api/v1/reports/**/schedules/**',
+          fixture: 'blank.json',
+          requestAlias: 'deleteScheduledReport',
+        });
+
+        cy.findByRole('button', { name: 'Schedule Report' }).click();
+        cy.withinModal(() => {
+          cy.findByText('My Scheduled Report').should('be.visible');
+          //For some reason due to having a tableCollection within a modal this command needed to be repeated to open the actionlist
+          cy.findByRole('button', { name: 'Open Menu' }).click({ force: true });
+          cy.findByRole('button', { name: 'Open Menu' }).click({ force: true });
+
+          cy.findByRole('button', { name: 'Delete' }).click({ force: true });
+        });
+        cy.withinModal(() => {
+          cy.findByText('Are you sure you want to delete this scheduled report?').should(
+            'be.visible',
+          );
+          cy.findByRole('button', { name: 'Delete' }).click({ force: true });
+        });
+        cy.wait('@deleteScheduledReport')
+          .its('url')
+          .should('include', '6d183f8b-8ea9-45e2-91de-235c30704bf9')
+          .should('include', '854c22f4-ad01-43f9-8ef9-5c5cdba0a6ae');
+      });
+
       it('deletes a saved report', () => {
         cy.stubRequest({
           method: 'DELETE',

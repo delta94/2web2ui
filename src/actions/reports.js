@@ -93,3 +93,12 @@ export function updateScheduledReport({ reportId, scheduleId, data }) {
     },
   });
 }
+export function deleteScheduledReport(reportId, scheduleId) {
+  return sparkpostApiRequest({
+    type: 'DELETE_SCHEDULED_REPORT',
+    meta: {
+      method: 'DELETE',
+      url: `/v1/reports/${reportId}/schedules/${scheduleId}`,
+    },
+  });
+}

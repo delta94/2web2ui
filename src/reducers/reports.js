@@ -74,6 +74,12 @@ export default (state = initialState, { type, payload }) => {
     case 'UPDATE_SCHEDULED_REPORT_FAIL':
       return { ...state, updateScheduledReportStatus: 'error' };
 
+    case 'DELETE_SCHEDULED_REPORT_PENDING':
+      return { ...state, deleteSchedulePending: true };
+    case 'DELETE_SCHEDULED_REPORT_SUCCESS':
+    case 'DELETE_SCHEDULED_REPORT_FAIL':
+      return { ...state, deleteSchedulePending: false };
+
     default:
       return state;
   }

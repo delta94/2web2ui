@@ -56,6 +56,13 @@ if (IS_HIBANA_ENABLED) {
         //If this is flaky, delete this and the check for submit button being disabled after submit
         delay: 500,
       });
+
+      cy.stubRequest({
+        method: 'DELETE',
+        url: 'api/v1/reports/**/schedules/**',
+        fixture: 'blank',
+        requestAlias: 'deleteScheduledReport',
+      });
     });
 
     it('Handles field validation on create correctly', () => {
@@ -275,6 +282,18 @@ if (IS_HIBANA_ENABLED) {
       cy.findByText('Successfully updated My Scheduled Report for report: My Bounce Report').should(
         'be.visible',
       );
+    });
+
+    it('Deletes existing scheduled report', () => {
+      cy.visit('/signals/schedule/foo/bar');
+      cy.wait('@getScheduledReport');
+      cy.findByRole('button', { name: 'Delete Item' }).click();
+      cy.withinModal(() => {
+        cy.findByRole('button', { name: 'Delete' }).click();
+        cy.wait('@deleteScheduledReport');
+      });
+      cy.url().should('include', '/signals/analytics');
+      cy.findByText('Successfully deleted My Scheduled Report').should('be.visible');
     });
   });
 }

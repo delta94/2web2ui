@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import moment from 'moment';
 import { Error } from '@sparkpost/matchbox-icons';
 import { refreshReportBuilder } from 'src/actions/summaryChart';
 import { getSubscription } from 'src/actions/billing';
 import { list as getSubaccountsList } from 'src/actions/subaccounts';
 import { getReports } from 'src/actions/reports';
-import { Empty, Tabs, Loading } from 'src/components';
+import {
+  Empty,
+  Tabs,
+  Loading,
+  AggregatedMetrics,
+  CompareByAggregatedMetrics,
+} from 'src/components';
 import { Box, Button, Page, Panel, Tooltip } from 'src/components/matchbox';
 import {
   bounceTabMetrics,
@@ -16,14 +21,8 @@ import {
   linksTabMetrics,
 } from 'src/config/metrics';
 import { parseSearchNew as parseSearch } from 'src/helpers/reports';
-import {
-  Charts,
-  AggregatedMetrics,
-  CompareByAggregatedMetrics,
-  ReportOptions,
-  ReportTable,
-  SaveReportModal,
-} from './components';
+import { getFormattedDateRangeForAggregateData } from 'src/helpers/date';
+import { Charts, ReportOptions, ReportTable, SaveReportModal } from './components';
 import {
   BounceReasonsTable,
   DelayReasonsTable,
@@ -152,7 +151,7 @@ export function ReportBuilder({
   }, [tabs]);
 
   const { to, from } = summarySearchOptions;
-  const dateValue = `${moment(from).format('MMM Do')} - ${moment(to).format('MMM Do, YYYY')}`;
+  const dateValue = getFormattedDateRangeForAggregateData(from, to);
 
   if (!reportOptions.isReady) {
     return <Loading />;
@@ -203,9 +202,12 @@ export function ReportBuilder({
                   <Charts {...chart} metrics={processedMetrics} to={to} yScale="linear" />
 
                   {hasActiveComparisons ? (
-                    <CompareByAggregatedMetrics date={dateValue} />
+                    <CompareByAggregatedMetrics date={dateValue} reportOptions={reportOptions} />
                   ) : (
-                    <AggregatedMetrics date={dateValue} />
+                    <AggregatedMetrics
+                      date={dateValue}
+                      processedMetrics={selectors.selectSummaryMetricsProcessed}
+                    />
                   )}
                 </Tabs.Item>
 

@@ -1,9 +1,7 @@
 export { default as ActiveComparisons } from './ActiveComparisons';
 export { default as ActiveMetrics } from './ActiveMetrics';
 export { default as ActiveFilters } from './ActiveFilters';
-export { default as AggregatedMetrics } from './AggregatedMetrics';
 export { default as Charts } from './Charts';
-export { default as CompareByAggregatedMetrics } from './CompareByAggregatedMetrics';
 export { default as CompareByForm } from './CompareByForm';
 export { default as FiltersForm } from './FiltersForm';
 export { default as MetricsDrawer } from './MetricsDrawer';

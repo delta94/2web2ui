@@ -20,6 +20,7 @@ import {
   parseDatetime,
   toMilliseconds,
   formatDateTimeWithoutYear,
+  getFormattedDateRangeForAggregateData,
 } from '../date';
 import { roundBoundaries } from '../metrics';
 import cases from 'jest-in-case';
@@ -71,6 +72,12 @@ describe('Date helpers', () => {
 
     // must be dates to be the same
     expect(isSameDate(a1, c)).toEqual(false);
+  });
+
+  it('should get correctly formatted date range for aggregate data', () => {
+    const from = new Date('2020-12-07T04:20:00');
+    const to = new Date('2020-12-14T04:20:00');
+    expect(getFormattedDateRangeForAggregateData(from, to)).toEqual('Dec 7th - Dec 14th, 2020');
   });
 
   describe('getRelativeDates', () => {

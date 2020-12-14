@@ -74,7 +74,7 @@ export default function TrackingDnsSection({ domain, isSectionVisible, title }) 
                     <Text as="label" fontWeight="500" fontSize="200">
                       Type
                     </Text>
-                    <Text as="p">TXT</Text>
+                    <Text as="p">CNAME</Text>
                   </>
                 )}
                 <CopyField label="Hostname" value={domainName} hideCopy={!unverified} />
