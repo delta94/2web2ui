@@ -68,6 +68,25 @@ describe('The domains details page', () => {
               'href',
               'https://www.sparkpost.com/docs/tech-resources/enabling-multiple-custom-tracking-domains/',
             );
+
+          cy.get('p')
+            .contains(
+              'Add the CNAME records, Hostnames, and Values for this domain in the settings section of your DNS provider.',
+            )
+            .should('be.visible');
+
+          cy.findByRole('button', { name: 'Verify Domain' }).click();
+          cy.findAllByText(
+            'Please confirm you have added the records to your DNS provider.',
+          ).should('be.visible');
+
+          cy.findAllByLabelText('The CNAME record has been added to the DNS provider.').click({
+            force: true,
+          });
+
+          cy.findAllByText(
+            'Please confirm you have added the records to your DNS provider.',
+          ).should('not.be.visible');
         });
 
         it('verified Tracking Domain with assigned subaccount functions correctly', () => {
@@ -328,6 +347,11 @@ describe('The domains details page', () => {
 
           cy.visit(`${SENDING_BOUNCE_DETAILS_URL}/hello-world-there.com`);
           cy.wait(['@accountDomainsReq', '@unverifieddkimSendingDomains']);
+
+          // HERE!
+          // cy.get('p').contains('Add these TXT records, Hostnames, and Values for this domain in the settings section of your DNS provider.');
+          // cy.get('p').contains('Add the CNAME record, Hostname and Value for this domain in the settings section of your DNS provider');
+
           cy.findByLabelText('The TXT record has been added to the DNS provider.').check({
             force: true,
           });
