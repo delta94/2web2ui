@@ -384,10 +384,6 @@ describe('The domains details page', () => {
           cy.visit(`${SENDING_BOUNCE_DETAILS_URL}/hello-world-there.com`);
           cy.wait(['@accountDomainsReq', '@unverifieddkimSendingDomains']);
 
-          // HERE!
-          // cy.get('p').contains('Add these TXT records, Hostnames, and Values for this domain in the settings section of your DNS provider.');
-          // cy.get('p').contains('Add the CNAME record, Hostname and Value for this domain in the settings section of your DNS provider');
-
           cy.findByLabelText('The TXT record has been added to the DNS provider.').check({
             force: true,
           });
