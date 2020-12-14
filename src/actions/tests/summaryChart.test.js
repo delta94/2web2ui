@@ -6,6 +6,7 @@ import {
   _getChartData,
   _getTableData,
   _getAggregateData,
+  _getAggregateDataReportBuilder,
 } from '../summaryChart';
 
 jest.mock('src/actions/metrics');
@@ -132,6 +133,44 @@ describe('Action Creator: Refresh Summary Report', () => {
       params,
       metrics,
       isCurrentGroupingAggregates: true,
+    });
+  });
+
+  it('_getAggregateDataReportBuilder should dispatch the correct actions when groupBy is set to aggregate', async () => {
+    testState.summaryChart = { groupBy: 'aggregate', metrics: 'metrics-args' };
+    const params = {};
+    metricsHelpers.getQueryFromOptionsV2 = jest.fn(() => params);
+    let fetchResult = {};
+    metricsActions.fetch = jest.fn(() => Promise.resolve(fetchResult));
+
+    await _getAggregateDataReportBuilder({})(dispatchMock, getStateMock);
+
+    expect(dispatchMock).toHaveBeenCalledTimes(2);
+
+    expect(metricsActions.fetch).toHaveBeenCalledWith({
+      type: 'FETCH_AGGREGATE_DATA',
+      path: 'deliverability',
+      params,
+      context: { metrics: 'metrics-args' },
+    });
+  });
+
+  it('_getAggregateDataReportBuilder should dispatch the correct actions when groupBy is not set to aggregate', async () => {
+    testState.summaryChart = { groupBy: 'not-aggregate', metrics: 'metrics-args' };
+    const params = {};
+    metricsHelpers.getQueryFromOptionsV2 = jest.fn(() => params);
+    let fetchResult = {};
+    metricsActions.fetch = jest.fn(() => Promise.resolve(fetchResult));
+
+    await _getAggregateDataReportBuilder({})(dispatchMock, getStateMock);
+
+    expect(dispatchMock).toHaveBeenCalledTimes(1);
+
+    expect(metricsActions.fetch).toHaveBeenCalledWith({
+      type: 'FETCH_AGGREGATE_DATA',
+      path: 'deliverability',
+      params,
+      context: { metrics: 'metrics-args' },
     });
   });
 

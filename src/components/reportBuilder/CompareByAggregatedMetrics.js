@@ -8,12 +8,10 @@ import { LegendCircle, Unit } from 'src/components';
 import Divider from 'src/components/divider';
 import { Box, Column, Columns, Inline, LabelValue, Stack } from 'src/components/matchbox';
 import { useSparkPostQuery } from 'src/hooks';
-import { useReportBuilderContext } from '../context/ReportBuilderContext';
-import { FILTER_TYPES } from '../constants';
+import { FILTER_TYPES } from '../../pages/reportBuilder/constants';
 
-export default function CompareByAggregatedMetrics({ date }) {
-  const { state } = useReportBuilderContext();
-  const { comparisons } = state;
+export default function CompareByAggregatedMetrics({ date, reportOptions }) {
+  const { comparisons } = reportOptions;
 
   return (
     <Box padding="400" backgroundColor="gray.1000" data-id="compare-by-aggregated-metrics">
@@ -36,6 +34,7 @@ export default function CompareByAggregatedMetrics({ date }) {
                   key={`comparison-${comparisonIndex}`}
                   comparison={comparison}
                   hasDivider={comparisonIndex < comparisons.length - 1}
+                  reportOptions={reportOptions}
                 />
               );
             })}
@@ -46,8 +45,7 @@ export default function CompareByAggregatedMetrics({ date }) {
   );
 }
 
-function ComparisonRow({ comparison, hasDivider }) {
-  const { state: reportOptions } = useReportBuilderContext();
+function ComparisonRow({ comparison, hasDivider, reportOptions }) {
   const { metrics } = reportOptions;
   const comparisonObj = FILTER_TYPES.find(
     comparisonConfig => comparisonConfig.label === comparison.type,

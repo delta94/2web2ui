@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { Code, ChatBubble, LightbulbOutline, ShowChart, Sync } from '@sparkpost/matchbox-icons';
 import SendingMailWebp from '@sparkpost/matchbox-media/images/Sending-Mail.webp';
 import SendingMail from '@sparkpost/matchbox-media/images/Sending-Mail@medium.jpg';
@@ -22,7 +23,12 @@ import {
 } from 'src/components/matchbox';
 import { Bold, Heading, TranslatableText } from 'src/components/text';
 import { ExternalLink, PageLink, SupportTicketLink } from 'src/components/links';
-import { ChartGroups } from 'src/pages/reportBuilder/components/Charts';
+import {
+  ChartGroups,
+  CompareByAggregatedMetrics,
+  AggregatedMetrics,
+} from 'src/components/reportBuilder';
+import { getFormattedDateRangeForAggregateData } from 'src/helpers/date';
 import { usePinnedReport } from 'src/hooks';
 import useDashboardContext from './hooks/useDashboardContext';
 import Dashboard from './components/Dashboard';
@@ -30,6 +36,9 @@ import Sidebar from './components/Sidebar';
 import { LINKS } from 'src/constants';
 import { useModal } from 'src/hooks';
 import ChangeReportModal from './components/ChangeReportModal';
+import { getMetricsFromKeys } from 'src/helpers/metrics';
+import { _getAggregateDataReportBuilder } from 'src/actions/summaryChart';
+import { usePrevious } from 'src/hooks';
 
 const OnboardingImg = styled(Picture.Image)`
   vertical-align: bottom;
@@ -67,10 +76,29 @@ export default function DashboardPageV2() {
     getReports();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const dispatch = useDispatch();
+
   const { closeModal, openModal, isModalOpen } = useModal();
 
   const { pinnedReport } = usePinnedReport(onboarding);
 
+  const prevReportOptions = usePrevious(pinnedReport.options);
+
+  useEffect(() => {
+    if (!pinnedReport.loading && !_.isEqual(prevReportOptions, pinnedReport.options))
+      dispatch(
+        _getAggregateDataReportBuilder({
+          ...pinnedReport.options,
+          filters: pinnedReport.options.filters,
+        }),
+      );
+  }, [dispatch, pinnedReport.loading, pinnedReport.options, prevReportOptions]);
+
+  const dateValue = getFormattedDateRangeForAggregateData(
+    pinnedReport?.options?.from,
+    pinnedReport?.options?.to,
+  );
   if (pending) return <Loading />;
 
   return (
@@ -79,9 +107,7 @@ export default function DashboardPageV2() {
         <Heading as="h1">Dashboard</Heading>
       </ScreenReaderOnly>
 
-      {isModalOpen && (
-        <ChangeReportModal open={isModalOpen} onClose={closeModal} reports={allReports} />
-      )}
+      <ChangeReportModal open={isModalOpen} onClose={closeModal} reports={allReports} />
 
       <Stack>
         {currentUser?.first_name && (
@@ -105,9 +131,20 @@ export default function DashboardPageV2() {
                       <TranslatableText>Change Report</TranslatableText> <Sync size={25} />
                     </Panel.Action>
                   </Panel.Header>
-                  <Panel.Section>
+                  {!pinnedReport.loading && (
                     <ChartGroups reportOptions={pinnedReport.options} p="0" />
-                  </Panel.Section>
+                  )}
+                  {pinnedReport.options.comparisons.length > 0 ? (
+                    <CompareByAggregatedMetrics
+                      date={dateValue}
+                      reportOptions={pinnedReport.options}
+                    />
+                  ) : (
+                    <AggregatedMetrics
+                      date={dateValue}
+                      processedMetrics={getMetricsFromKeys(pinnedReport.options.metrics, true)}
+                    />
+                  )}
                 </Dashboard.Panel>
               )}
               {onboarding === 'analyticsReportPromo' && (
