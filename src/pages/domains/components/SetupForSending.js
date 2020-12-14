@@ -75,7 +75,7 @@ export default function SetupForSending({ domain, isSectionVisible }) {
       </Layout.Section>
       <Layout.Section>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Panel>
+          <Panel mb="0">
             {!readyFor.dkim ? (
               <Panel.Section>
                 <span>Add these&nbsp;</span>

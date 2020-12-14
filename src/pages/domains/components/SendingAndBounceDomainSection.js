@@ -102,7 +102,7 @@ export default function SendingAndBounceDomainSection({ domain, isSectionVisible
         )}
       </Layout.Section>
       <Layout.Section>
-        <Panel>
+        <Panel mb="0">
           <form onSubmit={handleSubmit(onSubmit)} id="sendingbounceForm">
             {!readyFor.dkim || !readyFor.bounce ? (
               <Panel.Section>

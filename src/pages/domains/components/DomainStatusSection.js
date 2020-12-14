@@ -89,7 +89,7 @@ export default function DomainStatusSection({ domain, id, isTracking }) {
           </SubduedLink>
         </Layout.Section>
         <Layout.Section>
-          <Panel>
+          <Panel mb="0">
             <Panel.Section>
               <Columns space="100">
                 <Column>
@@ -204,7 +204,7 @@ export default function DomainStatusSection({ domain, id, isTracking }) {
         </Stack>
       </Layout.Section>
       <Layout.Section>
-        <Panel>
+        <Panel mb="0">
           <Panel.Section>
             <Columns space="100">
               <Column>

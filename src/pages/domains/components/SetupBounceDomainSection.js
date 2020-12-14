@@ -81,7 +81,7 @@ export default function SetupBounceDomainSection({ domain, isSectionVisible, tit
         </Stack>
       </Layout.Section>
       <Layout.Section>
-        <Panel>
+        <Panel mb="0">
           {!readyFor.bounce ? (
             <Panel.Section>
               <span>Add the&nbsp;</span>
