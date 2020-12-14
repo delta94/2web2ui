@@ -78,14 +78,14 @@ export default function SetupForSending({ domain, isSectionVisible }) {
           <Panel>
             {!readyFor.dkim ? (
               <Panel.Section>
-                <p>Add these&nbsp;</p>
+                <span>Add these&nbsp;</span>
                 <Text as="span" fontWeight="semibold">
                   TXT
                 </Text>
-                <p>
-                  &nbsp;records, Hostnames and Values for this domain in the settings section of
+                <span>
+                  &nbsp;records, Hostnames, and Values for this domain in the settings section of
                   your DNS provider.
-                </p>
+                </span>
                 <Panel.Action>
                   <ExternalLink
                     as={Button}
@@ -98,11 +98,11 @@ export default function SetupForSending({ domain, isSectionVisible }) {
               </Panel.Section>
             ) : (
               <Panel.Section>
-                <p>Below is the&nbsp;</p>
+                <span>Below is the&nbsp;</span>
                 <Text as="span" fontWeight="semibold">
                   TXT
                 </Text>
-                <p>&nbsp;record for the Hostname and DKIM value of this domain.</p>
+                <span>&nbsp;record for the Hostname and DKIM value of this domain.</span>
               </Panel.Section>
             )}
             <Panel.Section>
