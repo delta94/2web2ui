@@ -18,7 +18,7 @@ const PlaneIcon = styled(Send)`
 export default function SetupForSending({ domain, isSectionVisible }) {
   const { verifyDkim, showAlert, userName, verifyDkimLoading } = useDomains();
   const readyFor = resolveReadyFor(domain.status);
-  const { handleSubmit, register } = useForm();
+  const { handleSubmit, errors, register } = useForm();
 
   const onSubmit = () => {
     const { id, subaccount_id: subaccount } = domain;
@@ -121,11 +121,14 @@ export default function SetupForSending({ domain, isSectionVisible }) {
                 {!readyFor.dkim && (
                   <>
                     <Checkbox
+                      error={
+                        errors['ack-checkbox-dkim'] &&
+                        'Please confirm you have added the records to your DNS provider.'
+                      }
                       name="ack-checkbox-dkim"
                       ref={register({ required: true })}
                       label={<>The TXT record has been added to the DNS provider</>}
                     />
-                    <p>error message here?</p>
                   </>
                 )}
                 {/*API doesn't support it; Do we want to store this in ui option*/}

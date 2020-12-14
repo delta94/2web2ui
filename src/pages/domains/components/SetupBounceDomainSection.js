@@ -23,7 +23,7 @@ export default function SetupBounceDomainSection({ domain, isSectionVisible, tit
   const readyFor = resolveReadyFor(status);
   const initVerificationType = isByoipAccount && status.mx_status === 'valid' ? 'MX' : 'CNAME';
   const bounceDomainsConfig = getConfig('bounceDomains');
-  const { control, handleSubmit, watch, register } = useForm();
+  const { control, handleSubmit, watch, errors, register } = useForm();
   const watchVerificationType = watch('verificationType', initVerificationType);
 
   const onSubmit = () => {
@@ -179,12 +179,15 @@ export default function SetupBounceDomainSection({ domain, isSectionVisible, tit
             {!readyFor.bounce && (
               <Panel.Section>
                 <Checkbox
+                  error={
+                    errors['ack-checkbox-bounce'] &&
+                    'Please confirm you have added the records to your DNS provider.'
+                  }
                   name="ack-checkbox-bounce"
                   label={`The ${watchVerificationType} record has been added to the DNS provider`}
                   disabled={verifyBounceLoading}
                   ref={register({ required: true })}
                 />
-                <p>Error message here?</p>
               </Panel.Section>
             )}
 
