@@ -84,13 +84,16 @@ export default function SetupBounceDomainSection({ domain, isSectionVisible, tit
         <Panel>
           {!readyFor.bounce ? (
             <Panel.Section>
-              Add the{' '}
+              <p>Add the&nbsp;</p>
               <Text as="span" fontWeight="semibold">
                 CNAME
-              </Text>{' '}
-              record, Hostname and Value for this domain in the settings section of your DNS
-              provider.
+              </Text>
+              <p>
+                &nbsp;record, Hostname and Value for this domain in the settings section of your DNS
+                provider.
+              </p>
               <Panel.Action>
+                {/* flat button not link... */}
                 <ExternalLink
                   to={`mailto:?subject=Assistance%20Requested%20Verifying%20a%20Bounce%20Domain%20on%20SparkPost&body=${userName}%20has%20requested%20your%20assistance%20verifying%20a%20bounce%20domain%20with%20SparkPost.%20Follow%20the%20link%20below%20to%20find%20the%20values%20you%E2%80%99ll%20need%20to%20add%20to%20the%20settings%20of%20your%20DNS%20provider.%0D%0A%5BGo%20to%20SparkPost%5D(${window.location})%0D%0A`}
                   icon={PlaneIcon}
@@ -101,11 +104,11 @@ export default function SetupBounceDomainSection({ domain, isSectionVisible, tit
             </Panel.Section>
           ) : (
             <Panel.Section>
-              Below is the{' '}
+              <p>Below is the&nbsp;</p>
               <Text as="span" fontWeight="semibold">
-                CNAME{' '}
+                CNAME
               </Text>
-              record for the Hostname and Value for this domain at your DNS provider
+              <p>&nbsp;record for the Hostname and Value for this domain at your DNS provider</p>
             </Panel.Section>
           )}
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -180,18 +183,14 @@ export default function SetupBounceDomainSection({ domain, isSectionVisible, tit
                   disabled={verifyBounceLoading}
                   ref={register({ required: true })}
                 />
+                <p>Error message here?</p>
               </Panel.Section>
             )}
 
             {!readyFor.bounce && (
               <Panel.Section>
-                <Button
-                  variant="primary"
-                  type="submit"
-                  disabled={!Boolean(watch('ack-checkbox-bounce'))}
-                  loading={verifyBounceLoading}
-                >
-                  Authenticate for Bounce
+                <Button variant="primary" type="submit" loading={verifyBounceLoading}>
+                  Verify Bounce
                 </Button>
               </Panel.Section>
             )}

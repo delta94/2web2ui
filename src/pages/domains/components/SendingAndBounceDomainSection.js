@@ -106,9 +106,14 @@ export default function SendingAndBounceDomainSection({ domain, isSectionVisible
           <form onSubmit={handleSubmit(onSubmit)} id="sendingbounceForm">
             {!readyFor.dkim || !readyFor.bounce ? (
               <Panel.Section>
-                Add the <Bold>TXT</Bold> and <Bold>{watchVerificationType} </Bold>
-                records, Hostnames and Values for this domain in the settings section of your DNS
-                Provider
+                <p>Add the </p>
+                <Bold>TXT</Bold>
+                <p> and </p>
+                <Bold>{watchVerificationType} </Bold>
+                <p>
+                  records, Hostnames and Values for this domain in the settings section of your DNS
+                  Provider
+                </p>
                 <Panel.Action>
                   <ExternalLink
                     to={`mailto:?subject=Assistance%20Requested%20Verifying%20a%20Sending/Bounce%20Domain%20on%20SparkPost&body=${userName}%20has%20requested%20your%20assistance%20verifying%20a%20sending/bounce%20domain%20with%20SparkPost.%20Follow%20the%20link%20below%20to%20find%20the%20values%20you%E2%80%99ll%20need%20to%20add%20to%20the%20settings%20of%20your%20DNS%20provider.%0D%0A%5BGo%20to%20SparkPost%5D(${window.location})%0D%0A`}
@@ -197,6 +202,7 @@ export default function SendingAndBounceDomainSection({ domain, isSectionVisible
                   error={errors.addToDns && 'Adding TXT and CNAME is required'}
                   disabled={verifyBounceLoading || verifyDkimLoading}
                 />
+                <p>Error Message Here?</p>
               </Panel.Section>
             )}
             {(!readyFor.bounce || !readyFor.dkim) && (
@@ -206,9 +212,8 @@ export default function SendingAndBounceDomainSection({ domain, isSectionVisible
                   type="submit"
                   name="sendingBounceForm"
                   loading={verifyBounceLoading || verifyDkimLoading}
-                  disabled={!watch('addToDns')}
                 >
-                  Authenticate Domain
+                  Verify Domain
                 </Button>
               </Panel.Section>
             )}
