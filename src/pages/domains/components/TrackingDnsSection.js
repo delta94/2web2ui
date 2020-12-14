@@ -64,11 +64,13 @@ export default function TrackingDnsSection({ domain, isSectionVisible, title }) 
               </Panel.Section>
             ) : (
               <Panel.Section>
-                <span>Below is the&nbsp;</span>
-                <Text as="span" fontWeight="semibold">
-                  CNAME&nbsp;
-                </Text>
-                <span>record for this domain at your DNS provider.</span>
+                <p>
+                  <span>Below is the&nbsp;</span>
+                  <Text as="span" fontWeight="semibold">
+                    CNAME&nbsp;
+                  </Text>
+                  <span>record for this domain at your DNS provider.</span>
+                </p>
               </Panel.Section>
             )}
             <Panel.Section>

@@ -101,11 +101,13 @@ export default function SetupForSending({ domain, isSectionVisible }) {
               </Panel.Section>
             ) : (
               <Panel.Section>
-                <span>Below is the&nbsp;</span>
-                <Text as="span" fontWeight="semibold">
-                  TXT&nbsp;
-                </Text>
-                <span>record for the Hostname and DKIM value of this domain.</span>
+                <p>
+                  <span>Below is the&nbsp;</span>
+                  <Text as="span" fontWeight="semibold">
+                    TXT&nbsp;
+                  </Text>
+                  <span>record for the Hostname and DKIM value of this domain.</span>
+                </p>
               </Panel.Section>
             )}
             <Panel.Section>

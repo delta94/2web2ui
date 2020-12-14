@@ -107,11 +107,13 @@ export default function SetupBounceDomainSection({ domain, isSectionVisible, tit
             </Panel.Section>
           ) : (
             <Panel.Section>
-              <p>Below is the&nbsp;</p>
-              <Text as="span" fontWeight="semibold">
-                CNAME&nbsp;
-              </Text>
-              <p>record for the Hostname and Value for this domain at your DNS provider.</p>
+              <p>
+                <span>Below is the&nbsp;</span>
+                <Text as="span" fontWeight="semibold">
+                  CNAME&nbsp;
+                </Text>
+                <span>record for the Hostname and Value for this domain at your DNS provider.</span>
+              </p>
             </Panel.Section>
           )}
           <form onSubmit={handleSubmit(onSubmit)}>
