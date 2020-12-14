@@ -109,10 +109,10 @@ export default function SendingAndBounceDomainSection({ domain, isSectionVisible
                 <span>Add the&nbsp;</span>
                 <Bold>TXT</Bold>
                 <span>&nbsp;and&nbsp;</span>
-                <Bold>{watchVerificationType}</Bold>
+                <Bold>{watchVerificationType}&nbsp;</Bold>
                 <span>
-                  &nbsp;records, Hostnames, and Values for this domain in the settings section of
-                  &nbsp;your DNS provider.
+                  records, Hostnames, and Values for this domain in the settings section of your DNS
+                  provider.
                 </span>
                 <Panel.Action
                   component={ExternalLink}

@@ -80,11 +80,11 @@ export default function SetupForSending({ domain, isSectionVisible }) {
               <Panel.Section>
                 <span>Add these&nbsp;</span>
                 <Text as="span" fontWeight="semibold">
-                  TXT
+                  TXT&nbsp;
                 </Text>
                 <span>
-                  &nbsp;records, Hostnames, and Values for this domain in the settings section of
-                  your DNS provider.
+                  records, Hostnames, and Values for this domain in the settings section of your DNS
+                  provider.
                 </span>
                 <Panel.Action
                   component={ExternalLink}
@@ -101,9 +101,9 @@ export default function SetupForSending({ domain, isSectionVisible }) {
               <Panel.Section>
                 <span>Below is the&nbsp;</span>
                 <Text as="span" fontWeight="semibold">
-                  TXT
+                  TXT&nbsp;
                 </Text>
-                <span>&nbsp;record for the Hostname and DKIM value of this domain.</span>
+                <span>record for the Hostname and DKIM value of this domain.</span>
               </Panel.Section>
             )}
             <Panel.Section>
@@ -119,17 +119,15 @@ export default function SetupForSending({ domain, isSectionVisible }) {
                 <CopyField label="Hostname" value={domain.dkimHostname} hideCopy={readyFor.dkim} />
                 <CopyField label="Value" value={domain.dkimValue} hideCopy={readyFor.dkim} />
                 {!readyFor.dkim && (
-                  <>
-                    <Checkbox
-                      error={
-                        errors['ack-checkbox-dkim'] &&
-                        'Please confirm you have added the records to your DNS provider.'
-                      }
-                      name="ack-checkbox-dkim"
-                      ref={register({ required: true })}
-                      label="The TXT record has been added to the DNS provider."
-                    />
-                  </>
+                  <Checkbox
+                    error={
+                      errors['ack-checkbox-dkim'] &&
+                      'Please confirm you have added the records to your DNS provider.'
+                    }
+                    name="ack-checkbox-dkim"
+                    ref={register({ required: true })}
+                    label="The TXT record has been added to the DNS provider."
+                  />
                 )}
               </Stack>
             </Panel.Section>
