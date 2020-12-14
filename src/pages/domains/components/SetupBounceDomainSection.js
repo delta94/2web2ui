@@ -89,8 +89,8 @@ export default function SetupBounceDomainSection({ domain, isSectionVisible, tit
                 CNAME
               </Text>
               <p>
-                &nbsp;record, Hostname and Value for this domain in the settings section of your DNS
-                provider.
+                &nbsp;record, Hostname and Value for this domain in the settings section of
+                &nbsp;your DNS provider.
               </p>
               <Panel.Action>
                 {/* flat button not link... */}
@@ -108,7 +108,7 @@ export default function SetupBounceDomainSection({ domain, isSectionVisible, tit
               <Text as="span" fontWeight="semibold">
                 CNAME
               </Text>
-              <p>&nbsp;record for the Hostname and Value for this domain at your DNS provider</p>
+              <p>&nbsp;record for the Hostname and Value for this domain at your DNS provider.</p>
             </Panel.Section>
           )}
           <form onSubmit={handleSubmit(onSubmit)}>
