@@ -1,4 +1,4 @@
-import { IS_HIBANA_ENABLED } from 'cypress/constants';
+import { IS_HIBANA_ENABLED, USERNAME } from 'cypress/constants';
 import { LINKS } from 'src/constants';
 
 const PAGE_URL = '/dashboardV2';
@@ -761,7 +761,7 @@ function stubGrantsRequest({ role }) {
 // this is an override of the stub set by stubAuth
 function stubUsersRequest({ access_level }) {
   cy.stubRequest({
-    url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+    url: `/api/v1/users/${USERNAME}`,
     fixture: `users/200.get.${access_level}.json`,
     requestAlias: 'stubbedUsersRequest',
   });

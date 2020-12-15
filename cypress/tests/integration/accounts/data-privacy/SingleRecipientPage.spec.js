@@ -1,3 +1,5 @@
+import { USERNAME } from 'cypress/constants';
+
 describe('The single recipient data-privacy page', () => {
   const visitAsAdmin = () => {
     cy.stubAuth();
@@ -5,7 +7,7 @@ describe('The single recipient data-privacy page', () => {
 
     // todo, use a factory here instead of needing to call visit again
     cy.stubRequest({
-      url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+      url: `/api/v1/users/${USERNAME}`,
       fixture: 'users/200.get.no-subaccounts.json',
     });
 

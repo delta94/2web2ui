@@ -1,4 +1,4 @@
-import { IS_HIBANA_ENABLED } from 'cypress/constants';
+import { IS_HIBANA_ENABLED, USERNAME } from 'cypress/constants';
 import { PAGE_URL } from './constants';
 import { commonBeforeSteps } from './helpers';
 
@@ -14,7 +14,7 @@ if (IS_HIBANA_ENABLED) {
       });
 
       cy.stubRequest({
-        url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+        url: `/api/v1/users/${USERNAME}`,
         fixture: 'users/200.get.metrics-rollup.json',
         requestAlias: 'userReq',
       });

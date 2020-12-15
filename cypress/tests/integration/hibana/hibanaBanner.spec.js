@@ -1,4 +1,4 @@
-import { IS_HIBANA_ENABLED } from 'cypress/constants';
+import { IS_HIBANA_ENABLED, USERNAME } from 'cypress/constants';
 
 const PAGE_URL = '/';
 
@@ -36,7 +36,7 @@ if (!IS_HIBANA_ENABLED) {
     it('navigates the user to the profile page and dismisses the banner when clicking "Turn it on to see our new look!"', () => {
       beforeSteps();
       cy.stubRequest({
-        url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+        url: `/api/v1/users/${USERNAME}`,
         fixture: 'users/200.get.hibana-banner-is-visible.json',
         requestAlias: 'userReq',
       });
@@ -69,7 +69,7 @@ if (!IS_HIBANA_ENABLED) {
     it('dismisses the banner when the user clicks the dismiss button', () => {
       beforeSteps();
       cy.stubRequest({
-        url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+        url: `/api/v1/users/${USERNAME}`,
         fixture: 'users/200.get.hibana-banner-is-visible.json',
         requestAlias: 'userReq',
       });

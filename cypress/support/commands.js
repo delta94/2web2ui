@@ -1,14 +1,6 @@
-// ***********************************************
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-
-// type definitions for Cypress object "cy"
-/// <reference types="cypress" />
-
 import '@testing-library/cypress/add-commands';
 import 'cypress-file-upload';
+import { USERNAME, PASSWORD } from 'cypress/constants';
 
 /**
  * Used to authenticate with Cypress
@@ -24,13 +16,13 @@ Cypress.Commands.add('login', (options = {}) => {
     if (!authCookie) {
       if (!isStubbed) {
         cy.route('POST', '/api/v1/authenticate').as('loginPost');
-        cy.route('GET', `/api/v1/users/${Cypress.env('USERNAME')}/two-factor`).as('twoFactorGet');
+        cy.route('GET', `/api/v1/users/${USERNAME}/two-factor`).as('twoFactorGet');
       }
 
       cy.visit('/');
-      cy.findByLabelText('Email or Username').type(Cypress.env('USERNAME'));
-      cy.findByLabelText('Password').type(Cypress.env('PASSWORD'));
-      cy.get('[data-id="button-log-in"]').click();
+      cy.findByLabelText('Email or Username').type(USERNAME);
+      cy.findByLabelText('Password').type(PASSWORD);
+      cy.findByRole('button', { name: 'Log In' }).click();
 
       if (!isStubbed) {
         cy.wait('@loginPost');
@@ -69,7 +61,7 @@ Cypress.Commands.add('stubAuth', ({ hasRefreshToken = false } = {}) => {
   }).as('stubbedAuthenticateRequest');
   cy.route({
     method: 'GET',
-    url: `/api/v1/users/${Cypress.env('USERNAME')}/two-factor`,
+    url: `/api/v1/users/${USERNAME}/two-factor`,
     status: 200,
     response: '@twoFactorGet',
   }).as('stubbedTwoFactorRequest');
@@ -99,7 +91,7 @@ Cypress.Commands.add('stubAuth', ({ hasRefreshToken = false } = {}) => {
   }).as('stubbedBundlesRequest');
   cy.route({
     method: 'GET',
-    url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+    url: `/api/v1/users/${USERNAME}`,
     status: 200,
     response: '@usersGet',
   }).as('stubbedUsersRequest');

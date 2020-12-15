@@ -1,4 +1,4 @@
-import { IS_HIBANA_ENABLED } from 'cypress/constants';
+import { IS_HIBANA_ENABLED, USERNAME } from 'cypress/constants';
 
 const PAGE_URL = '/lists/suppressions';
 const SUPPRESSION_LIST_API_URL = '/api/v1/suppression-list*';
@@ -403,7 +403,7 @@ describe('The recipients suppressions list page', () => {
 
     it('does not render the "Subaccount" column when the user has no subaccounts', () => {
       cy.stubRequest({
-        url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+        url: `/api/v1/users/${USERNAME}`,
         fixture: 'users/200.get.no-subaccounts.json',
       });
 

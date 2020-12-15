@@ -1,4 +1,4 @@
-import { IS_HIBANA_ENABLED } from 'cypress/constants';
+import { IS_HIBANA_ENABLED, USERNAME } from 'cypress/constants';
 import { commonBeforeSteps } from './analytics-report/helpers';
 
 const PAGE_URL_OG = '/reports/summary';
@@ -11,7 +11,7 @@ describe('Date Time Section on Summary Report & Report Builder', () => {
   beforeEach(() => {
     commonBeforeSteps();
     cy.stubRequest({
-      url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+      url: `/api/v1/users/${USERNAME}`,
       fixture: 'users/200.get.metrics-rollup.json',
     });
 
