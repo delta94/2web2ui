@@ -148,8 +148,6 @@ export function ReportBuilder({
 
   const tabs = useMemo(() => {
     function getComparisonTabs() {
-      if (!hasActiveComparisons) return [];
-
       if (hasBounceMetrics) {
         return reportOptions.comparisons.map(comparison => {
           return {
@@ -185,6 +183,8 @@ export function ReportBuilder({
           };
         });
       }
+
+      return [];
     }
 
     return [
@@ -204,7 +204,6 @@ export function ReportBuilder({
     hasRejectionTab,
     hasDelayTab,
     hasLinksTab,
-    hasActiveComparisons,
     reportOptions.comparisons,
   ]);
 
