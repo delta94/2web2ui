@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import usePageFilters from 'src/hooks/usePageFilters';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { getReport, createScheduledReport } from 'src/actions/reports';
 import { showAlert } from 'src/actions/globalAlert';
 import { Page } from 'src/components/matchbox';
@@ -15,12 +14,10 @@ import { listUsers } from 'src/actions/users';
 import { getLocalTimezone } from 'src/helpers/date';
 import { useForm } from 'react-hook-form';
 import { formatFormValues } from './helpers/scheduledReports';
+import { PageLink } from 'src/components/links';
 
-const initFilters = { reportId: {} };
 export default function ScheduledReportCreatePage() {
-  const {
-    filters: { reportId },
-  } = usePageFilters(initFilters);
+  const { reportId } = useParams();
   const history = useHistory();
   const { report, loading } = useSelector(state => state.reports);
   const users = useSelector(state => selectUsers(state));
@@ -57,7 +54,7 @@ export default function ScheduledReportCreatePage() {
           message: `Successfully scheduled ${values.name} for report: ${report.name}`,
         }),
       );
-      history.push('/signals/analytics');
+      history.push(`/signals/analytics?report=${reportId}`);
     });
   };
 
@@ -65,7 +62,14 @@ export default function ScheduledReportCreatePage() {
     return <Loading />;
   }
   return (
-    <Page title="Schedule Report">
+    <Page
+      title="Schedule Report"
+      breadcrumbAction={{
+        content: 'Analytics Report',
+        to: `/signals/analytics?report=${reportId}`,
+        Component: PageLink,
+      }}
+    >
       <form onSubmit={formControls.handleSubmit(onSubmit)} id="scheduledReportForm">
         <ScheduledReportDetailsForm
           formControls={formControls}
@@ -73,7 +77,11 @@ export default function ScheduledReportCreatePage() {
           report={report}
           users={users}
         />
-        <ScheduledReportTimingForm formControls={formControls} disabled={isPendingCreate} />
+        <ScheduledReportTimingForm
+          formControls={formControls}
+          disabled={isPendingCreate}
+          report={report}
+        />
       </form>
     </Page>
   );

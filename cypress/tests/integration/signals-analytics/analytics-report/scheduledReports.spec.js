@@ -1,6 +1,10 @@
 import { IS_HIBANA_ENABLED } from 'cypress/constants';
 import { commonBeforeSteps } from './helpers';
 
+//Copied from src/pages/reportBuilder/helpers/scheduledReports
+//Can't directly import from file due to some babel/webpack error.
+const recipientUserToString = user => (user ? `${user.name} <${user.email}>` : '');
+
 if (IS_HIBANA_ENABLED) {
   describe('Analytics Report Scheduled Reports', () => {
     beforeEach(() => {
@@ -63,6 +67,13 @@ if (IS_HIBANA_ENABLED) {
         fixture: 'blank',
         requestAlias: 'deleteScheduledReport',
       });
+
+      cy.stubRequest({
+        method: 'POST',
+        url: 'api/v1/reports/**/schedules/test',
+        fixture: 'blank',
+        requestAlias: 'testSendScheduledReport',
+      });
     });
 
     it('Handles field validation on create correctly', () => {
@@ -84,12 +95,22 @@ if (IS_HIBANA_ENABLED) {
 
       //Selects a recipient, then erases that recipient using backspace, then blurs to trigger validation
       cy.findByLabelText('Send To').focus();
-      cy.findByText('Name: mockuser ---- Email: mockuser@example.com').click();
+      cy.findByText(
+        recipientUserToString({
+          name: 'mockuser',
+          email: 'mockuser@example.com',
+        }),
+      ).click();
       cy.findByLabelText('Send To').type('{backspace}');
       cy.findByLabelText('Send To').blur();
       cy.findByText('At least 1 recipient must be selected').should('be.visible');
       cy.findByLabelText('Send To').focus();
-      cy.findByText('Name: mockuser ---- Email: mockuser@example.com').click();
+      cy.findByText(
+        recipientUserToString({
+          name: 'mockuser',
+          email: 'mockuser@example.com',
+        }),
+      ).click();
 
       cy.findByLabelText('Time')
         .focus()
@@ -114,7 +135,12 @@ if (IS_HIBANA_ENABLED) {
 
       cy.findByLabelText('Scheduled Report Name').should('have.value', 'My Scheduled Report');
       cy.findByLabelText('Email Subject').should('have.value', 'This is a subject line');
-      cy.findByText('Name: mockuser ---- Email: mockuser@example.com').should('be.visible');
+      cy.findByText(
+        recipientUserToString({
+          name: 'mockuser',
+          email: 'mockuser@example.com',
+        }),
+      ).should('be.visible');
       cy.findByLabelText('Weekly').should('be.checked');
       cy.findByLabelText('Week').should('be.disabled');
       cy.findByLabelText('Day').should('have.value', 'fri');
@@ -147,13 +173,59 @@ if (IS_HIBANA_ENABLED) {
       cy.findByRole('button', { name: 'Update Timing' }).should('not.be.disabled');
     });
 
+    it('Can send a test report', () => {
+      cy.visit('/signals/schedule/foo');
+
+      //Needs .first() because there is also a send test button within the modal
+      cy.findAllByRole('button', { name: 'Send Test' })
+        .first()
+        .click();
+      cy.withinModal(() => {
+        cy.findByLabelText('Send To').focus();
+        cy.findByText(
+          recipientUserToString({
+            name: 'mockuser',
+            email: 'mockuser@example.com',
+          }),
+        ).click();
+        cy.findByRole('button', { name: 'Send Test' }).click();
+      });
+      //Checks that test report does not send when name and subject fields are not populated
+      cy.findByText(
+        'Please fill out "Scheduled Report Name" and "Email Subject" before sending test',
+      ).should('be.visible');
+      cy.findAllByText('Required').should('have.length', 2);
+
+      cy.findByLabelText('Scheduled Report Name').type('My Scheduled Report');
+      cy.findByLabelText('Email Subject').type('This is a subject line');
+      cy.findAllByRole('button', { name: 'Send Test' })
+        .first()
+        .click();
+      cy.withinModal(() => {
+        cy.findByRole('button', { name: 'Send Test' }).click();
+      });
+      cy.wait('@testSendScheduledReport')
+        .its('requestBody')
+        .should('deep.equal', {
+          name: 'My Scheduled Report',
+          recipients: ['mockuser'],
+          subject: 'This is a subject line',
+        });
+      cy.findByText('Successfully sent test report').should('be.visible');
+    });
+
     it('Submits form properly for creating a scheduled report', () => {
       cy.visit('/signals/schedule/foo');
 
       cy.findByLabelText('Scheduled Report Name').type('My First Report');
       cy.findByLabelText('Email Subject').type('Free Macbook');
       cy.findByLabelText('Send To').focus();
-      cy.findByText('Name: mockuser ---- Email: mockuser@example.com').click();
+      cy.findByText(
+        recipientUserToString({
+          name: 'mockuser',
+          email: 'mockuser@example.com',
+        }),
+      ).click();
       cy.findByLabelText('Time')
         .focus()
         .clear()
@@ -198,7 +270,13 @@ if (IS_HIBANA_ENABLED) {
         .clear()
         .type('Free Macbook Offer Expired');
       cy.findByLabelText('Send To').click();
-      cy.findByText('Name: whoami ---- Email: fakeuser@example.com').click();
+
+      cy.findByText(
+        recipientUserToString({
+          name: 'whoami',
+          email: 'fakeuser@example.com',
+        }),
+      ).click();
       cy.findByLabelText('Monthly').check({ force: true });
       cy.findByLabelText('Time')
         .focus()

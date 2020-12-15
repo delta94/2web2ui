@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import usePageFilters from 'src/hooks/usePageFilters';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import {
   deleteScheduledReport,
   getReport,
@@ -18,12 +17,10 @@ import { selectUsers } from 'src/selectors/users';
 import { listUsers } from 'src/actions/users';
 import { formatFormValues, getDefaultValuesMemoized } from './helpers/scheduledReports';
 import ScheduledEditFormWrapper from './components/ScheduledEditFormWrapper';
-const initFilters = { reportId: {}, scheduleId: {} };
+import { PageLink } from 'src/components/links';
 
 export default function ScheduledReportEditPage() {
-  const {
-    filters: { reportId, scheduleId },
-  } = usePageFilters(initFilters);
+  const { reportId, scheduleId } = useParams();
   const history = useHistory();
   const users = useSelector(state => selectUsers(state));
   const usersLoading = useSelector(state => state.users.loading);
@@ -68,7 +65,7 @@ export default function ScheduledReportEditPage() {
           message: `Successfully updated ${formattedValues.name} for report: ${report.name}`,
         }),
       );
-      history.push('/signals/analytics');
+      history.push(`/signals/analytics?report=${reportId}`);
     });
   };
 
@@ -80,7 +77,7 @@ export default function ScheduledReportEditPage() {
           message: `Successfully deleted ${scheduledReport.name}`,
         }),
       );
-      history.push('/signals/analytics');
+      history.push(`/signals/analytics?report=${reportId}`);
     });
   };
 
@@ -90,7 +87,14 @@ export default function ScheduledReportEditPage() {
 
   return (
     <>
-      <Page title="Schedule Report">
+      <Page
+        title="Schedule Report"
+        breadcrumbAction={{
+          content: 'Analytics Report',
+          to: `/signals/analytics?report=${report.id}`,
+          Component: PageLink,
+        }}
+      >
         {/*See comments in component on why a wrapper is needed*/}
         <ScheduledEditFormWrapper
           defaultValues={defaultValues}

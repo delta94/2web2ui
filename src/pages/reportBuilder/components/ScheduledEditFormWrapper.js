@@ -40,6 +40,7 @@ export default function ScheduledReportEditFormWrapper({
           formControls={timingFormControls}
           disabled={disabled || isSubmitting}
           isUpdatingScheduledReport={true}
+          report={report}
         />
       </form>
     </>

@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Controller } from 'react-hook-form';
+import { Controller, useWatch } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { Telegram } from '@sparkpost/matchbox-icons';
 import { tokens } from '@sparkpost/design-tokens-hibana';
 import {
   Box,
@@ -14,11 +16,15 @@ import {
   TextField,
 } from 'src/components/matchbox';
 import { Uppercase } from 'src/components/text';
-import { ButtonWrapper, RadioButtonGroup } from 'src/components';
-import { hasAtLeastOneRecipient } from '../helpers/scheduledReports';
+import { testScheduledReport } from 'src/actions/reports';
+import { showAlert } from 'src/actions/globalAlert';
+import { AsyncActionModal, ButtonWrapper, RadioButtonGroup } from 'src/components';
+import { hasAtLeastOneRecipient, recipientUserToString } from '../helpers/scheduledReports';
 import { DAY_OF_WEEK_OPTIONS, WEEK_OPTIONS } from '../constants/scheduledReports';
+import { ComboBoxTypeahead } from 'src/components/typeahead/ComboBoxTypeahead';
 import { ComboBoxTypeaheadWrapper } from 'src/components/reactHookFormWrapper';
 import { TimezoneTypeahead } from 'src/components/typeahead/TimezoneTypeahead';
+import useModal from 'src/hooks/useModal';
 
 export const ScheduledReportDetailsForm = ({
   formControls,
@@ -28,15 +34,55 @@ export const ScheduledReportDetailsForm = ({
   users,
 }) => {
   const history = useHistory();
+  const [testSendRecipients, setTestSendRecipients] = useState([]);
+  const { testScheduledReportStatus } = useSelector(({ reports }) => reports);
 
-  const { control, errors, formState, register, setValue } = formControls;
+  const { closeModal, isModalOpen, openModal } = useModal();
+  const dispatch = useDispatch();
 
+  const { control, errors, formState, register, setValue, setError } = formControls;
+  const formValues = useWatch({ control, name: ['name', 'subject'] });
+
+  const onSendTest = () => {
+    const { name, subject } = formValues;
+    if (!name || !subject) {
+      if (!name) {
+        setError('name', { message: 'Required' });
+      }
+      if (!subject) {
+        setError('subject', { message: 'Required' });
+      }
+      closeModal();
+      return dispatch(
+        showAlert({
+          type: 'error',
+          message: `Please fill out "Scheduled Report Name" and "Email Subject" before sending test`,
+        }),
+      );
+    }
+    dispatch(
+      testScheduledReport({
+        reportId: report.id,
+        name: name,
+        recipients: testSendRecipients.map(({ name }) => name),
+        subject: subject,
+      }),
+    ).then(() => {
+      dispatch(
+        showAlert({
+          type: 'success',
+          message: `Successfully sent test report`,
+        }),
+      );
+      closeModal();
+    });
+  };
   const Typeahead = (
     <ComboBoxTypeaheadWrapper
       disabled={disabled}
       error={errors.recipients && 'At least 1 recipient must be selected'}
       id="to-address"
-      itemToString={item => (item ? `Name: ${item.name} ---- Email: ${item.email}` : '')}
+      itemToString={recipientUserToString}
       label="Send To"
       name="recipients"
       results={users}
@@ -45,77 +91,104 @@ export const ScheduledReportDetailsForm = ({
   );
 
   return (
-    <Layout>
-      <Layout.Section annotated>
-        <Layout.SectionTitle>Details</Layout.SectionTitle>
-      </Layout.Section>
-      <Layout.Section>
-        <Panel>
-          <Panel.Section>
-            <TextField
-              ref={register({ required: 'Required' })}
-              disabled={disabled}
-              label="Scheduled Report Name"
-              name="name"
-              helpText="Title for the scheduling of this report"
-              id="scheduled-report-name"
-              error={errors.name?.message}
-            />
-          </Panel.Section>
-          <Panel.Section>
-            <Inline space="800">
-              <div>
-                <LabelValue>
-                  <LabelValue.Label>Report</LabelValue.Label>
-                  <LabelValue.Value>{report.name}</LabelValue.Value>
-                </LabelValue>
-              </div>
-              <div>
-                <LabelValue>
-                  <LabelValue.Label>From Address</LabelValue.Label>
-                  <LabelValue.Value>reports@sparkpost.com</LabelValue.Value>
-                </LabelValue>
-              </div>
-            </Inline>
-          </Panel.Section>
-          <Panel.Section>
-            <TextField
-              ref={register({ required: 'Required' })}
-              disabled={disabled}
-              label="Email Subject"
-              name="subject"
-              helpText="Text which will appear as subject line in report email"
-              id="email-subject"
-              error={errors.subject?.message}
-            />
-          </Panel.Section>
-          <Panel.Section>
-            <Controller
-              control={control}
-              as={Typeahead}
-              name="recipients"
-              rules={{ validate: hasAtLeastOneRecipient }}
-            />
-          </Panel.Section>
-          {isUpdatingScheduledReport && (
+    <>
+      <Layout>
+        <Layout.Section annotated>
+          <Layout.SectionTitle>Details</Layout.SectionTitle>
+        </Layout.Section>
+        <Layout.Section>
+          <Panel>
             <Panel.Section>
-              <ButtonWrapper>
-                <Button type="submit" variant="primary" disabled={!formState.isDirty || disabled}>
-                  Update Details
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => history.push('/signals/analytics')}
-                  disabled={disabled}
-                >
-                  Cancel
-                </Button>
-              </ButtonWrapper>
+              <TextField
+                ref={register({ required: 'Required' })}
+                disabled={disabled}
+                label="Scheduled Report Name"
+                name="name"
+                helpText="Title for the scheduling of this report"
+                id="scheduled-report-name"
+                error={errors.name?.message}
+              />
             </Panel.Section>
-          )}
-        </Panel>
-      </Layout.Section>
-    </Layout>
+            <Panel.Section>
+              <Inline space="800">
+                <div>
+                  <LabelValue>
+                    <LabelValue.Label>Report</LabelValue.Label>
+                    <LabelValue.Value>{report.name}</LabelValue.Value>
+                  </LabelValue>
+                </div>
+                <div>
+                  <LabelValue>
+                    <LabelValue.Label>From Address</LabelValue.Label>
+                    <LabelValue.Value>reports@sparkpost.com</LabelValue.Value>
+                  </LabelValue>
+                </div>
+              </Inline>
+            </Panel.Section>
+            <Panel.Section>
+              <TextField
+                ref={register({ required: 'Required' })}
+                disabled={disabled}
+                label="Email Subject"
+                name="subject"
+                helpText="Text which will appear as subject line in report email"
+                id="email-subject"
+                error={errors.subject?.message}
+              />
+            </Panel.Section>
+            <Panel.Section>
+              <Panel.Action onClick={openModal} disabled={disabled}>
+                Send Test
+                <Button.Icon as={Telegram} />
+              </Panel.Action>
+              <Controller
+                control={control}
+                as={Typeahead}
+                name="recipients"
+                rules={{ validate: hasAtLeastOneRecipient }}
+              />
+            </Panel.Section>
+            {isUpdatingScheduledReport && (
+              <Panel.Section>
+                <ButtonWrapper>
+                  <Button type="submit" variant="primary" disabled={!formState.isDirty || disabled}>
+                    Update Details
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => history.push(`/signals/analytics?report=${report.id}`)}
+                    disabled={disabled}
+                  >
+                    Cancel
+                  </Button>
+                </ButtonWrapper>
+              </Panel.Section>
+            )}
+          </Panel>
+        </Layout.Section>
+      </Layout>
+      <AsyncActionModal
+        disabled={testSendRecipients.length < 1}
+        open={isModalOpen}
+        actionVerb="Send Test"
+        isPending={testScheduledReportStatus === 'loading'}
+        onAction={onSendTest}
+        onCancel={closeModal}
+        title="Send Test Report Email"
+      >
+        <Box height="160px">
+          <ComboBoxTypeahead
+            id="test-send"
+            itemToString={recipientUserToString}
+            label="Send To"
+            onChange={setTestSendRecipients}
+            results={users}
+            value={testSendRecipients}
+            maxNumberOfResults={10}
+          />
+        </Box>
+      </AsyncActionModal>
+    </>
   );
 };
 
@@ -123,14 +196,17 @@ export const ScheduledReportTimingForm = ({
   formControls,
   isUpdatingScheduledReport,
   disabled,
+  report,
 }) => {
   const history = useHistory();
 
-  const { errors, formState, register, setValue, watch } = formControls;
+  const { control, errors, formState, register, setValue } = formControls;
 
-  const timingFormValue = watch('timing');
-  const periodFormValue = watch('period');
-  const timezoneFormValue = watch('timezone');
+  const {
+    period: periodFormValue,
+    timezone: timezoneFormValue,
+    timing: timingFormValue,
+  } = useWatch({ control, name: ['period', 'timezone', 'timing'] });
 
   return (
     <Layout>
@@ -168,7 +244,7 @@ export const ScheduledReportTimingForm = ({
             </Radio.Group>
           </Panel.Section>
           <Panel.Section>
-            <Inline>
+            <Inline alignY="top">
               <Select
                 id="week"
                 ref={register}
@@ -245,7 +321,7 @@ export const ScheduledReportTimingForm = ({
                 </Button>
                 <Button
                   variant="secondary"
-                  onClick={() => history.push('/signals/analytics')}
+                  onClick={() => history.push(`/signals/analytics?report=${report.id}`)}
                   disabled={disabled}
                 >
                   Cancel
@@ -261,7 +337,7 @@ export const ScheduledReportTimingForm = ({
             </Button>
             <Button
               variant="secondary"
-              onClick={() => history.push('/signals/analytics')}
+              onClick={() => history.push(`/signals/analytics?report=${report.id}`)}
               disabled={disabled}
             >
               Cancel

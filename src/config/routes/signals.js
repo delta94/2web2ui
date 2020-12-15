@@ -128,6 +128,8 @@ const hibanaReportsRoutes = [
     component: reportBuilder.ScheduledReportCreatePage,
     condition: isAccountUiOptionSet('allow_scheduled_reports'),
     layout: App,
+    category: 'Signals Analytics',
+    subcategory: 'Analytics Report',
     title: 'Schedule Report',
   },
   {
@@ -135,6 +137,8 @@ const hibanaReportsRoutes = [
     component: reportBuilder.ScheduledReportEditPage,
     condition: isAccountUiOptionSet('allow_scheduled_reports'),
     layout: App,
+    category: 'Signals Analytics',
+    subcategory: 'Analytics Report',
     title: 'Edit Scheduled Report',
   },
 ];
