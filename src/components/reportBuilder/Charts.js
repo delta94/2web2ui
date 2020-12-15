@@ -15,6 +15,8 @@ import { REPORT_BUILDER_FILTER_KEY_MAP } from 'src/constants';
 import { ApiErrorBanner } from 'src/components';
 import Loading from 'src/components/loading/PanelLoading';
 import { Heading } from 'src/components/text';
+import CustomTooltip from './Tooltip';
+
 const DEFAULT_UNIT = 'number';
 
 function getUniqueUnits(metrics) {
@@ -156,6 +158,7 @@ export function Charts(props) {
               yLabel={chart.label}
               tooltipValueFormatter={chart.yAxisFormatter}
               showXAxis={index === charts.length - 1}
+              tooltip={CustomTooltip}
             />
           </Box>
         ))}
