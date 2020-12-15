@@ -1,9 +1,4 @@
-import {
-  getApiFormattedGroupings,
-  getGroupingFields,
-  getIterableFormattedGroupings,
-  getComparisonArguments,
-} from '../';
+import { getApiFormattedGroupings, getGroupingFields, getIterableFormattedGroupings } from '../';
 import * as helpers from '../';
 
 const EXAMPLE_GROUPINGS = [
@@ -453,37 +448,6 @@ describe('Report Builder helpers', () => {
       );
 
       expect(data).toStrictEqual(EXAMPLE_GROUPINGS);
-    });
-  });
-
-  describe('getComparisonArguments', () => {
-    it('throws an error when an invalid comparison is passed', () => {
-      expect(() => getComparisonArguments({ type: 'foobar' })).toThrowError();
-    });
-
-    it('returns a structured comparison object for each passed in comparison made available via FILTER_TYPES', () => {
-      expect(getComparisonArguments({ type: 'Recipient Domain', value: 'whatever.com' })).toEqual({
-        domains: 'whatever.com',
-      });
-      expect(getComparisonArguments({ type: 'Sending IP', value: '12345' })).toEqual({
-        sending_ips: '12345',
-      });
-      expect(getComparisonArguments({ type: 'IP Pool', value: 'the-best-pool' })).toEqual({
-        ip_pools: 'the-best-pool',
-      });
-      expect(getComparisonArguments({ type: 'Campaign', value: 'campaign-yeah' })).toEqual({
-        campaigns: 'campaign-yeah',
-      });
-      expect(getComparisonArguments({ type: 'Template', value: 'not-a-good-template' })).toEqual({
-        templates: 'not-a-good-template',
-      });
-      expect(getComparisonArguments({ type: 'Sending Domain', value: 'whatadomain.com' })).toEqual({
-        sending_domains: 'whatadomain.com',
-      });
-      // Subaccounts have a different structure due to the presence of a unique name and ID:
-      expect(getComparisonArguments({ type: 'Subaccount', id: '123' })).toEqual({
-        subaccounts: '123',
-      });
     });
   });
 });

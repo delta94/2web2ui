@@ -507,4 +507,47 @@ describe('metrics helpers', () => {
       expect(metricsHelpers.getMetricFromKey('this_is_phony')).toBeUndefined();
     });
   });
+
+  describe('getComparisonArguments', () => {
+    it('throws an error when an invalid comparison is passed', () => {
+      expect(() => metricsHelpers.getComparisonArguments({ type: 'foobar' })).toThrowError();
+    });
+
+    it('returns a structured comparison object for each passed in comparison made available via FILTER_TYPES', () => {
+      expect(
+        metricsHelpers.getComparisonArguments({ type: 'Recipient Domain', value: 'whatever.com' }),
+      ).toEqual({
+        domains: 'whatever.com',
+      });
+      expect(metricsHelpers.getComparisonArguments({ type: 'Sending IP', value: '12345' })).toEqual(
+        {
+          sending_ips: '12345',
+        },
+      );
+      expect(
+        metricsHelpers.getComparisonArguments({ type: 'IP Pool', value: 'the-best-pool' }),
+      ).toEqual({
+        ip_pools: 'the-best-pool',
+      });
+      expect(
+        metricsHelpers.getComparisonArguments({ type: 'Campaign', value: 'campaign-yeah' }),
+      ).toEqual({
+        campaigns: 'campaign-yeah',
+      });
+      expect(
+        metricsHelpers.getComparisonArguments({ type: 'Template', value: 'not-a-good-template' }),
+      ).toEqual({
+        templates: 'not-a-good-template',
+      });
+      expect(
+        metricsHelpers.getComparisonArguments({ type: 'Sending Domain', value: 'whatadomain.com' }),
+      ).toEqual({
+        sending_domains: 'whatadomain.com',
+      });
+      // Subaccounts have a different structure due to the presence of a unique name and ID:
+      expect(metricsHelpers.getComparisonArguments({ type: 'Subaccount', id: '123' })).toEqual({
+        subaccounts: '123',
+      });
+    });
+  });
 });
