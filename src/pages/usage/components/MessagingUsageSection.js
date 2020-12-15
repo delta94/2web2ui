@@ -11,6 +11,7 @@ import MessagingUsageChart from './MessagingUsageChart';
 export default function MessagingUsageSection({
   usage,
   messagingUsageHistory,
+  usageHistoryStatus,
   subscription,
   endOfBillingPeriod,
   startOfBillingPeriod,
@@ -23,6 +24,37 @@ export default function MessagingUsageSection({
     usage && subscription && remaining > 0 && remaining / subscription.plan_volume < 0.1;
   const isNearingDailyLimit =
     usage && usage.day.used - usage.day.limit > 0 && usage.day.used / usage.day.limit > 0.9;
+
+  const usageChart = React.useMemo(() => {
+    if (usageHistoryStatus === 'loading' || usageHistoryStatus === 'error') {
+      return null;
+    }
+
+    return (
+      <Panel mb="-1px">
+        <Panel.Section>
+          <MessagingUsageChart
+            data={messagingUsageHistory}
+            dailyLimit={hasDailyLimit && usage.day.limit.toLocaleString()}
+            planVolume={subscription.plan_volume}
+            overage={overage}
+            start={startOfBillingPeriod}
+            end={endOfBillingPeriod}
+          />
+        </Panel.Section>
+      </Panel>
+    );
+  }, [
+    usageHistoryStatus,
+    messagingUsageHistory,
+    hasDailyLimit,
+    usage.day.limit,
+    subscription.plan_volume,
+    overage,
+    startOfBillingPeriod,
+    endOfBillingPeriod,
+  ]);
+
   return (
     <>
       <Layout.Section annotated>
@@ -64,18 +96,7 @@ export default function MessagingUsageSection({
       <Layout.Section>
         {usage && (
           <Stack space="0">
-            <Panel mb="-1px">
-              <Panel.Section>
-                <MessagingUsageChart
-                  data={messagingUsageHistory}
-                  dailyLimit={hasDailyLimit && usage.day.limit.toLocaleString()}
-                  planVolume={subscription.plan_volume}
-                  overage={overage}
-                  start={startOfBillingPeriod}
-                  end={endOfBillingPeriod}
-                />
-              </Panel.Section>
-            </Panel>
+            {usageChart}
             <Box padding="400" backgroundColor="gray.1000">
               <Stack>
                 <Grid>

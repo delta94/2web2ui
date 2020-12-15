@@ -10,6 +10,7 @@ import { getAccount, getSubscription, getUsage, getUsageHistory } from 'src/help
 import { MessagingUsageSection, FeatureUsageSection, RVUsageSection } from './components';
 
 export default function UsagePage() {
+  // API Requests
   const { data: account, status: accountStatus, refetch: accountRefetch } = useSparkPostQuery(() =>
     getAccount({ include: 'usage' }),
   );
@@ -24,16 +25,12 @@ export default function UsagePage() {
     status: subscriptionStatus,
     refetch: subscriptionRefetch,
   } = useSparkPostQuery(getSubscription);
-  const isLoading =
-    accountStatus === 'loading' ||
-    usageStatus === 'loading' ||
-    subscriptionStatus === 'loading' ||
-    usageHistoryStatus === 'loading';
-  const isError =
-    accountStatus === 'error' ||
-    usageStatus === 'error' ||
-    subscriptionStatus === 'error' ||
-    usageHistoryStatus === 'error';
+
+  // API Status Handling
+  // History is intentionally omitted from this array
+  const statuses = [accountStatus, usageStatus, subscriptionStatus];
+  const isLoading = statuses.includes('loading');
+  const isError = statuses.includes('error');
 
   function handleReload() {
     accountRefetch();
@@ -64,6 +61,7 @@ export default function UsagePage() {
   const billingSubscription = data.subscription;
   const rvUsage = data.usage.recipient_validation;
   const messagingUsageHistory = data?.usageHistory?.messaging;
+  const rvUsageHistory = data?.usageHistory?.recipient_validation;
 
   return (
     <Page title="Usage">
@@ -71,6 +69,7 @@ export default function UsagePage() {
         <MessagingUsageSection
           usage={accountUsage}
           messagingUsageHistory={messagingUsageHistory}
+          messagingUsageHistoryStatus={usageHistoryStatus}
           subscription={accountSubscription}
           endOfBillingPeriod={endOfBillingPeriod}
           startOfBillingPeriod={startOfBillingPeriod}
@@ -83,7 +82,11 @@ export default function UsagePage() {
 
       {rvUsage ? (
         <Layout>
-          <RVUsageSection rvUsage={rvUsage} />
+          <RVUsageSection
+            rvUsage={rvUsage}
+            rvUsageHistory={rvUsageHistory}
+            rvUsageHistoryStatus={usageHistoryStatus}
+          />
         </Layout>
       ) : null}
     </Page>

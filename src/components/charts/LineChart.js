@@ -12,44 +12,12 @@ import {
 import moment from 'moment';
 import styles from './LineChart.module.scss';
 import { tokens } from '@sparkpost/design-tokens-hibana';
-import { Box, Text } from 'src/components/matchbox';
-import { LegendCircle } from 'src/components';
 
 const identity = a => a;
 
 function orderDesc(a, b) {
   return b.value - a.value;
 }
-
-const CustomTooltip = ({ showTooltip, payload, label, labelFormatter, formatter }) => {
-  if (!showTooltip) {
-    return null;
-  }
-  return (
-    <Box borderRadius="200" padding="200" bg="gray.1000">
-      <Box fontSize="100" color="gray.200" mb="100">
-        {labelFormatter(label)}
-      </Box>
-      {payload.map(entry => (
-        <Box key={`report_chart_${entry.name}`} mb="100">
-          <Box justifyContent="space-between" alignItems="center" display="flex">
-            <Box display="inline-flex" alignItems="center">
-              <LegendCircle mr={tokens.spacing_300} color={entry.stroke} />
-              <Text as="span" fontSize="100" color="white">
-                {entry.name}
-              </Text>
-            </Box>
-            <Box ml="800">
-              <Text fontSize="100" textAlign="right" color="white">
-                {formatter(entry.value)}
-              </Text>
-            </Box>
-          </Box>
-        </Box>
-      ))}
-    </Box>
-  );
-};
 
 const Cursor = ({ data, height, points: [{ x, y }], width: chartWidth }) => {
   const sectionWidth = chartWidth / data.length;
@@ -126,7 +94,9 @@ export default function SpLineChart(props) {
     tooltipLabelFormatter = identity,
     tooltipValueFormatter = identity,
     showXAxis,
+    xAxisKey = 'ts',
     yLabel,
+    tooltip: CustomTooltip,
   } = props;
 
   return (
@@ -136,7 +106,7 @@ export default function SpLineChart(props) {
           <Bar key="noKey" dataKey="noKey" background={{ fill: tokens.color_gray_200 }} />
           <XAxis
             axisLine={false}
-            dataKey="ts"
+            dataKey={xAxisKey}
             height={30}
             hide={!showXAxis}
             interval="preserveStartEnd"
@@ -156,7 +126,7 @@ export default function SpLineChart(props) {
           />
           <Tooltip
             cursor={<Cursor data={data} />}
-            content={<CustomTooltip showTooltip={showTooltip} />}
+            content={CustomTooltip ? <CustomTooltip showTooltip={showTooltip} /> : null}
             wrapperStyle={{ zIndex: tokens.zIndex_overlay }}
             isAnimationActive={false}
             itemSorter={orderDesc}
