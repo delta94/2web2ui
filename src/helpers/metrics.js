@@ -380,20 +380,20 @@ export function rate(item, keys = []) {
  * @param {Object} comparison - passed in comparison when the user selects comparisons via "compare by"
  */
 export function getFilterByComparison(comparison) {
-  const filterType = REPORT_BUILDER_FILTER_KEY_MAP[comparison.type];
+  const filterId = REPORT_BUILDER_FILTER_KEY_MAP[comparison.type];
 
-  if (!filterType)
+  if (!filterId)
     throw new Error(
       `Invalid comparison ${comparison} - please supply a valid comparison to "useComparisonArguments".`,
     );
 
-  const value = filterType === 'subaccounts' ? comparison.id : comparison.value; // Subaccount formatting means different data must be passed to the request
+  const value = filterId === 'subaccounts' ? comparison.id : comparison.value; // Subaccount formatting means different data must be passed to the request
 
   // Returns according to the metrics advanced filters:
   // https://developers.sparkpost.com/api/metrics/#header-advanced-filters
   return {
     AND: {
-      [filterType]: {
+      [filterId]: {
         eq: [value],
       },
     },
