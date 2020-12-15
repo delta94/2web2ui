@@ -31,7 +31,7 @@ export default function MessagingUsageSection({
     }
 
     return (
-      <Panel mb="-1px">
+      <Panel mb="-1px" data-id="messaging-usage-chart">
         <Panel.Section>
           <MessagingUsageChart
             data={messagingUsageHistory}

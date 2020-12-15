@@ -146,7 +146,7 @@ describe('The usage page', () => {
 
       cy.visit(PAGE_URL);
       cy.wait(['@usageReq', '@usageHistoryReq', '@subscriptionReq', '@accountReq']);
-      cy.findByText('Dec 29th').should('be.visible');
+      cy.get('[data-id="messaging-usage-chart"]').should('be.visible');
     });
   }
 });
