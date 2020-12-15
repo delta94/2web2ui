@@ -147,7 +147,6 @@ describe('The usage page', () => {
       cy.visit(PAGE_URL);
       cy.wait(['@usageReq', '@usageHistoryReq', '@subscriptionReq', '@accountReq']);
       cy.findByText('Dec 29th').should('be.visible');
-      cy.findByText('80K').should('be.visible');
     });
   }
 });
