@@ -81,9 +81,26 @@ function getLineChartFormatters(precision, to = moment()) {
   return formatters;
 }
 
+function cumulativeData({ data, key }) {
+  const results = data.reduce((cumulativeDataSet, data) => {
+    const cumulativeData = { ...data };
+
+    if (cumulativeDataSet.length > 0 && data[key]) {
+      cumulativeData[key] = data[key] + cumulativeDataSet[cumulativeDataSet.length - 1][key];
+    }
+
+    cumulativeDataSet = [...cumulativeDataSet, cumulativeData];
+
+    return cumulativeDataSet;
+  }, []);
+
+  return results;
+}
+
 const formatYAxisPercent = _.memoize(v => `${roundToPlaces(v, v < 1 ? 3 : 1)}%`);
 
 export {
+  cumulativeData,
   getDayLines,
   getTimeTickFormatter,
   getTooltipLabelFormatter,

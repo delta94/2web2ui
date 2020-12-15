@@ -60,6 +60,7 @@ export default function UsagePage() {
   const accountSubscription = data.account.subscription;
   const billingSubscription = data.subscription;
   const rvUsage = data.usage.recipient_validation;
+  const messagingUsageHistory = data?.usageHistory?.messaging;
   const rvUsageHistory = data?.usageHistory?.recipient_validation;
 
   return (
@@ -67,6 +68,8 @@ export default function UsagePage() {
       <Layout>
         <MessagingUsageSection
           usage={accountUsage}
+          messagingUsageHistory={messagingUsageHistory}
+          messagingUsageHistoryStatus={usageHistoryStatus}
           subscription={accountSubscription}
           endOfBillingPeriod={endOfBillingPeriod}
           startOfBillingPeriod={startOfBillingPeriod}
