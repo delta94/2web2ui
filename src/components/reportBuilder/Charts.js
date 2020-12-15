@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import _ from 'lodash';
 import { getLineChartFormatters } from 'src/helpers/chart';
-import LineChart from './LineChart';
+import LineChart from 'src/components/charts/LineChart';
 import METRICS_UNIT_CONFIG from 'src/config/metrics-units';
 import { Box, Stack, Panel } from 'src/components/matchbox';
 import { useSparkPostQuery } from 'src/hooks';

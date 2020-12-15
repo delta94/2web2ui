@@ -286,7 +286,7 @@ if (IS_HIBANA_ENABLED) {
 
     it('Deletes existing scheduled report', () => {
       cy.visit('/signals/schedule/foo/bar');
-      cy.wait('@getScheduledReport')
+      cy.wait('@getScheduledReport');
       cy.findByRole('button', { name: 'Delete Item' }).click();
       cy.withinModal(() => {
         cy.findByRole('button', { name: 'Delete' }).click();

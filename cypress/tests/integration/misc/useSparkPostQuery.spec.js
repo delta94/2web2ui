@@ -14,6 +14,11 @@ function commonBeforeSteps() {
     fixture: 'account/200.get.include-usage.json',
     requestAlias: 'accountUsageReq',
   });
+  cy.stubRequest({
+    url: '/api/v1/usage/history',
+    fixture: 'usage/history/200.get.json',
+    requestAlias: 'usageHistoryReq',
+  });
 }
 
 describe('SparkPost request handling via `useSparkPostQuery`', () => {
