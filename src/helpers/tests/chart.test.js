@@ -1,4 +1,5 @@
 import {
+  cumulativeData,
   getDayLines,
   getTimeTickFormatter,
   getTooltipLabelFormatter,
@@ -34,6 +35,25 @@ describe('Helper: chart', () => {
       { ts: getTimestampWithFixedHour('2017-01-03T00:15', 0) },
       { ts: getTimestampWithFixedHour('2017-01-03T12:00', 12) },
     ];
+  });
+
+  describe('cumulativeData', () => {
+    const testData = [
+      { date: '2020-11-15', usage: 1000 },
+      { date: '2020-11-16', usage: 1000 },
+      { date: '2020-11-17', usage: 1000 },
+      { date: '2020-11-18', usage: 1000 },
+      { date: '2020-11-19', usage: 1000 },
+    ];
+
+    it('should return an array of cumulative data', () => {
+      const dataSet = cumulativeData({ data: testData, key: 'usage' });
+      expect(dataSet[0].usage).toEqual(1000);
+      expect(dataSet[1].usage).toEqual(2000);
+      expect(dataSet[2].usage).toEqual(3000);
+      expect(dataSet[3].usage).toEqual(4000);
+      expect(dataSet[4].usage).toEqual(5000);
+    });
   });
 
   describe('getDayLines', () => {
