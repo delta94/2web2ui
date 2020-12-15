@@ -26,8 +26,8 @@ export default function CompareByAggregatedMetrics({ date, reportOptions }) {
                 <CompareByAggregatedRow
                   key={`comparison-${comparisonIndex}`}
                   comparison={comparison}
-                  hasDivider={comparisonIndex < comparisons.length - 1}
                   reportOptions={reportOptions}
+                  hasDivider={comparisonIndex < comparisons.length - 1}
                 />
               );
             })}

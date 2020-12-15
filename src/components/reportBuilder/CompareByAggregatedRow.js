@@ -1,10 +1,18 @@
 import React from 'react';
+import styled from 'styled-components';
 import { getDeliverability } from 'src/helpers/api/metrics';
 import { getMetricsFromKeys, getFilterByComparison } from 'src/helpers/metrics';
 import { LegendCircle, Unit } from 'src/components';
 import Divider from 'src/components/divider';
-import { Box, Inline, LabelValue, Stack } from 'src/components/matchbox';
+import { Box, Columns, Column, LabelValue, Stack } from 'src/components/matchbox';
 import { useSparkPostQuery, usePrepareReportBuilderQuery } from 'src/hooks';
+
+const MetricsGrid = styled.div`
+  display: inline-grid;
+  width: 100%;
+  grid-gap: ${props => props.theme.space['200']};
+  grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+`;
 
 export default function CompareByAggregatedRow({ comparison, reportOptions, hasDivider }) {
   const requestParams = usePrepareRequestParams({ comparison, reportOptions });
@@ -26,34 +34,40 @@ export default function CompareByAggregatedRow({ comparison, reportOptions, hasD
 
   return (
     <Stack>
-      <Inline space="600">
-        <LabelValue dark>
-          <LabelValue.Label>{comparison.type}</LabelValue.Label>
+      <Columns>
+        <Column width={1 / 6}>
+          <LabelValue dark>
+            <LabelValue.Label>{comparison.type}</LabelValue.Label>
 
-          <LabelValue.Value>{comparison.value}</LabelValue.Value>
-        </LabelValue>
+            <LabelValue.Value>{comparison.value}</LabelValue.Value>
+          </LabelValue>
+        </Column>
 
-        {hasMetrics
-          ? aggregatedMetrics.map((metric, metricIndex) => {
-              const { label, key, stroke, unit, value } = metric;
+        {hasMetrics ? (
+          <Column>
+            <MetricsGrid>
+              {aggregatedMetrics.map((metric, metricIndex) => {
+                const { label, key, stroke, unit, value } = metric;
 
-              return (
-                <Stack key={`aggregated-metric-${key}-${metricIndex}`}>
-                  <LabelValue dark>
-                    <LabelValue.Label>{label}</LabelValue.Label>
+                return (
+                  <Stack key={`aggregated-metric-${key}-${metricIndex}`}>
+                    <LabelValue dark>
+                      <LabelValue.Label>{label}</LabelValue.Label>
 
-                    <LabelValue.Value>
-                      <Box display="flex" alignItems="center">
-                        {stroke ? <LegendCircle marginRight="200" color={stroke} /> : null}
-                        <Unit value={value} unit={unit} />
-                      </Box>
-                    </LabelValue.Value>
-                  </LabelValue>
-                </Stack>
-              );
-            })
-          : null}
-      </Inline>
+                      <LabelValue.Value>
+                        <Box display="flex" alignItems="center">
+                          {stroke ? <LegendCircle marginRight="200" color={stroke} /> : null}
+                          <Unit value={value} unit={unit} />
+                        </Box>
+                      </LabelValue.Value>
+                    </LabelValue>
+                  </Stack>
+                );
+              })}
+            </MetricsGrid>
+          </Column>
+        ) : null}
+      </Columns>
 
       {hasDivider ? <Divider /> : null}
     </Stack>
