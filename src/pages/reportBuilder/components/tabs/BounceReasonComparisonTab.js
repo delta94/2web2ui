@@ -2,25 +2,22 @@ import React from 'react';
 import { useSparkPostQuery } from 'src/hooks';
 import { ApiErrorBanner, Loading } from 'src/components';
 import { Panel } from 'src/components/matchbox';
-import {
-  getMetricsFromKeys,
-  getQueryFromOptionsV2 as getQueryFromOptions,
-  getFilterByComparison,
-} from 'src/helpers/metrics';
+import { getMetricsFromKeys, getFilterByComparison } from 'src/helpers/metrics';
 import { getBounceReasonByDomain, getDeliverability } from 'src/helpers/api/metrics';
 import { selectReasons, selectFormattedAggregates } from 'src/selectors/bounceReport';
 import { BounceReasonTable } from '../tables';
 import { usePrepareReportBuilderQuery } from 'src/hooks';
+import { useReportBuilderContext } from '../../context/ReportBuilderContext';
 
 export default function BounceReasonComparisonTab({ comparison }) {
-  const [reasonsArgs, aggregatesArgs] = useRequestArguments(comparison);
-  const reasonsQuery = useSparkPostQuery(() => getBounceReasonByDomain(reasonsArgs));
-  const aggregatesQuery = useSparkPostQuery(() => getDeliverability(aggregatesArgs));
-  const isPending = reasonsQuery.status === 'loading' || aggregatesQuery.status === 'loading';
-  const isError = reasonsQuery.status === 'error' || aggregatesQuery.status === 'error';
+  const [bounceReasonParams, aggregatesParams] = useRequestArguments(comparison);
+  const bounceReasonsQuery = useSparkPostQuery(() => getBounceReasonByDomain(bounceReasonParams));
+  const aggregatesQuery = useSparkPostQuery(() => getDeliverability(aggregatesParams));
+  const isPending = bounceReasonsQuery.status === 'loading' || aggregatesQuery.status === 'loading';
+  const isError = bounceReasonsQuery.status === 'error' || aggregatesQuery.status === 'error';
 
   function handleReload() {
-    reasonsQuery.refetch();
+    bounceReasonsQuery.refetch();
     aggregatesQuery.refetch();
   }
 
@@ -37,7 +34,7 @@ export default function BounceReasonComparisonTab({ comparison }) {
   }
 
   // This re-structuring using the `bounceReport` key is a holdover from Redux - could we refactor these selectors to be less opinionated?
-  const reasons = selectReasons({ bounceReport: { reasons: reasonsQuery.data } });
+  const reasons = selectReasons({ bounceReport: { reasons: bounceReasonsQuery.data } });
   const aggregates = selectFormattedAggregates({
     bounceReport: { aggregates: aggregatesQuery.data[0] },
   });
@@ -51,6 +48,7 @@ export default function BounceReasonComparisonTab({ comparison }) {
  * @param {Object} comparison - passed in comparison set by the user via the "Compare By" feature
  */
 function useRequestArguments(comparison) {
+  const { state: reportOptions } = useReportBuilderContext();
   // I borrowed this logic from `src/actions/bounceReport`
   // But does the comparison value influence which metrics are valid for this request?
   const deliverabilityMetrics = getMetricsFromKeys([
@@ -60,16 +58,18 @@ function useRequestArguments(comparison) {
     'count_admin_bounce',
   ]);
   const bounceReasonMetrics = getMetricsFromKeys(['count_bounce']);
-  const sharedArguments = usePrepareReportBuilderQuery();
-  const comparisonArguments = getFilterByComparison(comparison);
-  const aggregatesArgs = {
-    ...getQueryFromOptions({ ...sharedArguments, metrics: deliverabilityMetrics }),
-    ...comparisonArguments,
-  };
-  const bounceReasonArgs = {
-    ...getQueryFromOptions({ ...sharedArguments, metrics: bounceReasonMetrics }),
-    ...comparisonArguments,
-  };
+  const existingFilters = reportOptions.query_filters ? reportOptions.query_filters : [];
+  const comparisonFilter = getFilterByComparison(comparison);
+  const aggregatesParams = usePrepareReportBuilderQuery({
+    ...reportOptions,
+    filters: [...existingFilters, comparisonFilter],
+    metrics: deliverabilityMetrics,
+  });
+  const bounceReasonParams = usePrepareReportBuilderQuery({
+    ...reportOptions,
+    filters: [...existingFilters, comparisonFilter],
+    metrics: bounceReasonMetrics,
+  });
 
-  return [aggregatesArgs, bounceReasonArgs];
+  return [aggregatesParams, bounceReasonParams];
 }

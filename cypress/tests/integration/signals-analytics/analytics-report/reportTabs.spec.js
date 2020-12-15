@@ -3,7 +3,7 @@ import { PAGE_URL, STABLE_UNIX_DATE } from './constants';
 import { stubDeliverability, stubTimeSeries } from './helpers';
 
 if (IS_HIBANA_ENABLED) {
-  describe('Analytics Report bounce and rejection tables', () => {
+  describe('Analytics Report report tabs', () => {
     describe('the bounce reason table', () => {
       beforeEach(() => {
         commonBeforeSteps();
@@ -433,30 +433,35 @@ if (IS_HIBANA_ENABLED) {
       commonBeforeSteps();
       applyBounceMetrics();
       applySubaccountComparisons();
-
       cy.stubRequest({
-        url: '/api/v1/metrics/deliverability/bounce-reason/domain**/*',
+        url: '/api/v1/metrics/deliverability**',
         fixture: '400.json',
         statusCode: 400,
-        requestAlias: 'getBounceReasonsFail',
+        requestAlias: 'getDeliverabilityFail',
       });
 
       cy.findByRole('tab', { name: 'Bounce Reason Fake Subaccount 1 (ID 101)' }).click();
-      cy.wait(['@getBounceReasonsFail', '@getDeliverability']);
-      cy.wait('@getBounceReasonsFail');
-      cy.wait('@getBounceReasonsFail');
-      cy.wait('@getBounceReasonsFail');
+      cy.wait('@getDeliverabilityFail');
+      cy.wait('@getDeliverabilityFail');
+      cy.wait('@getDeliverabilityFail');
+      cy.wait('@getDeliverabilityFail');
 
       cy.findByText('An error occurred').should('be.visible');
       cy.findByText('Sorry, there was an issue.').should('be.visible');
 
       cy.stubRequest({
-        url: '/api/v1/metrics/deliverability/bounce-reason/domain**/*',
+        url: '/api/v1/metrics/deliverability**',
         fixture: 'metrics/deliverability/bounce-reason/domain/200.get.json',
-        requestAlias: 'getBounceReasons',
+        requestAlias: 'getBounceReason',
+      });
+      cy.stubRequest({
+        url: '/api/v1/metrics/deliverability/bounce-reason/domain**',
+        fixture: 'metrics/deliverability/200.get.json',
+        requestAlias: 'getDeliverability',
       });
       cy.findByRole('button', { name: 'Try Again' }).click();
-      cy.wait('@getBounceReasons');
+      cy.wait(['@getBounceReason', '@getDeliverability']);
+
       cy.get('table')
         .should('be.visible')
         .within(() => {

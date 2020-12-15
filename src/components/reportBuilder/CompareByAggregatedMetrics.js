@@ -8,8 +8,8 @@ export default function CompareByAggregatedMetrics({ date, reportOptions }) {
 
   return (
     <Box padding="400" backgroundColor="gray.1000" data-id="compare-by-aggregated-metrics">
-      <Columns>
-        <Column width={1 / 5}>
+      <Columns collapseBelow="md">
+        <Column width={1 / 6}>
           <LabelValue dark>
             <LabelValue.Label>Date</LabelValue.Label>
 

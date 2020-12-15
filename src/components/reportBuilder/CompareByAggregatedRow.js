@@ -11,7 +11,7 @@ const MetricsGrid = styled.div`
   display: inline-grid;
   width: 100%;
   grid-gap: ${props => props.theme.space['200']};
-  grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
 `;
 
 export default function CompareByAggregatedRow({ comparison, reportOptions, hasDivider }) {
@@ -82,20 +82,12 @@ export default function CompareByAggregatedRow({ comparison, reportOptions, hasD
  *
  */
 function usePrepareRequestParams({ comparison, reportOptions }) {
-  const sharedArguments = usePrepareReportBuilderQuery(reportOptions);
-  // If there are query_filter.groupings applied...
-  const existingFilters = sharedArguments.query_filters
-    ? JSON.parse(sharedArguments.query_filters) // parse the existing filters to allow for merging
-    : { groupings: [] };
+  const existingFilters = reportOptions.query_filters ? reportOptions.query_filters : [];
   const comparisonFilter = getFilterByComparison(comparison);
-  // ...merge them with new comparison filters derived from any active comparison
-  const aggregatesParams = {
-    ...sharedArguments,
-    // stringify the filters before passing them to the network request
-    query_filters: JSON.stringify({
-      groupings: [...existingFilters.groupings, comparisonFilter],
-    }),
-  };
+  const params = usePrepareReportBuilderQuery({
+    ...reportOptions,
+    filters: [...existingFilters, comparisonFilter],
+  });
 
-  return aggregatesParams;
+  return params;
 }
