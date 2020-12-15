@@ -10,7 +10,7 @@ import {
 import { getBounceReasonByDomain, getDeliverability } from 'src/helpers/api/metrics';
 import { selectReasons, selectFormattedAggregates } from 'src/selectors/bounceReport';
 import { BounceReasonTable } from '../tables';
-import { usePrepareQuery } from '../../hooks';
+import { usePrepareReportBuilderQuery } from 'src/hooks';
 
 export default function BounceReasonComparisonTab({ comparison }) {
   const [reasonsArgs, aggregatesArgs] = useRequestArguments(comparison);
@@ -60,7 +60,7 @@ function useRequestArguments(comparison) {
     'count_admin_bounce',
   ]);
   const bounceReasonMetrics = getMetricsFromKeys(['count_bounce']);
-  const sharedArguments = usePrepareQuery();
+  const sharedArguments = usePrepareReportBuilderQuery();
   const comparisonArguments = getComparisonArguments(comparison);
   const aggregatesArgs = {
     ...getQueryFromOptions({ ...sharedArguments, metrics: deliverabilityMetrics }),
