@@ -5,7 +5,7 @@ import { Panel } from 'src/components/matchbox';
 import {
   getMetricsFromKeys,
   getQueryFromOptionsV2 as getQueryFromOptions,
-  getComparisonArguments,
+  getFilterByComparison,
 } from 'src/helpers/metrics';
 import { getBounceReasonByDomain, getDeliverability } from 'src/helpers/api/metrics';
 import { selectReasons, selectFormattedAggregates } from 'src/selectors/bounceReport';
@@ -61,7 +61,7 @@ function useRequestArguments(comparison) {
   ]);
   const bounceReasonMetrics = getMetricsFromKeys(['count_bounce']);
   const sharedArguments = usePrepareReportBuilderQuery();
-  const comparisonArguments = getComparisonArguments(comparison);
+  const comparisonArguments = getFilterByComparison(comparison);
   const aggregatesArgs = {
     ...getQueryFromOptions({ ...sharedArguments, metrics: deliverabilityMetrics }),
     ...comparisonArguments,

@@ -510,43 +510,69 @@ describe('metrics helpers', () => {
 
   describe('getComparisonArguments', () => {
     it('throws an error when an invalid comparison is passed', () => {
-      expect(() => metricsHelpers.getComparisonArguments({ type: 'foobar' })).toThrowError();
+      expect(() => metricsHelpers.getFilterByComparison({ type: 'foobar' })).toThrowError();
     });
 
     it('returns a structured comparison object for each passed in comparison made available via FILTER_TYPES', () => {
       expect(
-        metricsHelpers.getComparisonArguments({ type: 'Recipient Domain', value: 'whatever.com' }),
+        metricsHelpers.getFilterByComparison({ type: 'Recipient Domain', value: 'whatever.com' }),
       ).toEqual({
-        domains: 'whatever.com',
-      });
-      expect(metricsHelpers.getComparisonArguments({ type: 'Sending IP', value: '12345' })).toEqual(
-        {
-          sending_ips: '12345',
+        AND: {
+          domains: {
+            eq: ['whatever.com'],
+          },
         },
-      );
-      expect(
-        metricsHelpers.getComparisonArguments({ type: 'IP Pool', value: 'the-best-pool' }),
-      ).toEqual({
-        ip_pools: 'the-best-pool',
+      });
+      expect(metricsHelpers.getFilterByComparison({ type: 'Sending IP', value: '12345' })).toEqual({
+        AND: {
+          sending_ips: {
+            eq: ['12345'],
+          },
+        },
       });
       expect(
-        metricsHelpers.getComparisonArguments({ type: 'Campaign', value: 'campaign-yeah' }),
+        metricsHelpers.getFilterByComparison({ type: 'IP Pool', value: 'the-best-pool' }),
       ).toEqual({
-        campaigns: 'campaign-yeah',
+        AND: {
+          ip_pools: {
+            eq: ['the-best-pool'],
+          },
+        },
       });
       expect(
-        metricsHelpers.getComparisonArguments({ type: 'Template', value: 'not-a-good-template' }),
+        metricsHelpers.getFilterByComparison({ type: 'Campaign', value: 'campaign-yeah' }),
       ).toEqual({
-        templates: 'not-a-good-template',
+        AND: {
+          campaigns: {
+            eq: ['campaign-yeah'],
+          },
+        },
       });
       expect(
-        metricsHelpers.getComparisonArguments({ type: 'Sending Domain', value: 'whatadomain.com' }),
+        metricsHelpers.getFilterByComparison({ type: 'Template', value: 'not-a-good-template' }),
       ).toEqual({
-        sending_domains: 'whatadomain.com',
+        AND: {
+          templates: {
+            eq: ['not-a-good-template'],
+          },
+        },
+      });
+      expect(
+        metricsHelpers.getFilterByComparison({ type: 'Sending Domain', value: 'whatadomain.com' }),
+      ).toEqual({
+        AND: {
+          sending_domains: {
+            eq: ['whatadomain.com'],
+          },
+        },
       });
       // Subaccounts have a different structure due to the presence of a unique name and ID:
-      expect(metricsHelpers.getComparisonArguments({ type: 'Subaccount', id: '123' })).toEqual({
-        subaccounts: '123',
+      expect(metricsHelpers.getFilterByComparison({ type: 'Subaccount', id: '123' })).toEqual({
+        AND: {
+          subaccounts: {
+            eq: ['123'],
+          },
+        },
       });
     });
   });

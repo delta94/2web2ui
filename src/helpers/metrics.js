@@ -6,7 +6,6 @@ import { HIBANA_METRICS_COLORS, REPORT_BUILDER_FILTER_KEY_MAP } from 'src/consta
 import { getRelativeDates } from 'src/helpers/date';
 import { dehydrateFilters } from 'src/pages/reportBuilder/helpers';
 import { safeDivide, safeRate } from './math';
-import { REPORT_BUILDER_FILTER_TYPE_COLLECTION } from '../constants';
 
 const {
   metricsPrecisionMap: precisionMap,
@@ -380,17 +379,23 @@ export function rate(item, keys = []) {
  *
  * @param {Object} comparison - passed in comparison when the user selects comparisons via "compare by"
  */
-export function getComparisonArguments(comparison) {
-  const comparisonObj = REPORT_BUILDER_FILTER_TYPE_COLLECTION.find(
-    filter => filter.label === comparison.type,
-  );
+export function getFilterByComparison(comparison) {
+  const filterType = REPORT_BUILDER_FILTER_KEY_MAP[comparison.type];
 
-  if (!comparisonObj)
+  if (!filterType)
     throw new Error(
       `Invalid comparison ${comparison} - please supply a valid comparison to "useComparisonArguments".`,
     );
 
+  const value = filterType === 'subaccounts' ? comparison.id : comparison.value; // Subaccount formatting means different data must be passed to the request
+
+  // Returns according to the metrics advanced filters:
+  // https://developers.sparkpost.com/api/metrics/#header-advanced-filters
   return {
-    [comparisonObj.value]: comparisonObj.value === 'subaccounts' ? comparison.id : comparison.value, // Subaccount formatting means different data must be passed to the request
+    AND: {
+      [filterType]: {
+        eq: [value],
+      },
+    },
   };
 }

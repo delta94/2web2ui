@@ -1,6 +1,6 @@
 import React from 'react';
 import { getDeliverability } from 'src/helpers/api/metrics';
-import { getMetricsFromKeys, getComparisonArguments } from 'src/helpers/metrics';
+import { getMetricsFromKeys, getFilterByComparison } from 'src/helpers/metrics';
 import { LegendCircle, Unit } from 'src/components';
 import Divider from 'src/components/divider';
 import { Box, Column, Columns, Inline, LabelValue, Stack } from 'src/components/matchbox';
@@ -43,7 +43,7 @@ export default function CompareByAggregatedMetrics({ date, reportOptions }) {
 
 function ComparisonRow({ comparison, reportOptions, hasDivider }) {
   const sharedArguments = usePrepareReportBuilderQuery(reportOptions);
-  const comparisonArguments = getComparisonArguments(comparison);
+  const comparisonArguments = getFilterByComparison(comparison);
   const aggregatesArgs = {
     ...sharedArguments,
     ...comparisonArguments,
