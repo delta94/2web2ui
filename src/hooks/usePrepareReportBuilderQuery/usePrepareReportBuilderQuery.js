@@ -5,7 +5,9 @@ import {
 } from 'src/helpers/metrics';
 
 /**
- * Prepares options for requests based on the current state of the page
+ * Prepares options for requests based on the current state of the passed in `reportOptions`. Returns URL encoded JSON.
+ *
+ * @param {Object} reportOptions - state object of the user's currently selected filters, comparisons, etc.
  */
 export default function usePrepareReportBuilderQuery(reportOptions) {
   const { metrics } = reportOptions;
@@ -19,5 +21,5 @@ export default function usePrepareReportBuilderQuery(reportOptions) {
     });
   }, [reportOptions, formattedMetrics]);
 
-  return formattedOptions;
+  return encodeURI(JSON.stringify(formattedOptions));
 }

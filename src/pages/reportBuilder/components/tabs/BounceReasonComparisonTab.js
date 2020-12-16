@@ -58,7 +58,7 @@ function useRequestArguments(comparison) {
     'count_admin_bounce',
   ]);
   const bounceReasonMetrics = getMetricsFromKeys(['count_bounce']);
-  const existingFilters = reportOptions.query_filters ? reportOptions.query_filters : [];
+  const existingFilters = reportOptions.filters ? reportOptions.filters : [];
   const comparisonFilter = getFilterByComparison(comparison);
   const aggregatesParams = usePrepareReportBuilderQuery({
     ...reportOptions,

@@ -74,7 +74,7 @@ if (IS_HIBANA_ENABLED) {
       it('renders an empty state when no results are returned', () => {
         cy.findByRole('tab', { name: 'Bounce Reason' }).click();
 
-        cy.findByLabelText('Filter').should('not.be.visible');
+        cy.findByLabelText('Filter').should('not.exist');
         cy.findByText('No bounce reasons to report').should('be.visible');
       });
     });
@@ -154,7 +154,7 @@ if (IS_HIBANA_ENABLED) {
 
         cy.wait(['@getRejectionReasons', '@getDeliverability']);
 
-        cy.findByLabelText('Filter').should('not.be.visible');
+        cy.findByLabelText('Filter').should('not.exist');
         cy.findByText('No rejection reasons to report').should('be.visible');
       });
     });
@@ -399,8 +399,8 @@ if (IS_HIBANA_ENABLED) {
         cy.wait(['@getDeliverability', '@getBounceReasons']).then(xhrs => {
           const [deliverabilityReq, bounceReasonsReq] = xhrs;
 
-          cy.wrap(deliverabilityReq.url).should('include', 'subaccounts=101');
-          cy.wrap(bounceReasonsReq.url).should('include', 'subaccounts=101');
+          cy.wrap(deliverabilityReq.url).should('include', '101');
+          cy.wrap(bounceReasonsReq.url).should('include', '101');
         });
 
         cy.get('table')
@@ -426,6 +426,46 @@ if (IS_HIBANA_ENABLED) {
                   .should('have.text', 'gmail.com');
               });
           });
+      });
+    });
+
+    it('merges existing query filters with comparisons when making requests for bounce reasons and aggregated metrics', () => {
+      commonBeforeSteps();
+      applyBounceMetrics();
+      applySubaccountComparisons();
+
+      // Apply an additional subaccount filter
+      cy.findByRole('button', { name: 'Add Filters' }).click();
+      cy.findByLabelText('Type').select('Subaccount');
+      cy.findByLabelText('Compare By').select('is equal to');
+      cy.findByLabelText('Subaccount').type('Fake Subaccount 4');
+      cy.wait('@getSubaccounts');
+      cy.findByRole('option', { name: 'Fake Subaccount 4 (ID 104)' }).click();
+      cy.findByRole('button', { name: 'Apply Filters' }).click();
+
+      // Select the bounce reason tab and verify the network request
+      cy.stubRequest({
+        url: '/api/v1/metrics/deliverability**/*',
+        fixture: 'metrics/deliverability/200.get.json',
+        requestAlias: 'getDeliverabilityAgain',
+      });
+      cy.stubRequest({
+        url: '/api/v1/metrics/deliverability/bounce-reason/domain**/*',
+        fixture: 'metrics/deliverability/bounce-reason/domain/200.get.json',
+        requestAlias: 'getBounceReasons',
+      });
+      cy.findByRole('tab', { name: 'Bounce Reason Fake Subaccount 1 (ID 101)' }).click();
+
+      cy.wait(['@getBounceReasons', '@getDeliverabilityAgain']).then(xhrs => {
+        const [deliverabilityReq, bounceReasonsReq] = xhrs;
+
+        // Verify the subaccount filters that were already present are in the request
+        cy.wrap(deliverabilityReq.url).should('include', '104');
+        cy.wrap(bounceReasonsReq.url).should('include', '104');
+
+        // And then verify that the relevant subaccount comparison was converted to a filter and included as well
+        cy.wrap(deliverabilityReq.url).should('include', '101');
+        cy.wrap(bounceReasonsReq.url).should('include', '101');
       });
     });
 

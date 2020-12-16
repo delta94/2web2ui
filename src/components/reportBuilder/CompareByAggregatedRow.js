@@ -82,7 +82,7 @@ export default function CompareByAggregatedRow({ comparison, reportOptions, hasD
  *
  */
 function usePrepareRequestParams({ comparison, reportOptions }) {
-  const existingFilters = reportOptions.query_filters ? reportOptions.query_filters : [];
+  const existingFilters = reportOptions.filters ? reportOptions.filters : [];
   const comparisonFilter = getFilterByComparison(comparison);
   const params = usePrepareReportBuilderQuery({
     ...reportOptions,
