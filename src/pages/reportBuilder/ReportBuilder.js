@@ -295,23 +295,17 @@ export function ReportBuilder({
                 </Tabs.Item>
               )}
 
-              {hasActiveComparisons
-                ? reportOptions.comparisons.map((comparison, comparisonIndex) => {
-                    return (
-                      <Tabs.Item key={`tab-${comparison.value}-${comparisonIndex}`}>
-                        {hasBounceMetrics ? (
-                          <BounceReasonComparisonTab comparison={comparison} />
-                        ) : null}
+              {hasBounceMetrics &&
+                hasActiveComparisons &&
+                reportOptions.comparisons.map((comparison, index) => {
+                  return (
+                    <Tabs.Item key={`tab-bounce-${comparison.value}-${index}`}>
+                      <BounceReasonComparisonTab comparison={comparison} />
+                    </Tabs.Item>
+                  );
+                })}
 
-                        {hasRejectionTab ? <RejectionReasonsTab /> : null}
-
-                        {hasDelayTab ? <DelayReasonsTab /> : null}
-
-                        {hasLinksTab ? <DelayReasonsTab /> : null}
-                      </Tabs.Item>
-                    );
-                  })
-                : null}
+              {/* TODO: compare by rejections, delays, and links tabs can go here */}
             </Tabs>
           </div>
         )}
