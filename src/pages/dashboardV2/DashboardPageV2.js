@@ -112,7 +112,7 @@ export default function DashboardPageV2() {
       <Stack>
         {currentUser?.first_name && (
           <Dashboard.Heading>
-            <TranslatableText>Welcome, </TranslatableText>
+            <TranslatableText>Welcome, 1234</TranslatableText>
             {currentUser.first_name}!
           </Dashboard.Heading>
         )}
