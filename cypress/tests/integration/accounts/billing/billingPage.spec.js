@@ -10,7 +10,6 @@ describe('Billing Page', () => {
     cy.stubRequest({
       url: BILLING_API_BASE_URL,
       fixture: 'billing/200.get.json',
-      fixtureAlias: 'billingGet',
     });
     cy.stubRequest({
       url: `${BILLING_API_BASE_URL}/plans`,
@@ -25,25 +24,21 @@ describe('Billing Page', () => {
     cy.stubRequest({
       url: '/api/v1/sending-ips',
       fixture: 'sending-ips/200.get.json',
-      fixtureAlias: 'sendingipsGet',
     });
 
     cy.stubRequest({
       url: `${BILLING_API_BASE_URL}/invoices`,
       fixture: 'billing/invoices/200.get.json',
-      fixtureAlias: 'invoicesGet',
     });
 
     cy.stubRequest({
       url: '/api/v1/usage',
       fixture: 'usage/200.get.json',
-      fixtureAlias: 'usageGet',
     });
 
     cy.stubRequest({
       url: `${BILLING_API_BASE_URL}/subscription`,
       fixture: 'billing/subscription/200.get.json',
-      fixtureAlias: 'billingSubscriptionGet',
     });
   });
 
@@ -117,12 +112,17 @@ describe('Billing Page', () => {
       fixture: 'billing/subscription/200.get.manually-billed.json',
       requestAlias: 'manuallyBilledSubsReq',
     });
+    cy.stubRequest({
+      url: `${ACCOUNT_API_BASE_URL}`,
+      fixture: 'account/200.get.100k-premier-plan.json',
+      requestAlias: 'accountRequest',
+    });
 
     cy.visit(PAGE_URL);
 
-    cy.wait(['@plansGet', '@bundlesGet', '@manuallyBilledSubsReq']);
+    cy.wait(['@accountRequest', '@plansGet', '@bundlesGet', '@manuallyBilledSubsReq']);
 
-    cy.findByText('Your current 100K Premier plan includes 50,000 emails per month').should(
+    cy.findByText('Your current 100K Premier plan includes 100,000 emails per month').should(
       'be.visible',
     );
     cy.findByText('Enable automatic billing to self-manage your plan and add-ons.').should(
