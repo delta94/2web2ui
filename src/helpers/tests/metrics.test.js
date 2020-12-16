@@ -519,14 +519,24 @@ describe('metrics helpers', () => {
       ).toEqual({
         AND: {
           domains: {
-            eq: ['whatever.com'],
+            eq: [
+              {
+                type: 'Recipient Domain',
+                value: 'whatever.com',
+              },
+            ],
           },
         },
       });
       expect(metricsHelpers.getFilterByComparison({ type: 'Sending IP', value: '12345' })).toEqual({
         AND: {
           sending_ips: {
-            eq: ['12345'],
+            eq: [
+              {
+                type: 'Sending IP',
+                value: '12345',
+              },
+            ],
           },
         },
       });
@@ -535,7 +545,12 @@ describe('metrics helpers', () => {
       ).toEqual({
         AND: {
           ip_pools: {
-            eq: ['the-best-pool'],
+            eq: [
+              {
+                type: 'IP Pool',
+                value: 'the-best-pool',
+              },
+            ],
           },
         },
       });
@@ -544,7 +559,12 @@ describe('metrics helpers', () => {
       ).toEqual({
         AND: {
           campaigns: {
-            eq: ['campaign-yeah'],
+            eq: [
+              {
+                type: 'Campaign',
+                value: 'campaign-yeah',
+              },
+            ],
           },
         },
       });
@@ -553,7 +573,12 @@ describe('metrics helpers', () => {
       ).toEqual({
         AND: {
           templates: {
-            eq: ['not-a-good-template'],
+            eq: [
+              {
+                type: 'Template',
+                value: 'not-a-good-template',
+              },
+            ],
           },
         },
       });
@@ -562,7 +587,12 @@ describe('metrics helpers', () => {
       ).toEqual({
         AND: {
           sending_domains: {
-            eq: ['whatadomain.com'],
+            eq: [
+              {
+                type: 'Sending Domain',
+                value: 'whatadomain.com',
+              },
+            ],
           },
         },
       });
@@ -570,7 +600,12 @@ describe('metrics helpers', () => {
       expect(metricsHelpers.getFilterByComparison({ type: 'Subaccount', id: '123' })).toEqual({
         AND: {
           subaccounts: {
-            eq: ['123'],
+            eq: [
+              {
+                type: 'Subaccount',
+                id: '123',
+              },
+            ],
           },
         },
       });
