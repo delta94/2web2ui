@@ -4,6 +4,8 @@ import { Banner, Picture } from 'src/components/matchbox';
 import ConfigurationWebp from '@sparkpost/matchbox-media/images/Configuration.webp';
 import { updateUserUIOptions } from 'src/actions/currentUser';
 import { isUserUiOptionSet } from 'src/helpers/conditions/user';
+import { LINKS } from 'src/constants';
+
 export default function InfoBanner() {
   const [dismiss, setDismiss] = useState(
     useSelector(state => isUserUiOptionSet('onboardingV2.abTestingBannerDismissed')(state)),
@@ -32,12 +34,7 @@ export default function InfoBanner() {
         content impact recipient engagement. These tests can help identify the most effective
         content, subject lines, images, and more.
       </p>
-      <Banner.Action
-        color="blue"
-        to="https://www.sparkpost.com/docs/tech-resources/a-b-testing-sparkpost/"
-        external
-        variant="outline"
-      >
+      <Banner.Action color="blue" to={LINKS.AB_TESTING_DOCS} external variant="outline">
         A/B Testing Documentation
       </Banner.Action>
       <Banner.Media>

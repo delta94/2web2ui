@@ -127,9 +127,12 @@ describe('Billing Page', () => {
     cy.stubRequest({
       url: `${BILLING_API_BASE_URL}/subscription`,
       fixture: 'billing/subscription/200.get.manually-billed.json',
+      requestAlias: 'manuallyBilledSubsReq',
     });
 
     cy.visit(PAGE_URL);
+
+    cy.wait('@manuallyBilledSubsReq');
 
     cy.findByText('Your current 100K Premier plan includes 50,000 emails per month').should(
       'be.visible',

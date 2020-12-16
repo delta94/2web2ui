@@ -9,6 +9,7 @@
 describe('The log in page', () => {
   beforeEach(() => {
     cy.stubAuth();
+    cy.clearCookies();
     cy.visit('/auth');
   });
 
