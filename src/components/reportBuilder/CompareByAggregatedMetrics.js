@@ -21,7 +21,7 @@ export default function CompareByAggregatedMetrics({ date, reportOptions }) {
 
         <Column>
           <Stack space="300">
-            {comparisons.map((comparison, comparisonIndex) => {
+            {comparisons?.map((comparison, comparisonIndex) => {
               return (
                 <CompareByAggregatedRow
                   key={`comparison-${comparisonIndex}`}
