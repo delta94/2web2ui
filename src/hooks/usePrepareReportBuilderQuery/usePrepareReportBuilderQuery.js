@@ -21,5 +21,5 @@ export default function usePrepareReportBuilderQuery(reportOptions) {
     });
   }, [reportOptions, formattedMetrics]);
 
-  return encodeURI(JSON.stringify(formattedOptions));
+  return formattedOptions;
 }
