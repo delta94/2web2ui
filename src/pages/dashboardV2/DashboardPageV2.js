@@ -39,7 +39,8 @@ import ChangeReportModal from './components/ChangeReportModal';
 import { getMetricsFromKeys } from 'src/helpers/metrics';
 import { _getAggregateDataReportBuilder } from 'src/actions/summaryChart';
 import { usePrevious } from 'src/hooks';
-import PinnedReportFiltersModal from './components/PinnedReportFiltersModal';
+import { AsyncActionModal } from 'src/components';
+import { ActiveFilters } from 'src/components/reportBuilder';
 
 const OnboardingImg = styled(Picture.Image)`
   vertical-align: bottom;
@@ -116,11 +117,17 @@ export default function DashboardPageV2() {
         onClose={closeModal}
         reports={allReports}
       />
-      <PinnedReportFiltersModal
+
+      <AsyncActionModal
         open={isModalOpen && name === 'Filters'}
-        onClose={closeModal}
-        pinnedReport={pinnedReport}
-      />
+        actionVerb="View Report"
+        onAction={() => history.push(pinnedReport.linkToReportBuilder)}
+        onCancel={closeModal}
+        title={`${pinnedReport.name} Filters `}
+        maxWidth="1300"
+      >
+        <ActiveFilters filters={pinnedReport.options.filters} />
+      </AsyncActionModal>
 
       <Stack>
         {currentUser?.first_name && (
