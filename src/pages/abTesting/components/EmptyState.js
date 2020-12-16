@@ -27,7 +27,7 @@ export default function AbTestEmptyState() {
             </li>
             <li>Create and schedule an A/B test.</li>
             <li>
-              <TranslatableText>Provide the ab_test_id when sending with the</TranslatableText>
+              <TranslatableText>Provide the ab_test_id when sending with the </TranslatableText>
               <ExternalLink to={LINKS.TRANSMISSIONS_API} icon={null}>
                 Transmission API.
               </ExternalLink>
