@@ -84,10 +84,13 @@ export default function DashboardPageV2() {
 
   const { pinnedReport } = usePinnedReport(onboarding);
 
-  const prevReportOptions = usePrevious(pinnedReport.options);
+  const prevReportOptions = usePrevious(pinnedReport.options) || {};
 
   useEffect(() => {
-    if (!pinnedReport.loading && !_.isEqual(prevReportOptions, pinnedReport.options))
+    const { from, to, ...restPrevOptions } = prevReportOptions;
+    const { from: fromNow, to: toNow, ...restNowOptions } = pinnedReport.options;
+    // removing from and to from comparison since time changes, which ends up changing the reportOptions
+    if (!pinnedReport.loading && !_.isEqual(restPrevOptions, restNowOptions))
       dispatch(
         _getAggregateDataReportBuilder({
           ...pinnedReport.options,
