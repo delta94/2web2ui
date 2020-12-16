@@ -4,6 +4,7 @@ import ConfigurationWebp from '@sparkpost/matchbox-media/images/Configuration.we
 import { Page } from 'src/components/matchbox';
 import { ExternalLink, PageLink } from 'src/components/links';
 import { useHistory } from 'react-router-dom';
+import { LINKS } from 'src/constants';
 
 export default function AbTestEmptyState() {
   const history = useHistory();
@@ -21,10 +22,10 @@ export default function AbTestEmptyState() {
             <li>
               Create two <PageLink to="/templates">templates</PageLink> you would like to test.
             </li>
-            <li>Create and schedule an A/B test</li>
+            <li>Create and schedule an A/B test.</li>
             <li>
               Provide the ab_test_id when sending with the{' '}
-              <ExternalLink to="https://developers.sparkpost.com/api/transmissions/#transmissions-post-send-an-a-b-test">
+              <ExternalLink to={LINKS.TRANSMISSIONS_API} icon={null}>
                 Transmission API.
               </ExternalLink>
             </li>
@@ -34,11 +35,7 @@ export default function AbTestEmptyState() {
         <EmptyState.Action onClick={() => history.push('/ab-testing/create')}>
           Create A/B Test
         </EmptyState.Action>
-        <EmptyState.Action
-          variant="outline"
-          to="https://www.sparkpost.com/docs/tech-resources/a-b-testing-sparkpost/"
-          external
-        >
+        <EmptyState.Action variant="outline" to={LINKS.AB_TESTING_DOCS} external>
           A/B Testing Documentation
         </EmptyState.Action>
       </EmptyState>

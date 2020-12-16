@@ -2,7 +2,7 @@ import { IS_HIBANA_ENABLED } from 'cypress/constants';
 const PAGE_URL = '/ab-testing';
 const API_URL = '/api/v1/ab-test';
 
-function stubAbtest({ fixture = 'ab-test/200.get.json', statusCode } = {}) {
+function stubAbTest({ fixture = 'ab-test/200.get.json', statusCode } = {}) {
   return cy.stubRequest({
     url: API_URL,
     fixture,
@@ -24,14 +24,14 @@ describe('The A/B Testing create page', () => {
     cy.login({ isStubbed: true });
   });
   it('has a relevant page title', () => {
-    stubAbtest();
+    stubAbTest();
     cy.visit(PAGE_URL);
     cy.wait('@abTest');
     cy.title().should('include', 'A/B Testing | SparkPost');
     cy.findByRole('heading', { name: 'A/B Testing' }).should('be.visible');
   });
   it('renders with a link to the create page', () => {
-    stubAbtest();
+    stubAbTest();
     cy.visit(PAGE_URL);
     cy.wait('@abTest');
 
@@ -40,7 +40,7 @@ describe('The A/B Testing create page', () => {
       .should('have.attr', 'href', '/ab-testing/create');
   });
   it('renders an error banner when the server returns one', () => {
-    stubAbtest({ fixture: 'ab-test/400.get.json', statusCode: 400 });
+    stubAbTest({ fixture: '400.json', statusCode: 400 });
     cy.visit(PAGE_URL);
     cy.wait('@abTest');
 
@@ -50,14 +50,14 @@ describe('The A/B Testing create page', () => {
     cy.findByText('This is an error').should('be.visible');
     cy.get('table').should('not.be.visible');
 
-    stubAbtest();
+    stubAbTest();
     cy.findByRole('button', { name: 'Try Again' }).click();
     cy.wait('@abTest');
     cy.get('table').should('be.visible');
   });
   if (IS_HIBANA_ENABLED) {
     it('renders the empty state banner when "allow_empty_states" is set on the account and banner hasnt been dismissed', () => {
-      stubAbtest();
+      stubAbTest();
       stubAccountsReq();
       cy.visit(PAGE_URL);
       cy.wait(['@accountReq', '@abTest']);
@@ -72,7 +72,7 @@ describe('The A/B Testing create page', () => {
         );
     });
     it('renders the empty state when there are no ab tests', () => {
-      stubAbtest({ fixture: 'ab-test/200.get.empty-list.json' });
+      stubAbTest({ fixture: '200.get.no-results.json' });
       stubAccountsReq();
       cy.visit(PAGE_URL);
       cy.wait(['@accountReq', '@abTest']);
