@@ -22,7 +22,14 @@ import {
 } from 'src/config/metrics';
 import { parseSearchNew as parseSearch } from 'src/helpers/reports';
 import { getFormattedDateRangeForAggregateData } from 'src/helpers/date';
-import { Charts, ReportOptions, ReportTable, SaveReportModal } from './components';
+import {
+  Charts,
+  ReportOptions,
+  GroupByTable,
+  SaveReportModal,
+  CompareByGroupByTable,
+} from './components';
+
 import {
   BounceReasonsTable,
   DelayReasonsTable,
@@ -238,7 +245,7 @@ export function ReportBuilder({
       </Panel>
       {showTable && (
         <div data-id="summary-table">
-          <ReportTable />
+          {hasActiveComparisons ? <CompareByGroupByTable /> : <GroupByTable />}
         </div>
       )}
       <SaveReportModal

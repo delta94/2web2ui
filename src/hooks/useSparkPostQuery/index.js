@@ -1,1 +1,1 @@
-export { default } from './useSparkPostQuery';
+export { useSparkPostQuery, useSparkPostQueries } from './useSparkPostQuery';

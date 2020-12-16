@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from './ReportTable.module.scss';
 import useUniqueId from 'src/hooks/useUniqueId';
 import { Box, Grid, Checkbox, Select } from 'src/components/matchbox';
-import { GROUP_BY_CONFIG } from '../constants';
+import { GROUP_BY_CONFIG } from '../../constants';
 
 export default function GroupByOption(props) {
   const { disabled, groupBy, hasSubaccounts, onChange } = props;

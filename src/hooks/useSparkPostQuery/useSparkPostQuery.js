@@ -5,8 +5,38 @@ import { refresh, logout } from 'src/actions/auth';
 import { useRefreshToken } from 'src/helpers/http';
 import { showAlert } from 'src/actions/globalAlert';
 import { fetch as fetchAccount } from 'src/actions/account';
+import { defaultQuery } from 'src/helpers/api';
 
-export default function useSparkPostQuery(queryFn, config = {}) {
+export function useSparkPostQueries(queries, config = {}, queryKey) {
+  const queryCache = useQueryCache();
+  const auth = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+
+  //Prepares the query by generating query metadata w/ query handler
+  const queryRequests = () =>
+    queries.map(queryFn => {
+      const { url, method, params, headers } = queryFn();
+      return defaultQuery(url, { method, params, headers, auth });
+    });
+
+  //Joins queries as single promise
+  const queryFn = () =>
+    Promise.all(queryRequests()).then(res => {
+      return res;
+    });
+
+  return useQuery({
+    // Passed in similarly to dependency array in other hooks
+    queryKey,
+    config: {
+      ...config,
+      onError: error => handleError({ error, queryCache, auth, dispatch }),
+    },
+    queryFn,
+  });
+}
+
+export function useSparkPostQuery(queryFn, config = {}) {
   const queryCache = useQueryCache();
   const auth = useSelector(state => state.auth);
   const dispatch = useDispatch();

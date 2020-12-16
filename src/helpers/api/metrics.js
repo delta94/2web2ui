@@ -33,10 +33,11 @@ export function getTemplatesMetrics(params) {
   };
 }
 
-export function getDeliverabilityMetrics(params) {
+export function getDeliverabilityMetrics(params, path) {
+  const joinedPath = `${DELIVERABILITY_BASE_URL}${path ? `/${path}` : ''}`;
   return {
     method: 'GET',
-    url: DELIVERABILITY_BASE_URL,
+    url: joinedPath,
     params,
   };
 }
