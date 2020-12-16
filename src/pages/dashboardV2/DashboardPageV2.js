@@ -108,16 +108,16 @@ export default function DashboardPageV2() {
         <Heading as="h1">Dashboard</Heading>
       </ScreenReaderOnly>
 
-      {name === 'Change Report' && (
-        <ChangeReportModal open={isModalOpen} onClose={closeModal} reports={allReports} />
-      )}
-      {name === 'Filters' && (
-        <PinnedReportFiltersModal
-          open={isModalOpen}
-          onClose={closeModal}
-          pinnedReport={pinnedReport}
-        />
-      )}
+      <ChangeReportModal
+        open={isModalOpen && name === 'Change Report'}
+        onClose={closeModal}
+        reports={allReports}
+      />
+      <PinnedReportFiltersModal
+        open={isModalOpen && name === 'Filters'}
+        onClose={closeModal}
+        pinnedReport={pinnedReport}
+      />
 
       <Stack>
         {currentUser?.first_name && (
