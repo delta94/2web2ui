@@ -114,7 +114,7 @@ describe('Billing Page', () => {
     });
     cy.stubRequest({
       url: `${ACCOUNT_API_BASE_URL}`,
-      fixture: 'account/200.get.100k-premier-plan.json',
+      fixture: 'account/200.get.json',
       requestAlias: 'accountRequest',
     });
 
@@ -122,7 +122,7 @@ describe('Billing Page', () => {
 
     cy.wait(['@accountRequest', '@plansGet', '@bundlesGet', '@manuallyBilledSubsReq']);
 
-    cy.findByText('Your current 100K Premier plan includes 100,000 emails per month').should(
+    cy.findByText('Your current 100K Premier plan includes 50,000 emails per month').should(
       'be.visible',
     );
     cy.findByText('Enable automatic billing to self-manage your plan and add-ons.').should(
