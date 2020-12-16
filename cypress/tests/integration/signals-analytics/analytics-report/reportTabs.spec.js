@@ -433,8 +433,9 @@ if (IS_HIBANA_ENABLED) {
       commonBeforeSteps();
       applyBounceMetrics();
       applySubaccountComparisons();
+
       cy.stubRequest({
-        url: '/api/v1/metrics/deliverability**',
+        url: '/api/v1/metrics/deliverability**/*',
         fixture: '400.json',
         statusCode: 400,
         requestAlias: 'getDeliverabilityFail',
@@ -450,17 +451,17 @@ if (IS_HIBANA_ENABLED) {
       cy.findByText('Sorry, there was an issue.').should('be.visible');
 
       cy.stubRequest({
-        url: '/api/v1/metrics/deliverability**',
+        url: '/api/v1/metrics/deliverability/bounce-reason/domain**/*',
         fixture: 'metrics/deliverability/bounce-reason/domain/200.get.json',
-        requestAlias: 'getBounceReason',
+        requestAlias: 'getBounceReasons',
       });
       cy.stubRequest({
-        url: '/api/v1/metrics/deliverability/bounce-reason/domain**',
+        url: '/api/v1/metrics/deliverability**/*',
         fixture: 'metrics/deliverability/200.get.json',
         requestAlias: 'getDeliverability',
       });
       cy.findByRole('button', { name: 'Try Again' }).click();
-      cy.wait(['@getBounceReason', '@getDeliverability']);
+      cy.wait(['@getBounceReasons', '@getDeliverability']);
 
       cy.get('table')
         .should('be.visible')
