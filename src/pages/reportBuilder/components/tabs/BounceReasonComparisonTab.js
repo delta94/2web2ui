@@ -10,7 +10,7 @@ import { usePrepareReportBuilderQuery } from 'src/hooks';
 import { useReportBuilderContext } from '../../context/ReportBuilderContext';
 
 export default function BounceReasonComparisonTab({ comparison }) {
-  const [bounceReasonParams, aggregatesParams] = useRequestArguments(comparison);
+  const [aggregatesParams, bounceReasonParams] = useRequestArguments(comparison);
   const bounceReasonsQuery = useSparkPostQuery(() => getBounceReasonByDomain(bounceReasonParams));
   const aggregatesQuery = useSparkPostQuery(() => getDeliverability(aggregatesParams));
   const isPending = bounceReasonsQuery.status === 'loading' || aggregatesQuery.status === 'loading';
