@@ -22,10 +22,6 @@ const PinToDashboardAction = styled(ActionList.Action)`
   }
 `;
 
-const AlignRightTableCell = styled(Table.Cell)`
-  text-align: right;
-`;
-
 const FilterBoxWrapper = props => (
   <Box borderBottom="400" padding="400">
     {props}
@@ -104,7 +100,15 @@ const rowComponent = (cell, index) => {
   const { id } = cell.props;
 
   if (type.name === 'Actions' || type.name === 'Icons') {
-    return <AlignRightTableCell key={`row-${id}-cell-${index}`}>{cell}</AlignRightTableCell>;
+    return (
+      <Box
+        key={`row-${id}-cell-${index}`}
+        as={Table.Cell}
+        textAlign={['Actions', 'Icons'].includes(type.name) ? 'right' : 'left'}
+      >
+        {cell}
+      </Box>
+    );
   }
 
   return <Table.Cell key={`row-${id}-cell-${index}`}>{cell}</Table.Cell>;
