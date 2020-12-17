@@ -46,14 +46,14 @@ if (IS_HIBANA_ENABLED) {
       cy.findAllByText('Sent').should('be.visible');
       cy.findAllByText('Accepted').should('be.visible');
       cy.findAllByText('Clicks').should('be.visible');
-      cy.findAllByText('Open Rate').should('be.visible');
+      cy.findAllByText('Opens').should('be.visible');
 
       cy.visit(`${PAGE_URL}&report=engagement&filters=Campaign:Christmas`);
       cy.wait(['@accountReq', '@userReq', '@reportsReq', '@billingSubscriptionReq']);
       cy.findAllByText('Sent').should('be.visible');
       cy.findAllByText('Accepted').should('be.visible');
       cy.findAllByText('Clicks').should('be.visible');
-      cy.findAllByText('Open Rate').should('be.visible');
+      cy.findAllByText('Opens').should('be.visible');
       // Additional params
       cy.findAllByText('Christmas').should('be.visible');
 
@@ -79,7 +79,7 @@ if (IS_HIBANA_ENABLED) {
         cy.findAllByText('Sent').should('be.visible');
         cy.findAllByText('Accepted').should('be.visible');
         cy.findAllByText('Clicks').should('be.visible');
-        cy.findAllByText('Open Rate').should('be.visible');
+        cy.findAllByText('Opens').should('be.visible');
       });
     });
 
