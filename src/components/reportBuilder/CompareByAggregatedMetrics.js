@@ -27,7 +27,7 @@ export default function CompareByAggregatedMetrics({
 
   const renderDate = () => {
     return (
-      <Column width={1 / 5}>
+      <Column width={showFiltersButton ? 2 / 5 : 1 / 5} mb={showFiltersButton && '200'}>
         <LabelValue dark>
           <LabelValue.Label>Date</LabelValue.Label>
 
