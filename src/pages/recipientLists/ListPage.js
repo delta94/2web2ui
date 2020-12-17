@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { Page } from 'src/components/matchbox';
 import { Loading, ApiErrorBanner, TableCollection } from 'src/components';
-import { Users } from 'src/components/images';
 import { PageLink } from 'src/components/links';
-import { listRecipientLists } from 'src/actions/recipientLists';
-import { LINKS } from 'src/constants';
+import InfoBanner from './components/InfoBanner';
 
 const columns = [
   { label: 'Name', sortKey: 'name' },
@@ -27,10 +24,6 @@ const getRowData = ({ name, id, total_accepted_recipients }) => [
 ];
 
 export class ListPage extends Component {
-  componentDidMount() {
-    this.props.listRecipientLists();
-  }
-
   onReloadApiBanner = () => {
     this.props.listRecipientLists({ force: true }); // force a refresh
   };
@@ -39,7 +32,7 @@ export class ListPage extends Component {
     return (
       <ApiErrorBanner
         errorDetails={this.props.error.message}
-        message="Sorry, we ran into an error loading your Recipient Lists"
+        message="Sorry, we ran into an error loading Recipient Lists"
         reload={this.onReloadApiBanner}
       />
     );
@@ -64,37 +57,19 @@ export class ListPage extends Component {
   }
 
   render() {
-    const { error, loading, recipientLists } = this.props;
+    const { error, loading } = this.props;
 
     if (loading) {
       return <Loading />;
     }
 
     return (
-      <Page
-        title="Recipient Lists"
-        primaryAction={primaryAction}
-        empty={{
-          show: recipientLists.length === 0,
-          image: Users,
-          content: <p>Manage your recipient lists</p>,
-          secondaryAction: {
-            content: 'Learn More',
-            to: LINKS.RECIP_API,
-            external: true,
-          },
-        }}
-      >
+      <Page title="Recipient Lists" primaryAction={primaryAction}>
+        {this.props.isEmptyStateEnabled && this.props.isHibanaEnabled && <InfoBanner />}
         {error ? this.renderError() : this.renderCollection()}
       </Page>
     );
   }
 }
 
-const mapStateToProps = ({ recipientLists }) => ({
-  error: recipientLists.error,
-  loading: recipientLists.listLoading,
-  recipientLists: recipientLists.list,
-});
-
-export default connect(mapStateToProps, { listRecipientLists })(ListPage);
+export default ListPage;
