@@ -4,42 +4,80 @@ import {
   getMetricsFromKeys,
   getQueryFromOptionsV2 as getQueryFromOptions,
 } from 'src/helpers/metrics';
+import { FilterAlt } from '@sparkpost/matchbox-icons';
 import { LegendCircle, Unit } from 'src/components';
 import Divider from 'src/components/divider';
-import { Box, Column, Columns, Inline, LabelValue, Stack } from 'src/components/matchbox';
+import { Button, Box, Column, Columns, Inline, LabelValue, Stack } from 'src/components/matchbox';
 import { useSparkPostQuery } from 'src/hooks';
 import { FILTER_TYPES } from '../../pages/reportBuilder/constants';
+import styled from 'styled-components';
 
-export default function CompareByAggregatedMetrics({ date, reportOptions }) {
+const ViewFilterButton = styled(Button)`
+  float: right;
+  color: ${props => props.theme.colors.gray['600']};
+`;
+
+export default function CompareByAggregatedMetrics({
+  date,
+  reportOptions,
+  showFiltersButton,
+  handleClickFiltersButton,
+}) {
   const { comparisons } = reportOptions;
+
+  const renderDate = () => {
+    return (
+      <Column width={1 / 5}>
+        <LabelValue dark>
+          <LabelValue.Label>Date</LabelValue.Label>
+
+          <LabelValue.Value>
+            <Unit value={date} />
+          </LabelValue.Value>
+        </LabelValue>
+      </Column>
+    );
+  };
+
+  const renderAggregateData = () => {
+    return (
+      <Column>
+        <Stack space="300">
+          {comparisons.map((comparison, comparisonIndex) => {
+            return (
+              <ComparisonRow
+                key={`comparison-${comparisonIndex}`}
+                comparison={comparison}
+                hasDivider={comparisonIndex < comparisons.length - 1}
+                reportOptions={reportOptions}
+              />
+            );
+          })}
+        </Stack>
+      </Column>
+    );
+  };
+
+  if (showFiltersButton)
+    return (
+      <Box padding="400" backgroundColor="gray.1000" data-id="compare-by-aggregated-metrics">
+        <Columns>
+          {renderDate()}
+          <Column width={4 / 5}>
+            <ViewFilterButton onClick={handleClickFiltersButton}>
+              View Filters <FilterAlt size={20} />
+            </ViewFilterButton>
+          </Column>
+        </Columns>
+        <Columns>{renderAggregateData()}</Columns>
+      </Box>
+    );
 
   return (
     <Box padding="400" backgroundColor="gray.1000" data-id="compare-by-aggregated-metrics">
       <Columns>
-        <Column width={1 / 5}>
-          <LabelValue dark>
-            <LabelValue.Label>Date</LabelValue.Label>
-
-            <LabelValue.Value>
-              <Unit value={date} />
-            </LabelValue.Value>
-          </LabelValue>
-        </Column>
-
-        <Column>
-          <Stack space="300">
-            {comparisons.map((comparison, comparisonIndex) => {
-              return (
-                <ComparisonRow
-                  key={`comparison-${comparisonIndex}`}
-                  comparison={comparison}
-                  hasDivider={comparisonIndex < comparisons.length - 1}
-                  reportOptions={reportOptions}
-                />
-              );
-            })}
-          </Stack>
-        </Column>
+        {renderDate()}
+        {renderAggregateData()}
       </Columns>
     </Box>
   );

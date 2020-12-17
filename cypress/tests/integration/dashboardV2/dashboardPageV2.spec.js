@@ -71,7 +71,7 @@ describe('Version 2 of the dashboard page', () => {
       stubUsageReq({ fixture: 'usage/200.get.messaging.json' });
       stubReportsRequest();
       cy.stubRequest({
-        url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+        url: `/api/v1/users/${USERNAME}`,
         fixture: `users/200.get.has-pinned-report.json`,
         requestAlias: 'userWithPinnedReport',
       });
@@ -107,9 +107,19 @@ describe('Version 2 of the dashboard page', () => {
         '@dataGetTimeSeries',
         '@getSubaccounts',
       ]);
-      cy.findByText('My Bounce Report').should('be.visible');
+      cy.findByText('My new report').should('be.visible');
       cy.findByText('Bounces').should('be.visible');
       cy.findByText('325K').should('be.visible');
+      cy.findByRole('button', { name: 'View Filters' }).should('be.visible');
+      cy.findByRole('button', { name: 'View Filters' }).click();
+      cy.withinModal(() => {
+        cy.findByRole('heading', { name: 'My new report Filters' }).should('be.visible');
+        cy.findByRole('button', { name: 'View Report' }).should('be.visible');
+        cy.findByRole('button', { name: 'Cancel' }).should('be.visible');
+        cy.findByText('Campaign').should('be.visible');
+        cy.findByRole('button', { name: 'View Report' }).click();
+      });
+      cy.findByRole('heading', { name: 'Analytics Report' }).should('be.visible');
     });
     it('Shows Helpful Shortcuts "invite team members" when admin', () => {
       stubGrantsRequest({ role: 'admin' });
