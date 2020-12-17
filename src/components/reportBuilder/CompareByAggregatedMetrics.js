@@ -20,14 +20,16 @@ export default function CompareByAggregatedMetrics({
 
   const renderDate = () => {
     return (
-      <Column width={showFiltersButton ? 2 / 5 : 1 / 5} mb={showFiltersButton && '200'}>
-        <LabelValue dark>
-          <LabelValue.Label>Date</LabelValue.Label>
+      <Column width={showFiltersButton ? 2 / 5 : 1 / 5}>
+        <Box mb={showFiltersButton && '500'}>
+          <LabelValue dark>
+            <LabelValue.Label>Date</LabelValue.Label>
 
-          <LabelValue.Value>
-            <Unit value={date} />
-          </LabelValue.Value>
-        </LabelValue>
+            <LabelValue.Value>
+              <Unit value={date} />
+            </LabelValue.Value>
+          </LabelValue>
+        </Box>
       </Column>
     );
   };
@@ -57,7 +59,7 @@ export default function CompareByAggregatedMetrics({
         <Columns>
           {renderDate()}
           <Column width={4 / 5}>
-            <ViewFilterButton onClick={handleClickFiltersButton}>
+            <ViewFilterButton variant="minimal" onClick={handleClickFiltersButton}>
               View Filters <FilterAlt size={20} />
             </ViewFilterButton>
           </Column>
