@@ -23,6 +23,18 @@
       "name": "Your Sending Report",
       "query_string": "from=2020-01-01T01%3A01%3A00Z&to=2020-01-02T01%3A01%3A00Z&range=7days&timezone=America%2FNew_York&precision=hour&metrics=count_sent",
       "subaccount_id": 0
+    },
+    {
+      "created": "2020-09-22T19:55:34.215Z",
+      "creator": "appteam",
+      "current_user_can_edit": true,
+      "description": "to be deleted",
+      "id": "0e860570-c1a8-47cf-9c39-1ffee38dd982",
+      "is_editable": false,
+      "modified": "2020-10-08T19:39:53.830Z",
+      "name": "My new report",
+      "query_string": "from=2020-09-18T15%3A00%3A00Z&to=2020-09-25T15%3A08%3A36Z&range=7days&timezone=America%2FNew_York&precision=hour&filters=Campaign%3ABlack%20Friday&metrics=count_bounce&report=0e860570-c1a8-47cf-9c39-1ffee38dd982",
+      "subaccount_id": 0
     }
   ]
 }

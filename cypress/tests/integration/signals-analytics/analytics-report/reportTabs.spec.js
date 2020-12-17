@@ -693,7 +693,7 @@ function commonBeforeSteps() {
 
 function applyBounceMetrics() {
   cy.withinDrawer(() => {
-    // Uncheck defaults, and check a metric that renders the "Rejection Reason" table
+    // Uncheck defaults, and check a metric that renders the "Bounce Reason" table
     cy.findByLabelText('Targeted').uncheck({ force: true });
     cy.findByLabelText('Accepted').uncheck({ force: true });
     cy.findByLabelText('Bounces').uncheck({ force: true });
@@ -706,7 +706,7 @@ function applyBounceMetrics() {
 
 function applyEngagementMetrics() {
   cy.withinDrawer(() => {
-    // Uncheck defaults, and check a metric that renders the "Rejection Reason" table
+    // Uncheck defaults, and check a metric that renders the "Links" table
     cy.findByLabelText('Targeted').uncheck({ force: true });
     cy.findByLabelText('Accepted').uncheck({ force: true });
     cy.findByLabelText('Bounces').uncheck({ force: true });

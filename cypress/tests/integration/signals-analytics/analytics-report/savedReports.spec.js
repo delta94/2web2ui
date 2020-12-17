@@ -205,7 +205,7 @@ if (IS_HIBANA_ENABLED) {
             .should('have.contain', 'sally-sender');
 
           cy.findAllByRole('option')
-            .eq(2)
+            .eq(3)
             .should('have.contain', 'Summary Report')
             .should('have.contain', 'Default');
         });
