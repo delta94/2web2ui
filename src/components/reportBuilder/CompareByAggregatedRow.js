@@ -16,13 +16,13 @@ const MetricsGrid = styled.div`
 
 export default function CompareByAggregatedRow({ comparison, reportOptions, hasDivider }) {
   const requestParams = usePrepareRequestParams({ comparison, reportOptions });
-  const { data, status } = useSparkPostQuery(() => getDeliverability(requestParams), {
+  const { status, data } = useSparkPostQuery(() => getDeliverability(requestParams), {
     refetchOnWindowFocus: false,
   });
 
   if (status === 'loading' || status === 'error') return null;
 
-  const aggregatedMetricsObj = data[0] || {};
+  const aggregatedMetricsObj = Boolean(data.length) ? data[0] : {};
   const aggregatedMetricsKeys = Object.keys(aggregatedMetricsObj);
   const aggregatedMetrics = getMetricsFromKeys(aggregatedMetricsKeys, true).map(metric => {
     return {
@@ -45,7 +45,7 @@ export default function CompareByAggregatedRow({ comparison, reportOptions, hasD
 
         {hasMetrics ? (
           <Column>
-            <MetricsGrid>
+            <MetricsGrid data-id="metrics-grid">
               {aggregatedMetrics.map((metric, metricIndex) => {
                 const { label, key, stroke, unit, value } = metric;
 
