@@ -113,14 +113,14 @@ describe('Billing Page', () => {
       requestAlias: 'manuallyBilledSubsReq',
     });
     cy.stubRequest({
-      url: `${ACCOUNT_API_BASE_URL}`,
-      fixture: 'account/200.get.json',
-      requestAlias: 'accountRequest',
+      url: `${BILLING_API_BASE_URL}/plans`,
+      fixture: 'billing/plans/200.get.json',
+      requestAlias: 'plansGet',
     });
 
     cy.visit(PAGE_URL);
 
-    cy.wait(['@accountRequest', '@plansGet', '@bundlesGet', '@manuallyBilledSubsReq']);
+    cy.wait(['@plansGet', '@bundlesGet', '@manuallyBilledSubsReq']);
 
     cy.findByText('Your current 100K Premier plan includes 50,000 emails per month').should(
       'be.visible',
