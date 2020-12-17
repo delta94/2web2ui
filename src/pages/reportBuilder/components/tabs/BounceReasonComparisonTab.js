@@ -8,13 +8,12 @@ import { selectReasons, selectFormattedAggregates } from 'src/selectors/bounceRe
 import { BounceReasonTable } from '../tables';
 import { usePrepareReportBuilderQuery } from 'src/hooks';
 import { useReportBuilderContext } from '../../context/ReportBuilderContext';
+import { TAB_LOADING_HEIGHT } from '../../constants';
 
 export default function BounceReasonComparisonTab({ comparison }) {
-  const [aggregatesParams, bounceReasonParams] = useRequestArguments(comparison);
-  const bounceReasonsQuery = useSparkPostQuery(() => getBounceReasonByDomain(bounceReasonParams));
-  const aggregatesQuery = useSparkPostQuery(() => getDeliverability(aggregatesParams));
-  const isPending = bounceReasonsQuery.status === 'loading' || aggregatesQuery.status === 'loading';
-  const isError = bounceReasonsQuery.status === 'error' || aggregatesQuery.status === 'error';
+  const { aggregatesQuery, bounceReasonsQuery, isPending, isError } = useQueryWithComparison(
+    comparison,
+  );
 
   function handleReload() {
     bounceReasonsQuery.refetch();
@@ -22,7 +21,7 @@ export default function BounceReasonComparisonTab({ comparison }) {
   }
 
   if (isPending) {
-    return <Loading minHeight="300px" />;
+    return <Loading minHeight={TAB_LOADING_HEIGHT} />;
   }
 
   if (isError) {
@@ -47,7 +46,7 @@ export default function BounceReasonComparisonTab({ comparison }) {
  *
  * @param {Object} comparison - passed in comparison set by the user via the "Compare By" feature
  */
-function useRequestArguments(comparison) {
+function useQueryWithComparison(comparison) {
   const { state: reportOptions } = useReportBuilderContext();
   // I borrowed this logic from `src/actions/bounceReport`
   // But does the comparison value influence which metrics are valid for this request?
@@ -70,6 +69,13 @@ function useRequestArguments(comparison) {
     filters: [...existingFilters, comparisonFilter],
     metrics: bounceReasonMetrics,
   });
+  const bounceReasonsQuery = useSparkPostQuery(() => getBounceReasonByDomain(bounceReasonParams));
+  const aggregatesQuery = useSparkPostQuery(() => getDeliverability(aggregatesParams));
 
-  return [aggregatesParams, bounceReasonParams];
+  return {
+    aggregatesQuery,
+    bounceReasonsQuery,
+    isPending: bounceReasonsQuery.status === 'loading' || aggregatesQuery.status === 'loading',
+    isError: bounceReasonsQuery.status === 'error' || aggregatesQuery.status === 'error',
+  };
 }

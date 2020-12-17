@@ -20,6 +20,7 @@ export function DelayReasonsTab({ reasons, totalAccepted, refreshDelayReport, ta
 
 const mapStateToProps = state => {
   const { aggregates } = state.delayReport;
+
   return {
     tableLoading: state.delayReport.aggregatesLoading || state.delayReport.reasonsLoading,
     reasons: state.delayReport.reasons,

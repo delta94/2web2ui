@@ -149,7 +149,8 @@ export function ReportBuilder({
 
   const tabs = useMemo(() => {
     /**
-     * Loop through active comparisons and add rendered tabs depending on the metrics selected by the end user
+     * For each type of relevant metrics that could render a tab,
+     * loop through active comparisons and add rendered tabs depending on the metrics selected by the end user
      */
     function getComparisonTabs() {
       let comparisonTabs = [];
