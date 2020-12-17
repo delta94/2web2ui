@@ -53,7 +53,7 @@ describe('The verify bounce domain page', () => {
         cy.findByRole('button', { name: 'Authenticate for Bounce' }).click();
 
         cy.wait('@verifyDomain');
-        cy.findAllByText('You have successfully verified cname record of prd2.splango.net').should(
+        cy.findAllByText('Successfully verified cname record of prd2.splango.net').should(
           'be.visible',
         );
       });
