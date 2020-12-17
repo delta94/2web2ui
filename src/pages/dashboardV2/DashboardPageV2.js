@@ -85,20 +85,23 @@ export default function DashboardPageV2() {
 
   const { pinnedReport } = usePinnedReport(onboarding);
 
-  const prevReportOptions = usePrevious(pinnedReport.options) || {};
+  const prevReportQueryString = usePrevious(pinnedReport.query_string);
 
   useEffect(() => {
-    const { from, to, ...restPrevOptions } = prevReportOptions;
-    const { from: fromNow, to: toNow, ...restNowOptions } = pinnedReport.options;
-    // removing from and to from comparison since time changes, which ends up changing the reportOptions
-    if (!pinnedReport.loading && !_.isEqual(restPrevOptions, restNowOptions))
+    if (!pinnedReport.loading && pinnedReport.query_string !== prevReportQueryString)
       dispatch(
         _getAggregateDataReportBuilder({
           ...pinnedReport.options,
           filters: pinnedReport.options.filters,
         }),
       );
-  }, [dispatch, pinnedReport.loading, pinnedReport.options, prevReportOptions]);
+  }, [
+    dispatch,
+    pinnedReport.loading,
+    pinnedReport.options,
+    pinnedReport.query_string,
+    prevReportQueryString,
+  ]);
 
   const dateValue = getFormattedDateRangeForAggregateData(
     pinnedReport?.options?.from,
