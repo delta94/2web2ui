@@ -6,6 +6,7 @@ export { default as useHibanaToggle } from './useHibanaToggle';
 export { default as useModal } from './useModal';
 export { default as usePageFilters } from './usePageFilters';
 export { default as usePinnedReport } from './usePinnedRport';
+export { default as usePrepareReportBuilderQuery } from './usePrepareReportBuilderQuery';
 export { default as usePrevious } from './usePrevious';
 export { default as useProvidedContext } from './useProvidedContext';
 export { useSparkPostQueries, useSparkPostQuery } from './useSparkPostQuery';

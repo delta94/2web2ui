@@ -1,7 +1,7 @@
 const METRICS_BASE_URL = `/v1/metrics`;
 const DELIVERABILITY_BASE_URL = `${METRICS_BASE_URL}/deliverability`;
 
-export function getDomainsMetrics(params) {
+export function getDomains(params) {
   return {
     method: 'GET',
     url: `${METRICS_BASE_URL}/domains`,
@@ -9,7 +9,7 @@ export function getDomainsMetrics(params) {
   };
 }
 
-export function getCampaignsMetrics(params) {
+export function getCampaigns(params) {
   return {
     method: 'GET',
     url: `${METRICS_BASE_URL}/campaigns`,
@@ -17,7 +17,7 @@ export function getCampaignsMetrics(params) {
   };
 }
 
-export function getSendingIpsMetrics(params) {
+export function getSendingIps(params) {
   return {
     method: 'GET',
     url: `${METRICS_BASE_URL}/sending-ips`,
@@ -25,7 +25,7 @@ export function getSendingIpsMetrics(params) {
   };
 }
 
-export function getTemplatesMetrics(params) {
+export function getTemplates(params) {
   return {
     method: 'GET',
     url: `${METRICS_BASE_URL}/templates`,
@@ -33,7 +33,7 @@ export function getTemplatesMetrics(params) {
   };
 }
 
-export function getDeliverabilityMetrics(params, path) {
+export function getDeliverability(params, path) {
   const joinedPath = `${DELIVERABILITY_BASE_URL}${path ? `/${path}` : ''}`;
   return {
     method: 'GET',
@@ -42,7 +42,7 @@ export function getDeliverabilityMetrics(params, path) {
   };
 }
 
-export function getTimeSeriesDeliverabilityMetrics(params) {
+export function getTimeSeries(params) {
   return {
     method: 'GET',
     url: `${DELIVERABILITY_BASE_URL}/time-series`,
@@ -50,7 +50,7 @@ export function getTimeSeriesDeliverabilityMetrics(params) {
   };
 }
 
-export function getBounceClassificationDeliverabilityMetrics(params) {
+export function getBounceClassification(params) {
   return {
     method: 'GET',
     url: `${DELIVERABILITY_BASE_URL}/bounce-classification`,
@@ -58,7 +58,7 @@ export function getBounceClassificationDeliverabilityMetrics(params) {
   };
 }
 
-export function getBounceReasonDeliverabilityMetrics(params) {
+export function getBounceReason(params) {
   return {
     method: 'GET',
     url: `${DELIVERABILITY_BASE_URL}/bounce-reason`,
@@ -66,7 +66,7 @@ export function getBounceReasonDeliverabilityMetrics(params) {
   };
 }
 
-export function getBounceReasonsByDomainDeliverabilityMetrics(params) {
+export function getBounceReasonByDomain(params) {
   return {
     method: 'GET',
     url: `${DELIVERABILITY_BASE_URL}/bounce-reason/domain`,
@@ -74,7 +74,7 @@ export function getBounceReasonsByDomainDeliverabilityMetrics(params) {
   };
 }
 
-export function getRejectionReasonByDomainDeliverabilityMetrics(params) {
+export function getRejectionReasonByDomain(params) {
   return {
     method: 'GET',
     url: `${DELIVERABILITY_BASE_URL}/rejection-reason/domain`,
@@ -82,7 +82,7 @@ export function getRejectionReasonByDomainDeliverabilityMetrics(params) {
   };
 }
 
-export function getDelayReasonByDomainDeliverabilityMetrics(params) {
+export function getDelayReasonByDomain(params) {
   return {
     method: 'GET',
     url: `${DELIVERABILITY_BASE_URL}/delay-reason/domain`,
@@ -90,7 +90,7 @@ export function getDelayReasonByDomainDeliverabilityMetrics(params) {
   };
 }
 
-export function getAttemptedDeliverabilityMetrics(params) {
+export function getAttempted(params) {
   return {
     method: 'GET',
     url: `${DELIVERABILITY_BASE_URL}/deliverability/attempt`,

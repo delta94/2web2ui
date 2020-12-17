@@ -6,7 +6,8 @@ import {
   selectEndOfBillingPeriod,
   selectStartOfBillingPeriod,
 } from 'src/selectors/accountBillingInfo';
-import { getAccount, getSubscription, getUsage, getUsageHistory } from 'src/helpers/api';
+import { getAccount, getUsage, getUsageHistory } from 'src/helpers/api/account';
+import { getSubscription } from 'src/helpers/api/billing';
 import { MessagingUsageSection, FeatureUsageSection, RVUsageSection } from './components';
 
 export default function UsagePage() {

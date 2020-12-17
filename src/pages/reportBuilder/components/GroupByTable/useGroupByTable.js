@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { getDeliverabilityMetrics } from 'src/helpers/api/metrics';
+import { getDeliverability } from 'src/helpers/api/metrics';
 import { useSparkPostQueries } from 'src/hooks';
 import {
   getMetricsFromKeys,
@@ -42,10 +42,7 @@ export default function useGroupByTable() {
   const separatedOptions = separateCompareOptions(reportOptions);
   const separatedRequests = separatedOptions.map(options => {
     return () =>
-      getDeliverabilityMetrics(
-        getQueryFromOptions({ ...options, metrics: formattedMetrics }),
-        groupBy,
-      );
+      getDeliverability(getQueryFromOptions({ ...options, metrics: formattedMetrics }), groupBy);
   });
 
   const { data = [], status, refetch } = useSparkPostQueries(

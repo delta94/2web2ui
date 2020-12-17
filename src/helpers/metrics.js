@@ -373,3 +373,27 @@ export function average(item, keys = []) {
 export function rate(item, keys = []) {
   return safeRate(item[keys[0]], item[keys[1]]);
 }
+
+/**
+ * Prepares request options/params based on the current state of the page and the passed in comparison object.
+ *
+ * @param {Object} comparison - passed in comparison when the user selects comparisons via "compare by"
+ */
+export function getFilterByComparison(comparison) {
+  const filterId = REPORT_BUILDER_FILTER_KEY_MAP[comparison.type];
+
+  if (!filterId)
+    throw new Error(
+      `Invalid comparison ${comparison} - please supply a valid comparison to "useComparisonArguments".`,
+    );
+
+  // Returns according to the metrics advanced filters:
+  // https://developers.sparkpost.com/api/metrics/#header-advanced-filters
+  return {
+    AND: {
+      [filterId]: {
+        eq: [comparison], // The `dehydrateFilters` helper expects this structure
+      },
+    },
+  };
+}

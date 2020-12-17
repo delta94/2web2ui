@@ -2,14 +2,14 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { LongTextContainer, Percent, TableCollection } from 'src/components';
 import { refreshDelayReportV2 as refreshDelayReport } from 'src/actions/delayReport';
+import { safeRate } from 'src/helpers/math';
 import {
   EmptyWrapper,
   FilterBoxWrapper,
   LoadingWrapper,
   TableCollectionBody,
   TableWrapper,
-} from './Wrappers';
-import { safeRate } from 'src/helpers/math';
+} from '../Wrappers';
 import { useReportBuilderContext } from '../../context/ReportBuilderContext';
 
 const filterBoxConfig = {
@@ -28,7 +28,7 @@ const columns = [
   { label: 'Domain', sortKey: 'domain' },
 ];
 
-export function DelayReasonsTable(props) {
+export function DelayReasonsTab(props) {
   const { state: reportOptions } = useReportBuilderContext();
   const { loading, reasons, totalAccepted, refreshDelayReport } = props;
 
@@ -86,4 +86,4 @@ const mapDispatchToProps = {
   refreshDelayReport,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(DelayReasonsTable);
+export default connect(mapStateToProps, mapDispatchToProps)(DelayReasonsTab);

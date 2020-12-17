@@ -1,8 +1,5 @@
-import React, { useCallback, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { refreshBounceReportV2 as refreshBounceReport } from 'src/actions/bounceReport';
+import React, { useCallback } from 'react';
 import { LongTextContainer, Percent, TableCollection } from 'src/components';
-import { mapStateToProps } from 'src/selectors/bounceReport';
 import { Tag } from 'src/components/matchbox';
 import { safeRate } from 'src/helpers/math';
 import {
@@ -11,8 +8,7 @@ import {
   LoadingWrapper,
   TableCollectionBody,
   TableWrapper,
-} from './Wrappers';
-import { useReportBuilderContext } from '../../context/ReportBuilderContext';
+} from '../Wrappers';
 
 const filterBoxConfig = {
   show: true,
@@ -35,16 +31,7 @@ const columns = [
   { label: 'Domain', minWidth: '90px', sortKey: 'domain' },
 ];
 
-export function BounceReasonsTable(props) {
-  const { state: reportOptions } = useReportBuilderContext();
-  const { aggregates, reasons, refreshBounceReport, tableLoading } = props;
-
-  useEffect(() => {
-    if (reportOptions.to && reportOptions.from) {
-      refreshBounceReport(reportOptions);
-    }
-  }, [refreshBounceReport, reportOptions]);
-
+export default function BounceReasonTable({ aggregates, reasons = [], tableLoading }) {
   const getRowData = useCallback(
     item => {
       const { reason, domain, bounce_category_name, bounce_class_name, count_bounce } = item;
@@ -66,7 +53,7 @@ export function BounceReasonsTable(props) {
     return <LoadingWrapper />;
   }
 
-  if (!reasons.length) {
+  if (!Boolean(reasons.length)) {
     return <EmptyWrapper message="No bounce reasons to report" />;
   }
 
@@ -85,9 +72,3 @@ export function BounceReasonsTable(props) {
     </TableCollection>
   );
 }
-
-const mapDispatchToProps = {
-  refreshBounceReport,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(BounceReasonsTable);

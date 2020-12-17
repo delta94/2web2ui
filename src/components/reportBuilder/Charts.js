@@ -5,7 +5,7 @@ import LineChart from 'src/components/charts/LineChart';
 import METRICS_UNIT_CONFIG from 'src/config/metrics-units';
 import { Box, Stack, Panel } from 'src/components/matchbox';
 import { useSparkPostQuery } from 'src/hooks';
-import { getTimeSeriesDeliverabilityMetrics } from 'src/helpers/api';
+import { getTimeSeries } from 'src/helpers/api/metrics';
 import {
   getMetricsFromKeys,
   getQueryFromOptionsV2 as getQueryFromOptions,
@@ -91,7 +91,7 @@ export function Charts(props) {
   // API request
   const { data: rawChartData, status: chartStatus, refetch: refetchChart } = useSparkPostQuery(
     () => {
-      return getTimeSeriesDeliverabilityMetrics(formattedOptions);
+      return getTimeSeries(formattedOptions);
     },
     {
       refetchOnWindowFocus: false,

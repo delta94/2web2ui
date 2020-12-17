@@ -2,14 +2,14 @@ import React, { useEffect } from 'react';
 import { Percent, TableCollection } from 'src/components';
 import { refreshEngagementReportV2 as refreshEngagementReport } from 'src/actions/engagementReport';
 import { connect } from 'react-redux';
+import { safeRate } from 'src/helpers/math';
 import {
   EmptyWrapper,
   FilterBoxWrapper,
   LoadingWrapper,
   TableCollectionBody,
   TableWrapper,
-} from './Wrappers';
-import { safeRate } from 'src/helpers/math';
+} from '../Wrappers';
 import { useReportBuilderContext } from '../../context/ReportBuilderContext';
 
 const filterBoxConfig = {
@@ -29,7 +29,7 @@ const columns = [
   { label: 'Percent of Total', sortKey: 'percentage_clicked' },
 ];
 
-export function LinksTable(props) {
+export function LinksTab(props) {
   const { state: reportOptions } = useReportBuilderContext();
   const { loading, links, refreshEngagementReport, totalClicks } = props;
 
@@ -86,4 +86,4 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
   refreshEngagementReport,
 };
-export default connect(mapStateToProps, mapDispatchToProps)(LinksTable);
+export default connect(mapStateToProps, mapDispatchToProps)(LinksTab);
