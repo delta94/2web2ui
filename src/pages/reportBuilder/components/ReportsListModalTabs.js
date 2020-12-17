@@ -94,7 +94,7 @@ const Actions = ({ id, handleDelete, handleEdit, handlePin, reportType, report, 
 
 const rowComponent = (cell, index) => {
   if (!cell) {
-    return null;
+    return <Table.Cell></Table.Cell>;
   }
   const { type } = cell;
   const { id } = cell.props;
