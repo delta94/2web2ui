@@ -1,0 +1,5 @@
+@import 'src/styles/hibana/charts';
+
+.AreaChart {
+    @include line-chart();
+}

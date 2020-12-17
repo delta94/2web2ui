@@ -1,5 +1,6 @@
 import { IS_HIBANA_ENABLED } from 'cypress/constants';
 import { PAGE_URL, STABLE_UNIX_DATE } from './constants';
+import { commonBeforeSteps } from './helpers';
 
 function verifyRow({ rowIndex, firstCell, secondCell, thirdCell, fourthCell, fifthCell }) {
   cy.get('tbody tr')
@@ -31,6 +32,7 @@ if (IS_HIBANA_ENABLED) {
   describe('Analytics Report breakdown table', () => {
     beforeEach(() => {
       cy.stubAuth();
+      commonBeforeSteps();
 
       cy.stubRequest({
         url: '/api/v1/subaccounts',
@@ -454,6 +456,93 @@ if (IS_HIBANA_ENABLED) {
           'include',
           'query_filters={"groupings":[{"AND":{"subaccounts":{"eq":["101","102"]}}},{"AND":{"domains":{"like":["hello","there","friend","these","are","some","tags"]}}}]}',
         );
+      });
+    });
+
+    describe('Compare By - Group By Table', () => {
+      it('will show a breakdown including comparisons', () => {
+        cy.stubRequest({
+          url: '/api/v1/metrics/deliverability/watched-domain**/*',
+          fixture: 'metrics/deliverability/watched-domain/200.get.json',
+          requestAlias: 'getWatchedDomains',
+        });
+        cy.visit(
+          '/signals/analytics?comparisons%5B0%5D%5Btype%5D=Subaccount&comparisons%5B0%5D%5Bvalue%5D=Fake%20Subaccount%201%20%28ID%20101%29&comparisons%5B0%5D%5Bid%5D=101&comparisons%5B1%5D%5Btype%5D=Subaccount&comparisons%5B1%5D%5Bvalue%5D=Fake%20Subaccount%203%20%28ID%20103%29&comparisons%5B1%5D%5Bid%5D=103',
+        );
+        cy.wait('@getSubaccountList');
+
+        cy.findByLabelText('Break Down By')
+          .scrollIntoView()
+          .select('Recipient Domain', { force: true });
+
+        cy.wait('@getWatchedDomains');
+        cy.wait('@getWatchedDomains');
+
+        cy.get('table').within(() => {
+          cy.findAllByText('Fake Subaccount 1 (ID 101)').should('have.length', 3);
+          cy.findAllByText('Fake Subaccount 3 (ID 103)').should('have.length', 3);
+        });
+      });
+
+      it('will render an empty state if no data is available', () => {
+        cy.stubRequest({
+          url: '/api/v1/metrics/deliverability/watched-domain**/*',
+          fixture: 'metrics/deliverability/watched-domain/200.get.no-results.json',
+          requestAlias: 'getWatchedDomains',
+        });
+        cy.visit(
+          '/signals/analytics?comparisons%5B0%5D%5Btype%5D=Subaccount&comparisons%5B0%5D%5Bvalue%5D=Fake%20Subaccount%201%20%28ID%20101%29&comparisons%5B0%5D%5Bid%5D=101&comparisons%5B1%5D%5Btype%5D=Subaccount&comparisons%5B1%5D%5Bvalue%5D=Fake%20Subaccount%203%20%28ID%20103%29&comparisons%5B1%5D%5Bid%5D=103',
+        );
+        cy.wait('@getSubaccountList');
+
+        cy.findByLabelText('Break Down By')
+          .scrollIntoView()
+          .select('Recipient Domain', { force: true });
+
+        cy.wait('@getWatchedDomains');
+        cy.wait('@getWatchedDomains');
+        cy.findAllByText('There is no data to display').should('be.visible');
+      });
+
+      it('will render an error state the requests fail', () => {
+        cy.stubRequest({
+          url: '/api/v1/metrics/deliverability/watched-domain**/*',
+          fixture: 'metrics/deliverability/watched-domain/400.get.json',
+          statusCode: 400,
+          requestAlias: 'getWatchedDomains',
+        });
+        cy.visit(
+          '/signals/analytics?comparisons%5B0%5D%5Btype%5D=Subaccount&comparisons%5B0%5D%5Bvalue%5D=Fake%20Subaccount%201%20%28ID%20101%29&comparisons%5B0%5D%5Bid%5D=101&comparisons%5B1%5D%5Btype%5D=Subaccount&comparisons%5B1%5D%5Bvalue%5D=Fake%20Subaccount%203%20%28ID%20103%29&comparisons%5B1%5D%5Bid%5D=103',
+        );
+        cy.wait('@getSubaccountList');
+
+        cy.findByLabelText('Break Down By')
+          .scrollIntoView()
+          .select('Recipient Domain', { force: true });
+
+        // Hmmmmmm
+        cy.wait(['@getWatchedDomains', '@getWatchedDomains']);
+        cy.wait(['@getWatchedDomains', '@getWatchedDomains']);
+        cy.wait(['@getWatchedDomains', '@getWatchedDomains']);
+        cy.wait(['@getWatchedDomains', '@getWatchedDomains']);
+
+        cy.findAllByText('Unable to load report');
+        cy.findAllByText('Please try again');
+
+        cy.stubRequest({
+          url: '/api/v1/metrics/deliverability/watched-domain**/*',
+          fixture: 'metrics/deliverability/watched-domain/200.get.json',
+          requestAlias: 'getWatchedDomains',
+        });
+
+        cy.findByRole('button', { name: 'Try Again' }).click();
+        cy.wait('@getWatchedDomains');
+        cy.wait('@getWatchedDomains');
+
+        cy.get('table').within(() => {
+          cy.findAllByText('Fake Subaccount 1 (ID 101)').should('have.length', 3);
+          cy.findAllByText('Fake Subaccount 3 (ID 103)').should('have.length', 3);
+        });
       });
     });
   });

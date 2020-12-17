@@ -1,4 +1,4 @@
-import { IS_HIBANA_ENABLED } from 'cypress/constants';
+import { IS_HIBANA_ENABLED, USERNAME } from 'cypress/constants';
 import { LINKS } from 'src/constants';
 
 const PAGE_URL = '/domains/create';
@@ -343,17 +343,22 @@ describe('The domains create page', () => {
 
     it('does not render "Subaccount Assignment" when the user\'s account does not have subaccounts', () => {
       cy.stubRequest({
-        url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+        url: `/api/v1/users/${USERNAME}`,
         fixture: 'users/200.get.no-subaccounts.json',
         requestAlias: 'currentUserReq',
       });
-      commonBeforeSteps();
-      cy.wait('@currentUserReq');
+      cy.stubRequest({
+        url: '/api/v1/account',
+        fixture: 'account/200.get.json',
+        requestAlias: 'accountDomainsReq',
+      });
+      cy.visit(PAGE_URL);
+      cy.wait(['@currentUserReq', '@accountDomainsReq']);
 
       cy.findByLabelText(/Sending Domain/g).should('be.visible');
       cy.findByLabelText(/Tracking Domain/g).should('be.visible');
       cy.findByLabelText('Domain').should('be.visible');
-      cy.findByText('Subaccount Assignment').should('not.be.visible');
+      cy.findByText('Subaccount Assignment').should('not.exist');
     });
   }
 

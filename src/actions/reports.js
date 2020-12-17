@@ -102,3 +102,18 @@ export function deleteScheduledReport(reportId, scheduleId) {
     },
   });
 }
+
+export function testScheduledReport({ reportId, name, subject, recipients }) {
+  return sparkpostApiRequest({
+    type: 'TEST_SCHEDULED_REPORT',
+    meta: {
+      method: 'POST',
+      url: `/v1/reports/${reportId}/schedules/test`,
+      data: {
+        name,
+        subject,
+        recipients,
+      },
+    },
+  });
+}

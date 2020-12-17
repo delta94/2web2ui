@@ -1,3 +1,5 @@
+import { USERNAME } from 'cypress/constants';
+
 describe('The billing plan page', () => {
   beforeEach(() => {
     // todo, this user should be joining not logging-in
@@ -108,7 +110,7 @@ describe('The billing plan page', () => {
     it('renders the first and last name fields when the user account does not have a stored first and last name', () => {
       cy.stubRequest({
         fixture: 'users/200.get.no-first-or-last-names.json',
-        url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+        url: `/api/v1/users/${USERNAME}`,
       });
 
       cy.visit('/onboarding/plan'); // Revisit page to override existing stub in `beforeEach()`
@@ -120,7 +122,7 @@ describe('The billing plan page', () => {
     it('does not render the first and last name fields when the user account has a stored first and last name', () => {
       cy.stubRequest({
         fixture: 'users/200.get.json',
-        url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+        url: `/api/v1/users/${USERNAME}`,
       });
 
       cy.visit('/onboarding/plan'); // Revisit page to override existing stub in `beforeEach()`

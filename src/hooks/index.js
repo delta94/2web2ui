@@ -8,7 +8,7 @@ export { default as usePageFilters } from './usePageFilters';
 export { default as usePinnedReport } from './usePinnedRport';
 export { default as usePrevious } from './usePrevious';
 export { default as useProvidedContext } from './useProvidedContext';
-export { default as useSparkPostQuery } from './useSparkPostQuery';
+export { useSparkPostQueries, useSparkPostQuery } from './useSparkPostQuery';
 export { default as useTabs } from './useTabs';
 export { default as useUniqueId } from './useUniqueId';
 export { default as useEmptyState } from './useEmptyState';

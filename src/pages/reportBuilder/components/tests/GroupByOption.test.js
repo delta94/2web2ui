@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import GroupByOption from '../GroupByOption';
+import GroupByOption from '../GroupByTable/GroupByOption';
 
 describe('GroupByOption', () => {
   let wrapper;

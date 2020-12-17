@@ -1,4 +1,4 @@
-import { IS_HIBANA_ENABLED } from 'cypress/constants';
+import { IS_HIBANA_ENABLED, USERNAME } from 'cypress/constants';
 import { LINKS } from 'src/constants';
 
 const PAGE_URL = '/dashboardV2';
@@ -63,6 +63,53 @@ describe('Version 2 of the dashboard page', () => {
         });
       });
       cy.findByText('Pinned Report updated').should('be.visible');
+    });
+    it('renders the Analytics Report step with pinned report when last usage date is not null and a pinned report is present in account ui options', () => {
+      stubGrantsRequest({ role: 'admin' });
+      stubAlertsReq();
+      stubAccountsReq();
+      stubUsageReq({ fixture: 'usage/200.get.messaging.json' });
+      stubReportsRequest();
+      cy.stubRequest({
+        url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+        fixture: `users/200.get.has-pinned-report.json`,
+        requestAlias: 'userWithPinnedReport',
+      });
+
+      cy.stubRequest({
+        method: 'GET',
+        url: '/api/v1/metrics/deliverability**/**',
+        fixture: 'metrics/deliverability/200.get.pinned-report.json',
+        requestAlias: 'dataGetDeliverability',
+      });
+
+      cy.stubRequest({
+        method: 'GET',
+        url: '/api/v1/metrics/deliverability/time-series**/**',
+        fixture: 'metrics/deliverability/time-series/200.get.json',
+        requestAlias: 'dataGetTimeSeries',
+      });
+
+      cy.stubRequest({
+        url: '/api/v1/subaccounts',
+        fixture: 'subaccounts/200.get.json',
+        requestAlias: 'getSubaccounts',
+      });
+
+      cy.visit(PAGE_URL);
+      cy.wait([
+        '@alertsReq',
+        '@accountReq',
+        '@usageReq',
+        '@getReports',
+        '@userWithPinnedReport',
+        '@dataGetDeliverability',
+        '@dataGetTimeSeries',
+        '@getSubaccounts',
+      ]);
+      cy.findByText('My Bounce Report').should('be.visible');
+      cy.findByText('Bounces').should('be.visible');
+      cy.findByText('325K').should('be.visible');
     });
     it('Shows Helpful Shortcuts "invite team members" when admin', () => {
       stubGrantsRequest({ role: 'admin' });
@@ -714,7 +761,7 @@ function stubGrantsRequest({ role }) {
 // this is an override of the stub set by stubAuth
 function stubUsersRequest({ access_level }) {
   cy.stubRequest({
-    url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+    url: `/api/v1/users/${USERNAME}`,
     fixture: `users/200.get.${access_level}.json`,
     requestAlias: 'stubbedUsersRequest',
   });

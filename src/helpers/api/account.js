@@ -12,3 +12,10 @@ export function getUsage() {
     url: '/v1/usage',
   };
 }
+
+export function getUsageHistory() {
+  return {
+    method: 'GET',
+    url: '/v1/usage/history',
+  };
+}

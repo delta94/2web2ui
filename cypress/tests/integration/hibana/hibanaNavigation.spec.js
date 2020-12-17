@@ -1,4 +1,4 @@
-import { IS_HIBANA_ENABLED } from 'cypress/constants';
+import { IS_HIBANA_ENABLED, USERNAME } from 'cypress/constants';
 
 if (IS_HIBANA_ENABLED) {
   describe('the Hibana navigation', () => {
@@ -563,7 +563,7 @@ if (IS_HIBANA_ENABLED) {
 
       it('renders an icon if no user first name and last name are returned for the current user', () => {
         cy.stubRequest({
-          url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+          url: `/api/v1/users/${USERNAME}`,
           fixture: 'users/200.get.no-first-or-last-names.json',
         });
 
@@ -575,7 +575,7 @@ if (IS_HIBANA_ENABLED) {
 
       it('renders an icon if a first name is missing from the current user', () => {
         cy.stubRequest({
-          url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+          url: `/api/v1/users/${USERNAME}`,
           fixture: 'users/200.get.no-first-name.json',
         });
 
@@ -587,7 +587,7 @@ if (IS_HIBANA_ENABLED) {
 
       it('renders an icon if a last name is missing from the current user', () => {
         cy.stubRequest({
-          url: `/api/v1/users/${Cypress.env('USERNAME')}`,
+          url: `/api/v1/users/${USERNAME}`,
           fixture: 'users/200.get.no-last-name.json',
         });
 

@@ -75,4 +75,9 @@ export const getDefaultValuesMemoized = _.memoize(getDefaultValues, (scheduledRe
   const usersString = users.map(({ name, email }) => `(${name}${email})`).join('-');
   return `${scheduledReportString}${usersString}`;
 });
+
 export const hasAtLeastOneRecipient = recipientList => recipientList.length > 0;
+
+//If this is updated, also update function in
+//cypress/tests/integration/signals-analytics/analytics-report/scheduledReports.spec.js.
+export const recipientUserToString = user => (user ? `${user.name} <${user.email}>` : '');

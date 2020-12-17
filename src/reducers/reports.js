@@ -80,6 +80,12 @@ export default (state = initialState, { type, payload }) => {
     case 'DELETE_SCHEDULED_REPORT_FAIL':
       return { ...state, deleteSchedulePending: false };
 
+    case 'TEST_SCHEDULED_REPORT_PENDING':
+      return { ...state, testScheduledReportStatus: 'loading' };
+    case 'TEST_SCHEDULED_REPORT_SUCCESS':
+      return { ...state, testScheduledReportStatus: 'success' };
+    case 'TEST_SCHEDULED_REPORT_FAIL':
+      return { ...state, testScheduledReportStatus: 'error' };
     default:
       return state;
   }

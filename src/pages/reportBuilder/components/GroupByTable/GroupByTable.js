@@ -9,21 +9,21 @@ import { TableCollection, Unit, PanelLoading } from 'src/components';
 import GroupByOption from './GroupByOption';
 import { Empty } from 'src/components';
 import { Panel, Table, Box } from 'src/components/matchbox';
-import { GROUP_BY_CONFIG } from '../constants';
-import { useReportBuilderContext } from '../context/ReportBuilderContext';
-import AddFilterLink from './AddFilterLink';
+import { GROUP_BY_CONFIG } from '../../constants';
+import { useReportBuilderContext } from '../../context/ReportBuilderContext';
+import AddFilterLink from '../AddFilterLink';
 
 import styles from './ReportTable.module.scss';
 
 const tableWrapper = props => {
   return (
-    <Panel.LEGACY>
+    <Panel>
       <Table freezeFirstColumn>{props.children}</Table>
-    </Panel.LEGACY>
+    </Panel>
   );
 };
 
-export const ReportTable = () => {
+export const GroupByTable = () => {
   const dispatch = useDispatch();
   const {
     selectors: { selectSummaryMetricsProcessed: metrics },
@@ -147,4 +147,4 @@ export const ReportTable = () => {
   );
 };
 
-export default ReportTable;
+export default GroupByTable;
