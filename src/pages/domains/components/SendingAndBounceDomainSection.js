@@ -9,13 +9,9 @@ import getConfig from 'src/helpers/getConfig';
 import useDomains from '../hooks/useDomains';
 import { ExternalLink, SubduedLink } from 'src/components/links';
 import { CopyField } from 'src/components';
-import { Send } from '@sparkpost/matchbox-icons';
-import styled from 'styled-components';
+import { TranslatableText } from 'src/components/text';
+import { Telegram } from '@sparkpost/matchbox-icons';
 import { EXTERNAL_LINKS } from '../constants';
-
-const PlaneIcon = styled(Send)`
-  transform: translate(0, -25%) rotate(-45deg);
-`;
 
 export default function SendingAndBounceDomainSection({ domain, isSectionVisible }) {
   const { id, status, subaccount_id } = domain;
@@ -107,20 +103,24 @@ export default function SendingAndBounceDomainSection({ domain, isSectionVisible
             {!readyFor.dkim || !readyFor.bounce ? (
               <Panel.Section>
                 <p>
-                  <span>Add the&nbsp;</span>
-                  <Bold>TXT</Bold>
-                  <span>&nbsp;and&nbsp;</span>
-                  <Bold>{watchVerificationType}&nbsp;</Bold>
-                  <span>
+                  <TranslatableText>Add the&nbsp;</TranslatableText>
+                  <TranslatableText>
+                    <Bold>TXT</Bold>
+                  </TranslatableText>
+                  <TranslatableText>&nbsp;and&nbsp;</TranslatableText>
+                  <TranslatableText>
+                    <Bold>{watchVerificationType}&nbsp;</Bold>
+                  </TranslatableText>
+                  <TranslatableText>
                     records, Hostnames, and Values for this domain in the settings section of your
                     DNS provider.
-                  </span>
+                  </TranslatableText>
                 </p>
                 <Panel.Action
                   component={ExternalLink}
                   external="true"
                   to={`mailto:?subject=Assistance%20Requested%20Verifying%20a%20Sending%20Domain%20on%20SparkPost&body=${userName}%20has%20requested%20your%20assistance%20verifying%20a%20sending%20domain%20with%20SparkPost.%20Follow%20the%20link%20below%20to%20find%20the%20values%20you%E2%80%99ll%20need%20to%20add%20to%20the%20settings%20of%20your%20DNS%20provider.%0D%0A%5BGo%20to%20SparkPost%5D(${window.location})%0D%0A`}
-                  icon={PlaneIcon}
+                  icon={Telegram}
                   iconMargin="0 0 -.25em .5em"
                   iconSize="18"
                 >

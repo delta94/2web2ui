@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Layout, Stack, Text } from 'src/components/matchbox';
 import { Panel, Checkbox } from 'src/components/matchbox';
-import { SubduedText } from 'src/components/text';
+import { SubduedText, TranslatableText } from 'src/components/text';
 import { ExternalLink, SubduedLink } from 'src/components/links';
 import useDomains from '../hooks/useDomains';
 import { CopyField } from 'src/components';
@@ -52,24 +52,24 @@ export default function TrackingDnsSection({ domain, isSectionVisible, title }) 
             {unverified ? (
               <Panel.Section>
                 <p>
-                  <span>Add the&nbsp;</span>
+                  <TranslatableText>Add the&nbsp;</TranslatableText>
                   <Text as="span" fontWeight="semibold">
                     CNAME&nbsp;
                   </Text>
-                  <span>
+                  <TranslatableText>
                     records, Hostnames, and Values for this domain in the settings section of your
                     DNS provider.
-                  </span>
+                  </TranslatableText>
                 </p>
               </Panel.Section>
             ) : (
               <Panel.Section>
                 <p>
-                  <span>Below is the&nbsp;</span>
+                  <TranslatableText>Below is the&nbsp;</TranslatableText>
                   <Text as="span" fontWeight="semibold">
                     CNAME&nbsp;
                   </Text>
-                  <span>record for this domain at your DNS provider.</span>
+                  <TranslatableText>record for this domain at your DNS provider.</TranslatableText>
                 </p>
               </Panel.Section>
             )}

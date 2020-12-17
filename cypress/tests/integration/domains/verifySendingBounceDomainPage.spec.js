@@ -83,7 +83,7 @@ describe('The verify sending/bounce domain page', () => {
         cy.findByRole('heading', { name: 'CNAME record for Bounce' }).should('be.visible');
       });
 
-      it('Verify Domain submit button is displays an error message until the user selects the confirmation checkbox', () => {
+      it('Verify Domain submit button displays an error message until the user selects the confirmation checkbox', () => {
         cy.stubRequest({
           url: '/api/v1/sending-domains/sending-bounce.net',
           fixture: 'sending-domains/200.get.unverified-dkim-bounce.json',
