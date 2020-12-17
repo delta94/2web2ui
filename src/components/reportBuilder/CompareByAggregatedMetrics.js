@@ -38,7 +38,7 @@ export default function CompareByAggregatedMetrics({
     return (
       <Column>
         <Stack space="300">
-          {comparisons.map((comparison, comparisonIndex) => {
+          {comparisons?.map((comparison, comparisonIndex) => {
             return (
               <CompareByAggregatedRow
                 key={`comparison-${comparisonIndex}`}
