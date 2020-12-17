@@ -331,6 +331,7 @@ if (IS_HIBANA_ENABLED) {
             cy.findByText('My Bounce Report')
               .closest('tr')
               .within(() => {
+                cy.get('td').should('have.length', 4);
                 cy.findAllByText('Open Menu').click({ force: true });
                 cy.findAllByText('Pin to Dashboard').should('not.be.visible');
               });
@@ -369,6 +370,7 @@ if (IS_HIBANA_ENABLED) {
             cy.findByText('My Bounce Report')
               .closest('tr')
               .within(() => {
+                cy.get('td').should('have.length', 6);
                 cy.findAllByText('Open Menu').click({ force: true });
                 cy.findAllByText('Pin to Dashboard').should('be.visible');
               });
