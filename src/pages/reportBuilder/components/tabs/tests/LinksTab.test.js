@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { LinksTable } from '../LinksTable';
+import { LinksTab } from '../LinksTab';
 import TestApp from 'src/__testHelpers__/TestApp';
 import { useReportBuilderContext } from 'src/pages/reportBuilder/context/ReportBuilderContext';
 jest.mock('src/pages/reportBuilder/context/ReportBuilderContext');
@@ -12,7 +12,7 @@ useReportBuilderContext.mockImplementation(() => ({
   },
 }));
 
-describe('Links Table', () => {
+describe('LinksTab', () => {
   const mockGetData = jest.fn();
   const defaultProps = {
     loading: false,
@@ -28,7 +28,7 @@ describe('Links Table', () => {
   const subject = props =>
     render(
       <TestApp>
-        <LinksTable {...defaultProps} {...props} />
+        <LinksTab {...defaultProps} {...props} />
       </TestApp>,
     );
   it('renders with the correct row information', () => {

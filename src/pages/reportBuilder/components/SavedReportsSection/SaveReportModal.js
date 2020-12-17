@@ -17,7 +17,7 @@ import { createReport, updateReport, getReports } from 'src/actions/reports';
 import { showAlert } from 'src/actions/globalAlert';
 import { getMetricsFromKeys } from 'src/helpers/metrics';
 import { useReportBuilderContext } from '../../context/ReportBuilderContext';
-import ActiveFilters from '../ActiveFilters';
+import ActiveFilters from 'src/components/reportBuilder/ActiveFilters';
 import { formatDateTime, relativeDateOptionsIndexed } from 'src/helpers/date';
 
 const DateRange = ({ to, from, relativeRange }) => {

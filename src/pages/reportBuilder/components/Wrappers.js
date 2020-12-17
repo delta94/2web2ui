@@ -1,8 +1,7 @@
-import { Box, Table } from 'src/components/matchbox';
 import React from 'react';
-import { Empty, Loading } from 'src/components';
-
 import styled from 'styled-components';
+import { Box, Table } from 'src/components/matchbox';
+import { Empty, Loading } from 'src/components';
 
 const OverflowDiv = styled.div`
   overflow: auto;
@@ -35,6 +34,6 @@ export const EmptyWrapper = ({ message }) => <Empty message={message} hasPanel={
 
 export const LoadingWrapper = () => (
   <Box position="relative">
-    <Loading />
+    <Loading minHeight="300px" />
   </Box>
 );

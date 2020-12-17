@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { RejectionReasonsTable } from '../RejectionReasonsTable';
+import { RejectionReasonsTab } from '../RejectionReasonsTab';
 import TestApp from 'src/__testHelpers__/TestApp';
 import { useReportBuilderContext } from 'src/pages/reportBuilder/context/ReportBuilderContext';
 jest.mock('src/pages/reportBuilder/context/ReportBuilderContext');
@@ -12,7 +12,7 @@ useReportBuilderContext.mockImplementation(() => ({
   },
 }));
 
-describe('Rejection Reasons Table', () => {
+describe('RejectionReasonsTab', () => {
   const mockGetData = jest.fn();
   const defaultProps = {
     loading: false,
@@ -30,7 +30,7 @@ describe('Rejection Reasons Table', () => {
   const subject = props =>
     render(
       <TestApp>
-        <RejectionReasonsTable {...defaultProps} {...props} />
+        <RejectionReasonsTab {...defaultProps} {...props} />
       </TestApp>,
     );
   it('renders with the correct row information', () => {

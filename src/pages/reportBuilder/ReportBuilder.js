@@ -31,10 +31,11 @@ import {
 } from './components';
 
 import {
-  BounceReasonsTable,
-  DelayReasonsTable,
-  LinksTable,
-  RejectionReasonsTable,
+  BounceReasonTab,
+  BounceReasonComparisonTab,
+  DelayReasonsTab,
+  LinksTab,
+  RejectionReasonsTab,
 } from './components/tabs';
 import { useReportBuilderContext } from './context/ReportBuilderContext';
 import { PRESET_REPORT_CONFIGS } from './constants';
@@ -128,30 +129,83 @@ export function ReportBuilder({
     return quantity >= limit;
   }, [subscription]);
 
-  const hasBounceTab = processedMetrics.some(({ key }) => {
+  const hasBounceMetrics = processedMetrics.some(({ key }) => {
     return bounceTabMetrics.map(({ key }) => key).includes(key);
   });
-  const hasRejectionTab = processedMetrics.some(({ key }) => {
+  const hasBounceTab = hasBounceMetrics && !hasActiveComparisons;
+  const hasRejectionMetrics = processedMetrics.some(({ key }) => {
     return rejectionTabMetrics.map(({ key }) => key).includes(key);
   });
-  const hasDelayTab = processedMetrics.some(({ key }) => {
+  const hasRejectionTab = hasRejectionMetrics && !hasActiveComparisons;
+  const hasDelayMetrics = processedMetrics.some(({ key }) => {
     return delayTabMetrics.map(({ key }) => key).includes(key);
   });
-  const hasLinksTab = processedMetrics.some(({ key }) => {
+  const hasDelayTab = hasDelayMetrics && !hasActiveComparisons;
+  const hasLinksMetrics = processedMetrics.some(({ key }) => {
     return linksTabMetrics.map(({ key }) => key).includes(key);
   });
+  const hasLinksTab = hasLinksMetrics && !hasActiveComparisons;
 
-  const tabs = useMemo(
-    () =>
-      [
-        { content: 'Report', onClick: () => setShowTable(true) },
-        hasBounceTab && { content: 'Bounce Reason', onClick: () => setShowTable(false) },
-        hasRejectionTab && { content: 'Rejection Reason', onClick: () => setShowTable(false) },
-        hasDelayTab && { content: 'Delay Reason', onClick: () => setShowTable(false) },
-        hasLinksTab && { content: 'Links', onClick: () => setShowTable(false) },
-      ].filter(Boolean),
-    [hasBounceTab, hasRejectionTab, hasDelayTab, hasLinksTab],
-  );
+  const tabs = useMemo(() => {
+    function getComparisonTabs() {
+      if (hasBounceMetrics) {
+        return reportOptions.comparisons.map(comparison => {
+          return {
+            content: `Bounce Reason ${comparison.value}`,
+            onClick: () => setShowTable(false),
+          };
+        });
+      }
+
+      if (hasRejectionMetrics) {
+        return reportOptions.comparisons.map(comparison => {
+          return {
+            content: `Rejection Reason ${comparison.value}`,
+            onClick: () => setShowTable(false),
+          };
+        });
+      }
+
+      if (hasDelayMetrics) {
+        return reportOptions.comparisons.map(comparison => {
+          return {
+            content: `Delay Reason ${comparison.value}`,
+            onClick: () => setShowTable(false),
+          };
+        });
+      }
+
+      if (hasLinksMetrics) {
+        return reportOptions.comparisons.map(comparison => {
+          return {
+            content: `Links ${comparison.value}`,
+            onClick: () => setShowTable(false),
+          };
+        });
+      }
+
+      return [];
+    }
+
+    return [
+      { content: 'Report', onClick: () => setShowTable(true) },
+      hasBounceTab && { content: 'Bounce Reason', onClick: () => setShowTable(false) },
+      hasRejectionTab && { content: 'Rejection Reason', onClick: () => setShowTable(false) },
+      hasDelayTab && { content: 'Delay Reason', onClick: () => setShowTable(false) },
+      hasLinksTab && { content: 'Links', onClick: () => setShowTable(false) },
+      ...getComparisonTabs(),
+    ].filter(Boolean);
+  }, [
+    hasBounceMetrics,
+    hasRejectionMetrics,
+    hasDelayMetrics,
+    hasLinksMetrics,
+    hasBounceTab,
+    hasRejectionTab,
+    hasDelayTab,
+    hasLinksTab,
+    reportOptions.comparisons,
+  ]);
 
   useEffect(() => {
     setShowTable(true);
@@ -202,52 +256,67 @@ export function ReportBuilder({
         {isEmpty ? (
           <Empty message="No Data" description="Must select at least one metric." />
         ) : (
-          <>
-            <div data-id="summary-chart">
-              <Tabs defaultTabIndex={0} forceRender tabs={tabs}>
+          <div data-id="summary-chart">
+            <Tabs defaultTabIndex={0} forceRender tabs={tabs}>
+              <Tabs.Item>
+                <Charts {...chart} metrics={processedMetrics} to={to} yScale="linear" />
+
+                {hasActiveComparisons ? (
+                  <CompareByAggregatedMetrics date={dateValue} reportOptions={reportOptions} />
+                ) : (
+                  <AggregatedMetrics
+                    date={dateValue}
+                    processedMetrics={selectors.selectSummaryMetricsProcessed}
+                  />
+                )}
+              </Tabs.Item>
+
+              {hasBounceTab && (
                 <Tabs.Item>
-                  <Charts {...chart} metrics={processedMetrics} to={to} yScale="linear" />
-
-                  {hasActiveComparisons ? (
-                    <CompareByAggregatedMetrics date={dateValue} reportOptions={reportOptions} />
-                  ) : (
-                    <AggregatedMetrics
-                      date={dateValue}
-                      processedMetrics={selectors.selectSummaryMetricsProcessed}
-                    />
-                  )}
+                  <BounceReasonTab />
                 </Tabs.Item>
+              )}
 
-                {hasBounceTab && (
-                  <Tabs.Item>
-                    <BounceReasonsTable />
-                  </Tabs.Item>
-                )}
-                {hasRejectionTab && (
-                  <Tabs.Item>
-                    <RejectionReasonsTable />
-                  </Tabs.Item>
-                )}
-                {hasDelayTab && (
-                  <Tabs.Item>
-                    <DelayReasonsTable />
-                  </Tabs.Item>
-                )}
-                {hasLinksTab && (
-                  <Tabs.Item>
-                    <LinksTable />
-                  </Tabs.Item>
-                )}
-              </Tabs>
-            </div>
-          </>
+              {hasRejectionTab && (
+                <Tabs.Item>
+                  <RejectionReasonsTab />
+                </Tabs.Item>
+              )}
+
+              {hasDelayTab && (
+                <Tabs.Item>
+                  <DelayReasonsTab />
+                </Tabs.Item>
+              )}
+
+              {hasLinksTab && (
+                <Tabs.Item>
+                  <LinksTab />
+                </Tabs.Item>
+              )}
+
+              {hasBounceMetrics &&
+                hasActiveComparisons &&
+                reportOptions.comparisons.map((comparison, index) => {
+                  return (
+                    <Tabs.Item key={`tab-bounce-${comparison.value}-${index}`}>
+                      <BounceReasonComparisonTab comparison={comparison} />
+                    </Tabs.Item>
+                  );
+                })}
+
+              {/* TODO: compare by rejections, delays, and links tabs can go here */}
+            </Tabs>
+          </div>
         )}
       </Panel>
+
       {showTable && (
         <div data-id="summary-table">
           {hasActiveComparisons ? <CompareByGroupByTable /> : <GroupByTable />}
         </div>
       )}
+
       <SaveReportModal
         create
         open={showSaveNewReportModal}

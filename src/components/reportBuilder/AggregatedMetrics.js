@@ -1,15 +1,27 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Box, Grid, Inline, LabelValue } from 'src/components/matchbox';
+import { Button, Box, Grid, Inline, LabelValue } from 'src/components/matchbox';
+import { FilterAlt } from '@sparkpost/matchbox-icons';
 import { Unit, LegendCircle } from 'src/components';
+import styled from 'styled-components';
 
-export default function AggregatedMetrics({ date, processedMetrics }) {
+const ViewFilterButton = styled(Button)`
+  float: right;
+  color: ${props => props.theme.colors.gray['600']};
+`;
+
+export default function AggregatedMetrics({
+  date,
+  processedMetrics,
+  showFiltersButton,
+  handleClickFiltersButton,
+}) {
   const chart = useSelector(state => state.summaryChart);
 
   return (
     <Box padding="400" backgroundColor="gray.1000">
       <Grid>
-        <Grid.Column sm={3}>
+        <Grid.Column sm={showFiltersButton ? 9 : 3}>
           <LabelValue dark>
             <LabelValue.Label>Date</LabelValue.Label>
 
@@ -18,6 +30,18 @@ export default function AggregatedMetrics({ date, processedMetrics }) {
             </LabelValue.Value>
           </LabelValue>
         </Grid.Column>
+        {showFiltersButton && (
+          <>
+            <Grid.Column sm={3}>
+              <ViewFilterButton onClick={handleClickFiltersButton}>
+                View Filters <FilterAlt size={20} />
+              </ViewFilterButton>
+            </Grid.Column>
+            <Box height="300" width="100%">
+              &nbsp;
+            </Box>
+          </>
+        )}
 
         <Grid.Column sm={9}>
           <Inline space="600">
