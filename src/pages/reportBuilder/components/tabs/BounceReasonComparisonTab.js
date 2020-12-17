@@ -39,7 +39,7 @@ export default function BounceReasonComparisonTab({ comparison }) {
     bounceReport: { aggregates: aggregatesQuery.data[0] },
   });
 
-  return <BounceReasonTable reasons={reasons} aggregates={aggregates} tableLoading={false} />;
+  return <BounceReasonTable reasons={reasons} aggregates={aggregates} loading={false} />;
 }
 
 /**
