@@ -9,7 +9,7 @@ import { TAB_LOADING_HEIGHT } from '../../constants';
 import { DelayReasonTable } from '../tables';
 
 export default function DelayReasonComparisonTab({ comparison }) {
-  const { aggregatesQuery, delayReasonsQuery, isPending, isError } = useQueryWithComparison(
+  const { aggregatesQuery, delayReasonsQuery, isPending, isError } = useQueriesWithComparison(
     comparison,
   );
 
@@ -41,7 +41,7 @@ export default function DelayReasonComparisonTab({ comparison }) {
  *
  * @param {Object} comparison - passed in comparison set by the user via the "Compare By" feature
  */
-function useQueryWithComparison(comparison) {
+function useQueriesWithComparison(comparison) {
   const { state: reportOptions } = useReportBuilderContext();
   const deliverabilityMetrics = getMetricsFromKeys([
     'count_accepted',

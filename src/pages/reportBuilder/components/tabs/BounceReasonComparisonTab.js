@@ -11,7 +11,7 @@ import { useReportBuilderContext } from '../../context/ReportBuilderContext';
 import { TAB_LOADING_HEIGHT } from '../../constants';
 
 export default function BounceReasonComparisonTab({ comparison }) {
-  const { aggregatesQuery, bounceReasonsQuery, isPending, isError } = useQueryWithComparison(
+  const { aggregatesQuery, bounceReasonsQuery, isPending, isError } = useQueriesWithComparison(
     comparison,
   );
 
@@ -46,10 +46,9 @@ export default function BounceReasonComparisonTab({ comparison }) {
  *
  * @param {Object} comparison - passed in comparison set by the user via the "Compare By" feature
  */
-function useQueryWithComparison(comparison) {
+function useQueriesWithComparison(comparison) {
   const { state: reportOptions } = useReportBuilderContext();
   // I borrowed this logic from `src/actions/bounceReport`
-  // But does the comparison value influence which metrics are valid for this request?
   const deliverabilityMetrics = getMetricsFromKeys([
     'count_bounce',
     'count_inband_bounce',
