@@ -149,43 +149,45 @@ export function ReportBuilder({
 
   const tabs = useMemo(() => {
     function getComparisonTabs() {
+      let comparisonTabs = [];
+
       if (hasBounceMetrics) {
-        return reportOptions.comparisons.map(comparison => {
-          return {
+        reportOptions.comparisons.forEach(comparison => {
+          comparisonTabs.push({
             content: `Bounce Reason ${comparison.value}`,
             onClick: () => setShowTable(false),
-          };
+          });
         });
       }
 
       if (hasRejectionMetrics) {
-        return reportOptions.comparisons.map(comparison => {
-          return {
+        reportOptions.comparisons.forEach(comparison => {
+          comparisonTabs.push({
             content: `Rejection Reason ${comparison.value}`,
             onClick: () => setShowTable(false),
-          };
+          });
         });
       }
 
       if (hasDelayMetrics) {
-        return reportOptions.comparisons.map(comparison => {
-          return {
+        reportOptions.comparisons.forEach(comparison => {
+          comparisonTabs.push({
             content: `Delay Reason ${comparison.value}`,
             onClick: () => setShowTable(false),
-          };
+          });
         });
       }
 
       if (hasLinksMetrics) {
-        return reportOptions.comparisons.map(comparison => {
-          return {
+        reportOptions.comparisons.forEach(comparison => {
+          comparisonTabs.push({
             content: `Links ${comparison.value}`,
             onClick: () => setShowTable(false),
-          };
+          });
         });
       }
 
-      return [];
+      return comparisonTabs;
     }
 
     return [
