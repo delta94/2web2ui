@@ -37,7 +37,7 @@ export const SavedReportsSection = props => {
       closeModal();
       showAlert({
         type: 'success',
-        message: `Successfully pinned ${focusedReport.name} to your Dashboard.`,
+        message: `Successfully pinned ${focusedReport.name} to the Dashboard.`,
       });
     });
   };
@@ -48,7 +48,7 @@ export const SavedReportsSection = props => {
       closeModal();
       showAlert({
         type: 'success',
-        message: `You have successfully deleted ${focusedReport.name}.`,
+        message: `Successfully deleted ${focusedReport.name}.`,
       });
       // Unsets the report if it's the report that's deleted.
       if (focusedReport.id === selectedReport.id) {
@@ -199,13 +199,13 @@ export const SavedReportsSection = props => {
                   <Bold>{focusedReport.name}</Bold>
                   <span>&nbsp;will now replace&nbsp;</span>
                   <Bold>{previouslyPinnedReport.name}</Bold>
-                  <span>&nbsp;on your Dashboard.</span>
+                  <span>&nbsp;on the Dashboard.</span>
                 </p>
               )}
             {!previouslyPinnedReport.id && (
               <p>
                 <Bold>{focusedReport.name}</Bold>
-                <span>&nbsp;will be pinned to your Dashboard.&nbsp;</span>
+                <span>&nbsp;will be pinned to the Dashboard.&nbsp;</span>
               </p>
             )}
           </>

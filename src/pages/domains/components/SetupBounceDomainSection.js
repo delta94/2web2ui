@@ -33,7 +33,7 @@ export default function SetupBounceDomainSection({ domain, isSectionVisible, tit
       if (result[`${type}_status`] === 'valid') {
         showAlert({
           type: 'success',
-          message: `You have successfully verified ${type} record of ${id}`,
+          message: `Successfully verified ${type} record of ${id}`,
         });
       } else {
         showAlert({

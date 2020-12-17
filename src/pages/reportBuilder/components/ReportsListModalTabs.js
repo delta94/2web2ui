@@ -18,7 +18,7 @@ import { ButtonLink, PageLink } from 'src/components/links';
 const PinToDashboardAction = styled(ActionList.Action)`
   &[disabled] {
     opacity: 0.5;
-    cursor: not-allowed;
+    pointer-events: none;
   }
 `;
 
@@ -28,15 +28,25 @@ const FilterBoxWrapper = props => (
   </Box>
 );
 
-const Icons = ({ report, pinnedReport }) => {
+const Icons = ({ report, pinnedReport, allowDashboardV2 }) => {
   let icons = [];
+
+  if (!allowDashboardV2) {
+    return icons;
+  }
+
   if (pinnedReport && pinnedReport.id === report.id) {
     icons.push(
-      <Tooltip content="Pinned to Dashboard">
+      <Tooltip
+        content="Pinned to Dashboard"
+        key={`tooltip-key-${report.id}`}
+        id={`tooltip-id-${report.id}`}
+      >
         <PushPin label="pinned-to-dashboard" />
       </Tooltip>,
     );
   }
+
   return icons;
 };
 
@@ -99,10 +109,8 @@ export const MyReportsTab = ({
     { label: 'Name', sortKey: 'name' },
     { label: 'Last Modification', sortKey: 'modified' },
     {},
+    {},
   ];
-  if (allowDashboardV2) {
-    myReportColumnHeaders.push({});
-  }
 
   const myReportsColumns = report => {
     const { name, modified, isLast } = report;
@@ -116,7 +124,11 @@ export const MyReportsTab = ({
         {name}
       </ButtonLink>,
       <div>{formatDateTime(modified)}</div>,
-      allowDashboardV2 ? <Icons report={report} pinnedReport={pinnedReport}></Icons> : undefined,
+      <Icons
+        report={report}
+        pinnedReport={pinnedReport}
+        allowDashboardV2={allowDashboardV2}
+      ></Icons>,
       <Actions
         isScheduledReportsEnabled={isScheduledReportsEnabled}
         id={`popover-myreports-${report.id}`}
@@ -130,7 +142,7 @@ export const MyReportsTab = ({
       />,
     ];
 
-    return myColumns.filter(Boolean);
+    return myColumns;
   };
 
   return (
@@ -167,10 +179,8 @@ export const AllReportsTab = ({
     { label: 'Created By', sortKey: 'creator' },
     {},
     {},
+    {},
   ];
-  if (allowDashboardV2) {
-    allReportColumnHeaders.push({});
-  }
 
   const getColumnsForAllReports = () => {
     return allReportColumnHeaders;
@@ -208,11 +218,15 @@ export const AllReportsTab = ({
       <Tag>
         <Subaccount id={subaccount_id} master={subaccount_id === 0} shrinkLength={12} />
       </Tag>,
-      allowDashboardV2 ? <Icons report={report} pinnedReport={pinnedReport}></Icons> : undefined,
+      <Icons
+        report={report}
+        pinnedReport={pinnedReport}
+        allowDashboardV2={allowDashboardV2}
+      ></Icons>,
       action,
     ];
 
-    return allColumns.filter(Boolean);
+    return allColumns;
   };
   return (
     <TableCollection

@@ -388,7 +388,7 @@ if (IS_HIBANA_ENABLED) {
         });
 
         cy.withinModal(() => {
-          cy.get('p').contains('My Bounce Report will be pinned to your Dashboard.');
+          cy.get('p').contains('My Bounce Report will be pinned to the Dashboard.');
           cy.findAllByText('Pin to Dashboard').should('be.visible');
         });
 
@@ -403,7 +403,7 @@ if (IS_HIBANA_ENABLED) {
         cy.wait('@updateUiOption');
 
         cy.withinSnackbar(() => {
-          cy.findAllByText('Successfully pinned My Bounce Report to your Dashboard.').should(
+          cy.findAllByText('Successfully pinned My Bounce Report to the Dashboard.').should(
             'be.visible',
           );
         });
@@ -438,7 +438,7 @@ if (IS_HIBANA_ENABLED) {
 
         cy.withinModal(() => {
           cy.get('p').contains(
-            'My Other Bounce Report will now replace My Bounce Report on your Dashboard.',
+            'My Other Bounce Report will now replace My Bounce Report on the Dashboard.',
           );
         });
       });
@@ -547,7 +547,7 @@ if (IS_HIBANA_ENABLED) {
         });
 
         cy.withinSnackbar(() => {
-          cy.findByText('You have successfully deleted My Bounce Report.').should('be.visible');
+          cy.findByText('Successfully deleted My Bounce Report.').should('be.visible');
         });
       });
 
