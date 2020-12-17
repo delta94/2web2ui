@@ -2,7 +2,10 @@ import React from 'react';
 import _ from 'lodash';
 import { Box, Inline, Tag, Text } from 'src/components/matchbox';
 import { Comparison, Emphasized } from 'src/components/text';
-import { getIterableFormattedGroupings, getActiveFilterTagGroups } from '../helpers';
+import {
+  getIterableFormattedGroupings,
+  getActiveFilterTagGroups,
+} from 'src/pages/reportBuilder/helpers';
 
 export default function ActiveFilters({ filters, handleFilterRemove }) {
   const iterableGroupings = getIterableFormattedGroupings(filters);
@@ -26,13 +29,13 @@ export default function ActiveFilters({ filters, handleFilterRemove }) {
                 backgroundColor="gray.100"
                 space="0"
               >
+                <span aria-hidden="true">[</span>
                 {grouping.filters.map((filter, filterIndex) => {
                   return (
                     <Box
                       key={`filter-${groupingIndex}-${filterIndex}`}
                       paddingY="100"
-                      paddingX="200"
-                      backgroundColor="gray.100"
+                      paddingX="100"
                       data-id="active-filter"
                     >
                       <Inline as="span" space="200">
@@ -71,6 +74,7 @@ export default function ActiveFilters({ filters, handleFilterRemove }) {
                     </Box>
                   );
                 })}
+                <span aria-hidden="true">]</span>
 
                 {grouping.hasAndBetweenGroups ? (
                   <Box marginX="200">

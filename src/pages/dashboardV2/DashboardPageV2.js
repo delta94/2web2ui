@@ -39,6 +39,8 @@ import ChangeReportModal from './components/ChangeReportModal';
 import { getMetricsFromKeys } from 'src/helpers/metrics';
 import { _getAggregateDataReportBuilder } from 'src/actions/summaryChart';
 import { usePrevious } from 'src/hooks';
+import { AsyncActionModal } from 'src/components';
+import { ActiveFilters } from 'src/components/reportBuilder';
 
 const OnboardingImg = styled(Picture.Image)`
   vertical-align: bottom;
@@ -79,14 +81,17 @@ export default function DashboardPageV2() {
 
   const dispatch = useDispatch();
 
-  const { closeModal, openModal, isModalOpen } = useModal();
+  const { closeModal, openModal, isModalOpen, meta: { name } = {} } = useModal();
 
   const { pinnedReport } = usePinnedReport(onboarding);
 
-  const prevReportOptions = usePrevious(pinnedReport.options);
+  const prevReportOptions = usePrevious(pinnedReport.options) || {};
 
   useEffect(() => {
-    if (!pinnedReport.loading && !_.isEqual(prevReportOptions, pinnedReport.options))
+    const { from, to, ...restPrevOptions } = prevReportOptions;
+    const { from: fromNow, to: toNow, ...restNowOptions } = pinnedReport.options;
+    // removing from and to from comparison since time changes, which ends up changing the reportOptions
+    if (!pinnedReport.loading && !_.isEqual(restPrevOptions, restNowOptions))
       dispatch(
         _getAggregateDataReportBuilder({
           ...pinnedReport.options,
@@ -107,7 +112,22 @@ export default function DashboardPageV2() {
         <Heading as="h1">Dashboard</Heading>
       </ScreenReaderOnly>
 
-      <ChangeReportModal open={isModalOpen} onClose={closeModal} reports={allReports} />
+      <ChangeReportModal
+        open={isModalOpen && name === 'Change Report'}
+        onClose={closeModal}
+        reports={allReports}
+      />
+
+      <AsyncActionModal
+        open={isModalOpen && name === 'Filters'}
+        actionVerb="View Report"
+        onAction={() => history.push(pinnedReport.linkToReportBuilder)}
+        onCancel={closeModal}
+        title={`${pinnedReport.name} Filters `}
+        maxWidth="1300"
+      >
+        <ActiveFilters filters={pinnedReport.options.filters} />
+      </AsyncActionModal>
 
       <Stack>
         {currentUser?.first_name && (
@@ -127,7 +147,7 @@ export default function DashboardPageV2() {
                     <Panel.Action onClick={() => history.push(pinnedReport.linkToReportBuilder)}>
                       <TranslatableText>View Report</TranslatableText> <ShowChart size={25} />
                     </Panel.Action>
-                    <Panel.Action onClick={openModal}>
+                    <Panel.Action onClick={() => openModal({ name: 'Change Report' })}>
                       <TranslatableText>Change Report</TranslatableText> <Sync size={25} />
                     </Panel.Action>
                   </Panel.Header>
@@ -138,11 +158,15 @@ export default function DashboardPageV2() {
                     <CompareByAggregatedMetrics
                       date={dateValue}
                       reportOptions={pinnedReport.options}
+                      handleClickFiltersButton={() => openModal({ name: 'Filters' })}
+                      showFiltersButton={pinnedReport?.options?.filters.length > 0}
                     />
                   ) : (
                     <AggregatedMetrics
                       date={dateValue}
                       processedMetrics={getMetricsFromKeys(pinnedReport.options.metrics, true)}
+                      handleClickFiltersButton={() => openModal({ name: 'Filters' })}
+                      showFiltersButton={pinnedReport?.options?.filters.length > 0}
                     />
                   )}
                 </Dashboard.Panel>

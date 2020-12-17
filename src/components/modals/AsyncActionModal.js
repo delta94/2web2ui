@@ -19,9 +19,10 @@ export default function AsyncActionModal(props) {
     actionVerb = 'Confirm',
     cancelVerb = 'Cancel',
     showCloseButton = true,
+    maxWidth,
   } = props;
   return (
-    <Modal open={open} onClose={onCancel} showCloseButton={showCloseButton}>
+    <Modal open={open} onClose={onCancel} showCloseButton={showCloseButton} maxWidth={maxWidth}>
       {title && <Modal.Header>{title}</Modal.Header>}
       <Modal.Content>{isPending ? <Loading minHeight="25vh" /> : <>{children}</>}</Modal.Content>
       <Modal.Footer>
