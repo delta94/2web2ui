@@ -22,6 +22,10 @@ const PinToDashboardAction = styled(ActionList.Action)`
   }
 `;
 
+const AlignRightTableCell = styled(Table.Cell)`
+  text-align: right;
+`;
+
 const FilterBoxWrapper = props => (
   <Box borderBottom="400" padding="400">
     {props}
@@ -83,13 +87,27 @@ const Actions = ({ id, handleDelete, handleEdit, handlePin, reportType, report, 
             is="button"
             onClick={() => (reportIsPinned ? '' : handlePin(report, rest.pinnedReport))}
             disabled={reportIsPinned}
-            tabIndex={reportIsPinned ? '-1' : false}
+            tabIndex={reportIsPinned ? '-1' : 'false'}
           />
         )}
         <ActionList.Action content="Edit" onClick={() => handleEdit(report)} />
       </ActionList>
     </Popover>
   );
+};
+
+const rowComponent = (cell, index) => {
+  if (!cell) {
+    return null;
+  }
+  const { type } = cell;
+  const { id } = cell.props;
+
+  if (type.name === 'Actions' || type.name === 'Icons') {
+    return <AlignRightTableCell key={`row-${id}-cell-${index}`}>{cell}</AlignRightTableCell>;
+  }
+
+  return <Table.Cell key={`row-${id}-cell-${index}`}>{cell}</Table.Cell>;
 };
 
 export const MyReportsTab = ({
@@ -145,11 +163,15 @@ export const MyReportsTab = ({
     return myColumns;
   };
 
+  const getMyReportRowComponent = report => {
+    return <Table.Row>{myReportsColumns(report).map(rowComponent)}</Table.Row>;
+  };
+
   return (
     <TableCollection
       rows={myReports}
       columns={myReportColumnHeaders}
-      getRowData={myReportsColumns}
+      rowComponent={getMyReportRowComponent}
       wrapperComponent={Table}
       filterBox={{
         label: '',
@@ -228,11 +250,16 @@ export const AllReportsTab = ({
 
     return allColumns;
   };
+
+  const getAllReportRowComponent = report => {
+    return <Table.Row>{allReportsColumns(report).map(rowComponent)}</Table.Row>;
+  };
+
   return (
     <TableCollection
       rows={reports}
       columns={getColumnsForAllReports()}
-      getRowData={allReportsColumns}
+      rowComponent={getAllReportRowComponent}
       wrapperComponent={Table}
       filterBox={{
         label: '',

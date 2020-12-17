@@ -196,16 +196,22 @@ export const SavedReportsSection = props => {
               previouslyPinnedReport.id &&
               focusedReport.id !== previouslyPinnedReport.id && (
                 <p>
-                  <Bold>{focusedReport.name}</Bold>
-                  <span>&nbsp;will now replace&nbsp;</span>
-                  <Bold>{previouslyPinnedReport.name}</Bold>
-                  <span>&nbsp;on the Dashboard.</span>
+                  <TranslatableText>
+                    <Bold>{focusedReport.name}</Bold>
+                  </TranslatableText>
+                  <TranslatableText>&nbsp;will now replace&nbsp;</TranslatableText>
+                  <TranslatableText>
+                    <Bold>{previouslyPinnedReport.name}</Bold>
+                  </TranslatableText>
+                  <TranslatableText>&nbsp;on the Dashboard.</TranslatableText>
                 </p>
               )}
             {!previouslyPinnedReport.id && (
               <p>
-                <Bold>{focusedReport.name}</Bold>
-                <span>&nbsp;will be pinned to the Dashboard.&nbsp;</span>
+                <TranslatableText>
+                  <Bold>{focusedReport.name}</Bold>
+                </TranslatableText>
+                <TranslatableText>&nbsp;will be pinned to the Dashboard.&nbsp;</TranslatableText>
               </p>
             )}
           </>
@@ -220,9 +226,13 @@ export const SavedReportsSection = props => {
         confirmVerb="Delete"
         content={
           <p>
-            <span>The report&nbsp;</span>
-            <Bold>"{focusedReport.name}"</Bold>
-            <span>&nbsp;will be permanently removed. This cannot be undone.</span>
+            <TranslatableText>The report&nbsp;</TranslatableText>
+            <TranslatableText>
+              <Bold>"{focusedReport.name}"</Bold>
+            </TranslatableText>
+            <TranslatableText>
+              &nbsp;will be permanently removed. This cannot be undone.
+            </TranslatableText>
           </p>
         }
         open={isModalOpen && type === 'delete'}
