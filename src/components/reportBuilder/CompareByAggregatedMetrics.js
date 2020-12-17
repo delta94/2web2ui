@@ -1,20 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Unit } from 'src/components';
-import { Box, Column, Columns, LabelValue, Stack } from 'src/components/matchbox';
-import CompareByAggregatedRow from './CompareByAggregatedRow';
-import React, { useMemo } from 'react';
-import { getDeliverabilityMetrics } from 'src/helpers/api';
-import {
-  getMetricsFromKeys,
-  getQueryFromOptionsV2 as getQueryFromOptions,
-} from 'src/helpers/metrics';
 import { FilterAlt } from '@sparkpost/matchbox-icons';
-import { LegendCircle, Unit } from 'src/components';
-import Divider from 'src/components/divider';
-import { Button, Box, Column, Columns, Inline, LabelValue, Stack } from 'src/components/matchbox';
-import { useSparkPostQuery } from 'src/hooks';
-import { FILTER_TYPES } from '../../pages/reportBuilder/constants';
+import { Unit } from 'src/components';
+import { Box, Button, Column, Columns, LabelValue, Stack } from 'src/components/matchbox';
+import CompareByAggregatedRow from './CompareByAggregatedRow';
 
 const ViewFilterButton = styled(Button)`
   float: right;
