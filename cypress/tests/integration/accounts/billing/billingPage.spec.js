@@ -106,7 +106,7 @@ describe('Billing Page', () => {
     cy.findByText('Dedicated IPs').should('not.be.visible');
   });
 
-  it('renders the manually billed transition banner when the user\'s subscription type is not "active", "inactive", or "none"', () => {
+  it.skip('renders the manually billed transition banner when the user\'s subscription type is not "active", "inactive", or "none"', () => {
     cy.stubRequest({
       url: `${BILLING_API_BASE_URL}/subscription`,
       fixture: 'billing/subscription/200.get.manually-billed.json',
