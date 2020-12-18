@@ -255,18 +255,20 @@ if (IS_HIBANA_ENABLED) {
 
         cy.findListBoxByLabelText('Report').within(() => {
           cy.findAllByRole('option')
-            .eq(0)
-            .should('have.contain', 'My Bounce Report')
+            .eq(2)
+            .should('have.contain', 'Comparison Report')
             .click();
         });
 
         cy.findByRole('button', { name: 'Save Changes' }).click();
-        cy.findByLabelText('Name').should('have.value', 'My Bounce Report');
+        cy.findByLabelText('Name').should('have.value', 'Comparison Report');
         cy.findByLabelText('Description').should('have.value', 'Here is a description');
 
         cy.withinModal(() => {
           cy.findByText('Bounces').should('be.visible');
           cy.findByText('Last 7 Days').should('be.visible');
+          cy.findByText('Fake Subaccount 3 (ID 103)').should('be.visible');
+          cy.findByText('Fake Subaccount 1 (ID 101)').should('be.visible');
         });
       });
 

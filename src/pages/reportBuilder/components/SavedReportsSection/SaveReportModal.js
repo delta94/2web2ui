@@ -19,6 +19,7 @@ import { getMetricsFromKeys } from 'src/helpers/metrics';
 import { useReportBuilderContext } from '../../context/ReportBuilderContext';
 import ActiveFilters from 'src/components/reportBuilder/ActiveFilters';
 import { formatDateTime, relativeDateOptionsIndexed } from 'src/helpers/date';
+import ActiveComparisons from '../ActiveComparisons';
 
 const DateRange = ({ to, from, relativeRange }) => {
   if (relativeRange === 'custom') {
@@ -74,6 +75,7 @@ export function SaveReportModal(props) {
   const { search = '' } = useLocation();
   const { state: reportOptions } = useReportBuilderContext();
   const hasFilters = Boolean(reportOptions.filters.length);
+  const hasComparisons = Boolean(reportOptions.comparisons.length);
 
   React.useEffect(() => {
     if (!report) return;
@@ -128,6 +130,14 @@ export function SaveReportModal(props) {
                   <Heading as="h6">Filters</Heading>
 
                   <ActiveFilters filters={reportOptions.filters} />
+                </Box>
+              ) : null}
+
+              {hasComparisons ? (
+                <Box>
+                  <Heading as="h6">Comparisons</Heading>
+
+                  <ActiveComparisons comparisons={reportOptions.comparisons} />
                 </Box>
               ) : null}
 
