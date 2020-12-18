@@ -69,7 +69,7 @@ describe('The engagement details page', () => {
     stubEmptyState();
     cy.visit(PAGE_URL);
 
-    cy.findByText('Recommendations').should('not.be.visible');
+    cy.findByText('Recommendations').should('not.exist');
     cy.findByText('Insufficient data to populate this chart').should('be.visible');
   });
 
@@ -129,7 +129,7 @@ describe('The engagement details page', () => {
           cy.findByText('Insufficient data to populate this chart').should('be.visible');
         });
 
-        cy.findByText('Recommendations').should('not.be.visible');
+        cy.findByText('Recommendations').should('not.exist');
       });
 
       it('renders recommendations based on the returned data', () => {

@@ -86,7 +86,7 @@ describe('The domains details page', () => {
 
           cy.findAllByText(
             'Please confirm you have added the records to your DNS provider.',
-          ).should('not.be.visible');
+          ).should('not.exist');
         });
 
         it('verified Tracking Domain with assigned subaccount functions correctly', () => {
@@ -122,7 +122,7 @@ describe('The domains details page', () => {
             'be.checked',
           );
           cy.findByRole('heading', { name: 'Tracking' }).should('be.visible');
-          cy.findByRole('button', { name: 'Verify Domain' }).should('not.be.visible');
+          cy.findByRole('button', { name: 'Verify Domain' }).should('not.exist');
           cy.findByRole('heading', { name: 'Delete Domain' }).should('be.visible');
           cy.findByRole('button', { name: 'Delete Domain' }).click();
 
@@ -155,10 +155,10 @@ describe('The domains details page', () => {
           cy.findByRole('heading', { name: 'Domain Status' }).should('be.visible');
           cy.findByRole('heading', { name: 'Tracking' }).should('be.visible');
           cy.findByRole('heading', { name: 'Delete Domain' }).should('be.visible');
-          cy.findByRole('heading', { name: 'Sending' }).should('not.be.visible');
-          cy.findByRole('heading', { name: 'Bounce' }).should('not.be.visible');
-          cy.findByRole('heading', { name: 'DNS Verification' }).should('not.be.visible');
-          cy.findByRole('heading', { name: 'Email Verification' }).should('not.be.visible');
+          cy.findByRole('heading', { name: 'Sending' }).should('not.exist');
+          cy.findByRole('heading', { name: 'Bounce' }).should('not.exist');
+          cy.findByRole('heading', { name: 'DNS Verification' }).should('not.exist');
+          cy.findByRole('heading', { name: 'Email Verification' }).should('not.exist');
         });
 
         it('confirms removal of default domain tracking.', () => {
@@ -293,10 +293,10 @@ describe('The domains details page', () => {
           cy.findByText('This domain has been blocked by SparkPost').should('be.visible');
 
           cy.findByRole('heading', { name: 'Domain Status' }).should('be.visible');
-          cy.findByRole('heading', { name: 'Sending' }).should('not.be.visible');
-          cy.findByRole('heading', { name: 'Bounce' }).should('not.be.visible');
-          cy.findByRole('heading', { name: 'Sending and Bounce' }).should('not.be.visible');
-          cy.findByRole('heading', { name: 'Link Tracking Domain' }).should('not.be.visible');
+          cy.findByRole('heading', { name: 'Sending' }).should('not.exist');
+          cy.findByRole('heading', { name: 'Bounce' }).should('not.exist');
+          cy.findByRole('heading', { name: 'Sending and Bounce' }).should('not.exist');
+          cy.findByRole('heading', { name: 'Link Tracking Domain' }).should('not.exist');
           cy.findByRole('heading', { name: 'Delete Domain' }).should('be.visible');
           cy.findAllByText('This domain has been blocked by SparkPost').should('be.visible');
         });
@@ -324,10 +324,10 @@ describe('The domains details page', () => {
           cy.findByRole('heading', { name: 'Domain Status' }).should('be.visible');
           cy.findByRole('heading', { name: 'DNS Verification' }).should('be.visible');
           cy.findByRole('heading', { name: 'Email Verification' }).should('be.visible');
-          cy.findByRole('heading', { name: 'Sending' }).should('not.be.visible');
+          cy.findByRole('heading', { name: 'Sending' }).should('not.exist');
           cy.findByRole('heading', { name: 'Bounce' }).should('be.visible');
-          cy.findByRole('heading', { name: 'Sending and Bounce' }).should('not.be.visible');
-          cy.findByRole('heading', { name: 'Link Tracking Domain' }).should('not.be.visible');
+          cy.findByRole('heading', { name: 'Sending and Bounce' }).should('not.exist');
+          cy.findByRole('heading', { name: 'Link Tracking Domain' }).should('not.exist');
           cy.findByRole('heading', { name: 'Delete Domain' }).should('be.visible');
           cy.findByRole('button', { name: 'Verify Domain' }).should('be.visible');
 
@@ -349,7 +349,7 @@ describe('The domains details page', () => {
 
           cy.findAllByText(
             'Please confirm you have added the records to your DNS provider.',
-          ).should('not.be.visible');
+          ).should('not.exist');
 
           cy.get('p')
             .contains(
@@ -365,7 +365,7 @@ describe('The domains details page', () => {
 
           cy.findAllByText(
             'Please confirm you have added the records to your DNS provider.',
-          ).should('not.be.visible');
+          ).should('not.exist');
         });
 
         it('unverified domain renders success message on Verifying Dkim for domain', () => {
@@ -410,9 +410,9 @@ describe('The domains details page', () => {
           cy.findByRole('heading', { name: 'Sending' }).should('be.visible');
           cy.findByRole('heading', { name: 'Bounce' }).should('be.visible');
           cy.findByRole('button', { name: 'Verify Bounce' }).should('be.visible');
-          cy.findByRole('heading', { name: 'DNS Verification' }).should('not.be.visible');
-          cy.findByRole('heading', { name: 'Email Verification' }).should('not.be.visible');
-          cy.findByRole('heading', { name: 'Sending and Bounce' }).should('not.be.visible');
+          cy.findByRole('heading', { name: 'DNS Verification' }).should('not.exist');
+          cy.findByRole('heading', { name: 'Email Verification' }).should('not.exist');
+          cy.findByRole('heading', { name: 'Sending and Bounce' }).should('not.exist');
         });
 
         it('unverified bounce domain renders success message on Verifying bounce domain', () => {
@@ -453,10 +453,10 @@ describe('The domains details page', () => {
           cy.findByRole('heading', { name: 'Sending and Bounce' }).should('be.visible');
           cy.findByRole('heading', { name: 'Link Tracking Domain' }).should('be.visible');
           cy.findByRole('heading', { name: 'Delete Domain' }).should('be.visible');
-          cy.findByRole('heading', { name: 'Sending' }).should('not.be.visible');
-          cy.findByRole('heading', { name: 'Bounce' }).should('not.be.visible');
-          cy.findByRole('heading', { name: 'DNS Verification' }).should('not.be.visible');
-          cy.findByRole('heading', { name: 'Email Verification' }).should('not.be.visible');
+          cy.findByRole('heading', { name: 'Sending' }).should('not.exist');
+          cy.findByRole('heading', { name: 'Bounce' }).should('not.exist');
+          cy.findByRole('heading', { name: 'DNS Verification' }).should('not.exist');
+          cy.findByRole('heading', { name: 'Email Verification' }).should('not.exist');
         });
 
         it('renders correct sections for verified bounce domain and unverified sending domain', () => {
@@ -468,10 +468,10 @@ describe('The domains details page', () => {
           cy.visit(`${SENDING_BOUNCE_DETAILS_URL}/bounce2.spappteam.com`);
           cy.wait(['@verifiedDomains', '@accountDomainsReq']);
           cy.findByRole('heading', { name: 'Domain Status' }).should('be.visible');
-          cy.findByRole('heading', { name: 'Sending and Bounce' }).should('not.be.visible');
-          cy.findByRole('heading', { name: 'Link Tracking Domain' }).should('not.be.visible');
+          cy.findByRole('heading', { name: 'Sending and Bounce' }).should('not.exist');
+          cy.findByRole('heading', { name: 'Link Tracking Domain' }).should('not.exist');
           cy.findByRole('heading', { name: 'Delete Domain' }).should('be.visible');
-          cy.findByRole('heading', { name: 'Sending' }).should('not.be.visible');
+          cy.findByRole('heading', { name: 'Sending' }).should('not.exist');
           cy.findByRole('heading', { name: 'Bounce' }).should('be.visible');
           cy.findByRole('button', { name: 'Verify Domain' }).should('be.visible');
           cy.findByRole('heading', { name: 'DNS Verification' }).should('be.visible');

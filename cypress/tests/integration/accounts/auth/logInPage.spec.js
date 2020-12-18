@@ -13,7 +13,7 @@ describe('The log in page', () => {
   });
 
   it('renders a "Required" error message when no email address is entered', () => {
-    cy.findByText('Required').should('not.be.visible');
+    cy.findByText('Required').should('not.exist');
     cy.get('[data-id="button-log-in"]').click();
 
     cy.findByText('Required').should('be.visible');

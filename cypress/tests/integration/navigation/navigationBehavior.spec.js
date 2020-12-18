@@ -33,7 +33,7 @@ function assertAccountMenuIsVisible() {
 }
 
 function assertAccountMenuIsNotVisible() {
-  cy.get(accountDropdownListSelector).should('not.be.visible');
+  cy.get(accountDropdownListSelector).should('not.exist');
 }
 
 if (!IS_HIBANA_ENABLED) {

@@ -58,13 +58,13 @@ describe('The templates published template page', () => {
     cy.withinMainContent(() => {
       cy.findAllByText('Templates').should('be.visible');
     });
-    cy.findByText('Stubbed Template 1').should('not.be.visible');
+    cy.findByText('Stubbed Template 1').should('not.exist');
   });
 
   describe('the code editor in published mode', () => {
     function checkForReadOnly() {
       cy.findByText('Read Only').should('be.visible');
-      cy.findByText('More').should('not.be.visible'); // Checks that menu is not available on each tab
+      cy.findByText('More').should('not.exist'); // Checks that menu is not available on each tab
 
       cy.get(EDITOR_SELECTOR)
         .focus()
@@ -73,7 +73,7 @@ describe('The templates published template page', () => {
 
       cy.scrollTo('top');
 
-      cy.findByText('Hello, world').should('not.be.visible');
+      cy.findByText('Hello, world').should('not.exist');
     }
 
     it('renders a "Read Only" tag when "HTML" is selected and authoring HTML is impossible', () => {
@@ -106,7 +106,7 @@ describe('The templates published template page', () => {
 
       cy.findByText('Test Data').click();
 
-      cy.findByText('Read Only').should('not.be.visible');
+      cy.findByText('Read Only').should('not.exist');
 
       cy.get(EDITOR_SELECTOR)
         .focus()

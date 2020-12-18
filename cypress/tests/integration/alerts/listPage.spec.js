@@ -46,7 +46,7 @@ describe('The alerts list page', () => {
     cy.findByText('Try Again').should('be.visible');
     cy.findByText('Show Error Details').click();
     cy.findByText('This is an error').should('be.visible');
-    cy.get('table').should('not.be.visible');
+    cy.get('table').should('not.exist');
 
     stubAlerts();
     cy.findByRole('button', { name: 'Try Again' }).click();
@@ -67,7 +67,7 @@ describe('The alerts list page', () => {
       .last()
       .closest('a')
       .should('have.attr', 'href', '/alerts/create');
-    cy.get('table').should('not.be.visible');
+    cy.get('table').should('not.exist');
   });
 
   it('renders recent incidents', () => {
@@ -79,10 +79,10 @@ describe('The alerts list page', () => {
 
     cy.get('[data-id="recent-incidents"]').within(() => {
       // 'Alert 1' and 'Alert 4' are not rendered since they are muted
-      cy.findByText('Alert 1').should('not.be.visible');
+      cy.findByText('Alert 1').should('not.exist');
       cy.findByText('Alert 2').should('be.visible');
       cy.findByText('Alert 3').should('be.visible');
-      cy.findByText('Alert 4').should('not.be.visible');
+      cy.findByText('Alert 4').should('not.exist');
     });
   });
 
@@ -91,8 +91,8 @@ describe('The alerts list page', () => {
     cy.visit(PAGE_URL);
     cy.wait('@alertsReq');
 
-    cy.findByText('Recent Incidents').should('not.be.visible');
-    cy.get('[data-id="recent-incidents"]').should('not.be.visible');
+    cy.findByText('Recent Incidents').should('not.exist');
+    cy.get('[data-id="recent-incidents"]').should('not.exist');
   });
 
   describe('the alerts table', () => {
@@ -162,9 +162,9 @@ describe('The alerts list page', () => {
       cy.wait(debounceDelay); // Debounce time
 
       cy.get('table').within(() => {
-        cy.findByText('Alert 2').should('not.be.visible');
-        cy.findByText('Alert 3').should('not.be.visible');
-        cy.findByText('Alert 4').should('not.be.visible');
+        cy.findByText('Alert 2').should('not.exist');
+        cy.findByText('Alert 3').should('not.exist');
+        cy.findByText('Alert 4').should('not.exist');
       });
 
       cy.findByLabelText('Filter By').clear();
@@ -201,9 +201,9 @@ describe('The alerts list page', () => {
       cy.wait(debounceDelay); // Debounce time
 
       cy.get('table').within(() => {
-        cy.findByText('Alert 2').should('not.be.visible');
-        cy.findByText('Alert 3').should('not.be.visible');
-        cy.findByText('Alert 4').should('not.be.visible');
+        cy.findByText('Alert 2').should('not.exist');
+        cy.findByText('Alert 3').should('not.exist');
+        cy.findByText('Alert 4').should('not.exist');
       });
     });
 
@@ -268,7 +268,7 @@ describe('The alerts list page', () => {
       cy.findByText('Are you sure you want to delete this alert?').should('be.visible');
       cy.withinModal(() => cy.findByText('Cancel').click());
 
-      cy.findByText('Are you sure you want to delete this alert?').should('not.be.visible');
+      cy.findByText('Are you sure you want to delete this alert?').should('not.exist');
 
       clickDeleteButton();
 
@@ -280,7 +280,7 @@ describe('The alerts list page', () => {
 
       cy.withinModal(() => cy.findByText('Delete').click());
       cy.findByText('Alert deleted').should('be.visible');
-      cy.findByText('Alert 2').should('not.be.visible');
+      cy.findByText('Alert 2').should('not.exist');
     });
 
     it('renders an error when deleting an alert fails', () => {

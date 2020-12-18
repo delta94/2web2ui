@@ -121,7 +121,7 @@ describe('The verify sending/bounce domain page', () => {
         });
 
         cy.findAllByText('Please confirm you have added the records to your DNS provider.').should(
-          'not.be.visible',
+          'not.exist',
         );
 
         cy.findByRole('button', { name: 'Verify Domain' }).click();

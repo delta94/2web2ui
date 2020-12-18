@@ -49,7 +49,7 @@ describe('The events page', () => {
     cy.findByText('Show Error Details').click();
     cy.findByText('This is an error').should('be.visible');
     cy.findByText('Hide Error Details').click();
-    cy.findByText('This is an error').should('not.be.visible');
+    cy.findByText('This is an error').should('not.exist');
 
     cy.stubRequest({
       url: '/api/v1/events/message/documentation',
@@ -57,7 +57,7 @@ describe('The events page', () => {
     });
 
     cy.findByText('Try Again').click();
-    cy.findByText('An error occurred').should('not.be.visible');
+    cy.findByText('An error occurred').should('not.exist');
   });
 
   it('renders an error when the request for events data fails', () => {
@@ -73,7 +73,7 @@ describe('The events page', () => {
     cy.findByText('Show Error Details').click();
     cy.findByText('This is an error').should('be.visible');
     cy.findByText('Hide Error Details').click();
-    cy.findByText('This is an error').should('not.be.visible');
+    cy.findByText('This is an error').should('not.exist');
 
     cy.stubRequest({
       url: '/api/v1/events/message*',
@@ -81,7 +81,7 @@ describe('The events page', () => {
     });
 
     cy.findByText('Try Again').click();
-    cy.findByText('An error occurred').should('not.be.visible');
+    cy.findByText('An error occurred').should('not.exist');
   });
 
   it('renders the "Share this report" modal when clicking on the "Share" button', () => {
@@ -97,7 +97,7 @@ describe('The events page', () => {
       it('re-requests data when filtering by "Broad Date Range"', () => {
         cy.visit(PAGE_URL);
 
-        cy.findByText('different-results@hotmail.com').should('not.be.visible');
+        cy.findByText('different-results@hotmail.com').should('not.exist');
 
         cy.stubRequest({
           url: '/api/v1/events/message*',
@@ -126,7 +126,7 @@ describe('The events page', () => {
       it('re-requests data when filtering by "Narrow Date Range"', () => {
         cy.visit(PAGE_URL);
 
-        cy.findByText('different-results@hotmail.com').should('not.be.visible');
+        cy.findByText('different-results@hotmail.com').should('not.exist');
 
         cy.stubRequest({
           url: '/api/v1/events/message*',
@@ -160,7 +160,7 @@ describe('The events page', () => {
       cy.findByText('Clear All Filters').should('be.visible');
       cy.findByText('different-recipient@hotmail.com').should('be.visible'); // The new results are visible...
       cy.url().should('include', 'recipients=different-recipient%40hotmail.com');
-      cy.findByText('fake-recipient@hotmail.com').should('not.be.visible'); // ...and the old results are not!
+      cy.findByText('fake-recipient@hotmail.com').should('not.exist'); // ...and the old results are not!
     });
 
     it('renders an invalid email address in the recipient email address filter when an invalid email is entered', () => {
@@ -191,7 +191,7 @@ describe('The events page', () => {
         .type('a@b.c')
         .blur();
 
-      cy.findByText('a@b.c is not a valid email address').should('not.be.visible');
+      cy.findByText('a@b.c is not a valid email address').should('not.exist');
     });
 
     it('re-requests data when removing an active filter and when clicking "Clear All Filters"', () => {
@@ -209,7 +209,7 @@ describe('The events page', () => {
         .blur();
 
       cy.findByText('different-recipient@hotmail.com').should('be.visible');
-      cy.findByText('fake-recipient@hotmail.com').should('not.be.visible');
+      cy.findByText('fake-recipient@hotmail.com').should('not.exist');
 
       cy.stubRequest({
         url: '/api/v1/events/message*',
@@ -222,7 +222,7 @@ describe('The events page', () => {
       cy.wait('@getMessageEvents');
 
       cy.findByText('fake-recipient@hotmail.com').should('be.visible');
-      cy.findByText('different-recipient@hotmail.com').should('not.be.visible');
+      cy.findByText('different-recipient@hotmail.com').should('not.exist');
     });
 
     describe('the "Advanced Filters" modal', () => {
@@ -260,14 +260,14 @@ describe('The events page', () => {
         removePresetFilters();
         cy.findByText('Remove').click();
 
-        cy.findByLabelText(selectLabel).should('not.be.visible');
-        cy.findByLabelText(textFieldLabel).should('not.be.visible');
+        cy.findByLabelText(selectLabel).should('not.exist');
+        cy.findByLabelText(textFieldLabel).should('not.exist');
       });
 
       it('closes the modal when clicking "Cancel"', () => {
         cy.findByText('Cancel').click();
 
-        cy.findByText('Advanced Filters').should('not.be.visible');
+        cy.findByText('Advanced Filters').should('not.exist');
       });
 
       it('does not add in default filters if there are alreday filters', () => {
@@ -303,7 +303,7 @@ describe('The events page', () => {
 
         cy.findByText('Apply Filters').click();
 
-        cy.findByText('Advanced Filters').should('not.be.visible');
+        cy.findByText('Advanced Filters').should('not.exist');
         cy.findByText('Event: Amp Click').should('be.visible');
         cy.url().should('include', 'events=amp_click');
         cy.findByText('Event: Out Of Band').should('be.visible');
@@ -311,7 +311,7 @@ describe('The events page', () => {
         cy.findByText('Recipient Domains: gmail.com').should('be.visible');
         cy.findByText('Subjects: Happy Birthday').should('be.visible');
         cy.findByText('These are different results').should('be.visible'); // The new results are visible...
-        cy.findByText('fake-recipient@hotmail.com').should('not.be.visible'); // ...and the old results are not!
+        cy.findByText('fake-recipient@hotmail.com').should('not.exist'); // ...and the old results are not!
       });
 
       it('removes all filters when clicking "Clear All Filters"', () => {
@@ -328,9 +328,9 @@ describe('The events page', () => {
 
         cy.findByText('Clear All Filters').click();
 
-        cy.findByText('Event: Amp Click').should('not.be.visible');
-        cy.findByText('Event: Out Of Band').should('not.be.visible');
-        cy.findByText('Recipient Domains: gmail.com').should('not.be.visible');
+        cy.findByText('Event: Amp Click').should('not.exist');
+        cy.findByText('Event: Out Of Band').should('not.exist');
+        cy.findByText('Recipient Domains: gmail.com').should('not.exist');
       });
     });
   });
@@ -352,7 +352,7 @@ describe('The events page', () => {
       });
 
       it('re-requests events data when clicking the "Next" pagination button while updating the current rendered page', () => {
-        cy.findByText('different-results@hotmail.com').should('not.be.visible');
+        cy.findByText('different-results@hotmail.com').should('not.exist');
         cy.get(CURRENT_PAGE_SELECTOR).should('contain', '1');
 
         cy.findByText('Previous')
@@ -405,7 +405,7 @@ describe('The events page', () => {
           .closest('button')
           .click();
 
-        cy.findByText('different-results@hotmail.com').should('not.be.visible');
+        cy.findByText('different-results@hotmail.com').should('not.exist');
         cy.findByText('fake-recipient@hotmail.com').should('be.visible');
         cy.get(CURRENT_PAGE_SELECTOR).should('contain', '1');
       });
@@ -420,7 +420,7 @@ describe('The events page', () => {
           fixture: 'events/message/200.get.different-results.json',
         });
 
-        cy.findByText('different-results@hotmail.com').should('not.be.visible');
+        cy.findByText('different-results@hotmail.com').should('not.exist');
       });
 
       it('re-requests events data when clicking on "100"', () => {
@@ -490,7 +490,7 @@ describe('The events page', () => {
       cy.visit(PAGE_URL);
 
       cy.findByText('There are no message events for your current query').should('be.visible');
-      cy.get('table').should('not.be.visible');
+      cy.get('table').should('not.exist');
     });
   });
 });

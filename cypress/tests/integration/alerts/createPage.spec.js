@@ -27,7 +27,7 @@ describe('Alerts Page - Create', () => {
     cy.get('[name="metric"]').select('monthly_sending_limit');
     cy.findByText('Percent Used').should('be.visible');
     cy.findByLabelText('Percent Used').should('have.value', '80');
-    cy.findByText('Filtered by').should('not.be.visible');
+    cy.findByText('Filtered by').should('not.exist');
   });
 
   it('Health Score metric has evaluator, comparison, subaccount filter, & single facet filter', () => {
@@ -61,7 +61,7 @@ describe('Alerts Page - Create', () => {
   it('Injection count metric has evaluated value, & no filters', () => {
     cy.get('[name="metric"]').select('injection_count');
     cy.findByLabelText('Falls Below').should('have.value', '100000');
-    cy.findByText('Filtered by').should('not.be.visible');
+    cy.findByText('Filtered by').should('not.exist');
   });
 
   it('Blocklist metric has filters by blocklist and domains/IP', () => {
@@ -92,7 +92,7 @@ describe('Alerts Page - Create', () => {
       cy.findByText('Master and all subaccounts').should('be.visible');
 
       cy.findByText('Fake Subaccount 1 (101)').click({ force: true });
-      cy.findByText('Master and all subaccounts').should('not.be.visible');
+      cy.findByText('Master and all subaccounts').should('not.exist');
       cy.findByText('Master account').should('be.visible');
     });
   });

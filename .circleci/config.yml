@@ -34,19 +34,9 @@ commands:
       changed.'
     steps:
       - checkout
-      - run:
-          name: 'Configure /etc/hosts so that application tenant is defined for integration testing'
-          command: sudo echo 127.0.0.1 localhost | sudo tee -a /etc/hosts
       - restore_npm_cache
       - run: npm ci
       - save_npm_cache
-
-  cypress_dependencies:
-    description: 'Installs some Cypress-specific dependencies that are not pre-installed on the image we are using.'
-    steps:
-      - run:
-          name: 'Install Cypress Dependencies'
-          command: sudo apt-get update && sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
 
   cypress_cleanup:
     parameters:
@@ -58,14 +48,14 @@ commands:
     steps:
       - store_test_results:
           name: 'Upload test report'
-          path: /home/circleci/project/cypress/results
+          path: /root/project/cypress/results
       - store_artifacts:
           name: 'Upload videos'
-          path: /home/circleci/project/cypress/videos
+          path: /root/project/cypress/videos
           destination: cypress-videos
       - store_artifacts:
           name: 'Upload screenshots'
-          path: /home/circleci/project/cypress/screenshots
+          path: /root/project/cypress/screenshots
           destination: cypress-screenshots
       - run:
           name: 'Check for coverage report'
@@ -153,11 +143,11 @@ jobs:
             - build-hibana
 
   'Integration Testing - OG Theme':
-    <<: *defaults
+    docker:
+      - image: cypress/browsers
     parallelism: 5
     steps:
       - setup
-      - cypress_dependencies
       # Restores the /build folder from the previous job
       - attach_workspace:
           at: ./
@@ -175,7 +165,8 @@ jobs:
           theme: og
 
   'Integration Testing - OG Theme - Targeted':
-    <<: *defaults
+    docker:
+      - image: cypress/browsers
     description: 'Runs integration tests for the OG theme, structured for individual test debugging'
     parameters:
       specs:
@@ -183,7 +174,6 @@ jobs:
         default: ''
     steps:
       - setup
-      - cypress_dependencies
       # Restores the /build folder from the previous job
       - attach_workspace:
           at: ./
@@ -197,11 +187,11 @@ jobs:
           theme: og
 
   'Integration Testing - Hibana Theme':
-    <<: *defaults
+    docker:
+      - image: cypress/browsers
     parallelism: 5
     steps:
       - setup
-      - cypress_dependencies
       # Restores the /build folder from the previous job
       - attach_workspace:
           at: ./
@@ -219,7 +209,8 @@ jobs:
           theme: hibana
 
   'Integration Testing - Hibana Theme - Targeted':
-    <<: *defaults
+    docker:
+      - image: cypress/browsers
     description: 'Runs integration tests for the Hibana theme, structured for individual test debugging'
     parameters:
       specs:
@@ -227,7 +218,6 @@ jobs:
         default: ''
     steps:
       - setup
-      - cypress_dependencies
       # Restores the /build folder from the previous job
       - attach_workspace:
           at: ./

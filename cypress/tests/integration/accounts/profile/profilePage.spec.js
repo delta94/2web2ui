@@ -30,7 +30,7 @@ describe('The profile page', () => {
         requestAlias: 'updateUIOptions',
       });
 
-      cy.findByDataId('desktop-navigation').should('not.be.visible'); // Checks for the Hibana navigation
+      cy.findByDataId('desktop-navigation').should('not.exist'); // Checks for the Hibana navigation
 
       // The Toggle component does not have an appropriate label - this is actually an a11y bug that will be addressed by Matchbox
       cy.get('[name="isHibanaEnabled"]').click({ force: true });
@@ -49,7 +49,7 @@ describe('The profile page', () => {
         });
       });
       cy.findAllByText('App design updated.').should('be.visible'); // The previous feedback message may still be around, so need to grab all of them
-      cy.findByDataId('desktop-navigation').should('not.be.visible');
+      cy.findByDataId('desktop-navigation').should('not.exist');
     });
   }
 });

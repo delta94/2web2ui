@@ -91,7 +91,7 @@ describe('The templates edit draft page', () => {
     cy.findByText('Unable to load template').should('be.visible');
     cy.title().should('include', 'Templates');
     cy.findByRole('heading', { name: 'Templates' }).should('be.visible');
-    cy.findByText('Stubbed Template 1').should('not.be.visible');
+    cy.findByText('Stubbed Template 1').should('not.exist');
   });
 
   it('does not render an error if the server returns content with null values', () => {
@@ -177,7 +177,7 @@ describe('The templates edit draft page', () => {
 
       cy.visit(PAGE_URL);
 
-      cy.findByText('Save and Publish').should('not.be.visible');
+      cy.findByText('Save and Publish').should('not.exist');
     });
 
     it('renders with a "Save and Publish" button', () => {
@@ -260,7 +260,7 @@ describe('The templates edit draft page', () => {
       //   });
 
       //   cy.findByText('Something went wrong.').should('be.visible');
-      //   cy.findByText('Template published').should('not.be.visible');
+      //   cy.findByText('Template published').should('not.exist');
       // });
     });
 
@@ -422,23 +422,23 @@ describe('The templates edit draft page', () => {
 
       // HTML tab already active by default, so no need to click it
       typeInEditor('Hello HTML tab.');
-      cy.findByText('Hello HTML tab.').should('not.be.visible');
+      cy.findByText('Hello HTML tab.').should('not.exist');
       cy.findByText('Read Only').should('be.visible');
 
       cy.findByText('AMP HTML').click();
       typeInEditor('Hello AMP HTML tab.');
-      cy.findByText('Hello AMP HTML tab.').should('not.be.visible');
+      cy.findByText('Hello AMP HTML tab.').should('not.exist');
       cy.findByText('Read Only').should('be.visible');
 
       cy.findByText('Text').click();
       typeInEditor('Hello Text tab.');
-      cy.findByText('Hello Text tab.').should('not.be.visible');
+      cy.findByText('Hello Text tab.').should('not.exist');
       cy.findByText('Read Only').should('be.visible');
 
       cy.findByText('Test Data').click();
       typeInEditor('Hello Test Data tab.');
       cy.findByText('Hello Test Data tab.').should('be.visible');
-      cy.findByText('Read Only').should('not.be.visible');
+      cy.findByText('Read Only').should('not.exist');
     });
 
     it('renders the values of the HTML, AMP HTML, and Text tabs from the stored template', () => {
@@ -546,7 +546,7 @@ describe('The templates edit draft page', () => {
         // See: https://github.com/cypress-io/cypress/issues/2851
         // cy.findByText('Copy Code').click();
         // cy.findByText('Snippet copied').should('be.visible');
-        // cy.findByText('Add a snippet').should('not.be.visible');
+        // cy.findByText('Add a snippet').should('not.exist');
       });
 
       it('renders the "Insert AMP Boilerplate" button when opened', () => {
@@ -560,17 +560,17 @@ describe('The templates edit draft page', () => {
         cy.findByText('HTML').click();
         cy.findByText('More').click({ force: true });
 
-        cy.findByText('Insert AMP Boilerplate').should('not.be.visible');
+        cy.findByText('Insert AMP Boilerplate').should('not.exist');
 
         cy.findByText('Text').click();
         cy.findByText('More').click({ force: true });
 
-        cy.findByText('Insert AMP Boilerplate').should('not.be.visible');
+        cy.findByText('Insert AMP Boilerplate').should('not.exist');
 
         cy.findByText('Test Data').click();
         cy.findByText('More').click({ force: true });
 
-        cy.findByText('Insert AMP Boilerplate').should('not.be.visible');
+        cy.findByText('Insert AMP Boilerplate').should('not.exist');
       });
 
       it('renders a warning modal when the "Insert AMP Boilerplate" button is clicked, which allows the user to replace the content of the "AMP HTML" tab with the starter boilerplate', () => {
@@ -578,7 +578,7 @@ describe('The templates edit draft page', () => {
 
         cy.findByText('AMP HTML').click();
         cy.findByText('AMP HTML!').should('be.visible');
-        cy.findByText('4email').should('not.be.visible');
+        cy.findByText('4email').should('not.exist');
         cy.findByText('More').click({ force: true });
         cy.findByText('Insert AMP Boilerplate').click();
 
@@ -586,7 +586,7 @@ describe('The templates edit draft page', () => {
           'be.visible',
         );
         cy.findByText('Insert').click();
-        cy.findByText('AMP HTML!').should('not.be.visible');
+        cy.findByText('AMP HTML!').should('not.exist');
         cy.findByText('4email').should('be.visible');
       });
     });
@@ -759,7 +759,7 @@ describe('The templates edit draft page', () => {
         beforeSteps({ fixture: 'utils/content-previewer/422.post.code-3000-no-line.json' });
 
         cy.findByText(DEFAULT_PREVIEW_ERROR_HEADING).should('be.visible');
-        cy.findByText('This is an error description').should('not.be.visible');
+        cy.findByText('This is an error description').should('not.exist');
         cy.findByText(DEFAULT_PREVIEW_ERROR_DESCRIPTION).should('be.visible');
       });
 

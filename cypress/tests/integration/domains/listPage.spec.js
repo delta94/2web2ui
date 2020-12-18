@@ -163,7 +163,7 @@ describe('The domains list page', () => {
         cy.get(PAGES_SELECTOR).within(() => {
           cy.findAllByText('1').should('be.visible');
           cy.findAllByText('2').should('be.visible');
-          cy.findAllByText('3').should('not.be.visible');
+          cy.findAllByText('3').should('not.exist');
 
           cy.findAllByRole('button', { name: 'Previous' }).should('be.disabled');
           cy.findAllByRole('button', { name: 'Next' }).should('not.be.disabled');
@@ -222,7 +222,7 @@ describe('The domains list page', () => {
         cy.wait('@sendingDomainsReq');
 
         cy.withinMainContent(() => {
-          cy.findByRole('table').should('not.be.visible');
+          cy.findByRole('table').should('not.exist');
           cy.findByText('There is no data to display').should('be.visible');
         });
       });
@@ -244,7 +244,7 @@ describe('The domains list page', () => {
           cy.findByRole('button', { name: 'Show Error Details' }).click();
           cy.findByText('This is an error').should('be.visible');
           cy.findByRole('button', { name: 'Hide Error Details' }).click();
-          cy.findByText('This is an error').should('not.be.visible');
+          cy.findByText('This is an error').should('not.exist');
         });
 
         // Verifying that the list endpoint is re-requested, rendering the table successfully
@@ -655,7 +655,7 @@ describe('The domains list page', () => {
         cy.findByLabelText('Unverified').should('be.visible');
         cy.findByLabelText('Blocked').should('be.visible');
         cy.findByLabelText('SPF Valid').should('be.visible');
-        cy.findByLabelText('Bounce').should('not.be.visible');
+        cy.findByLabelText('Bounce').should('not.exist');
         cy.findByLabelText('DKIM Signing').should('be.visible');
       });
 
@@ -665,7 +665,7 @@ describe('The domains list page', () => {
         cy.visit(`${PAGE_URL}/list/bounce`);
         cy.wait(['@sendingDomainsReq', '@subaccountsReq']);
 
-        cy.get('table').should('not.be.visible');
+        cy.get('table').should('not.exist');
         cy.findByText('There is no data to display').should('be.visible');
       });
 
@@ -686,7 +686,7 @@ describe('The domains list page', () => {
           cy.findByRole('button', { name: 'Show Error Details' }).click();
           cy.findByText('This is an error').should('be.visible');
           cy.findByRole('button', { name: 'Hide Error Details' }).click();
-          cy.findByText('This is an error').should('not.be.visible');
+          cy.findByText('This is an error').should('not.exist');
         });
 
         // Verifying that the list endpoint is re-requested, rendering the table successfully
@@ -773,7 +773,7 @@ describe('The domains list page', () => {
         cy.get(PAGES_SELECTOR).within(() => {
           cy.findAllByText('1').should('be.visible');
           cy.findAllByText('2').should('be.visible');
-          cy.findAllByText('3').should('not.be.visible');
+          cy.findAllByText('3').should('not.exist');
 
           cy.findAllByRole('button', { name: 'Previous' }).should('be.disabled');
           cy.findAllByRole('button', { name: 'Next' }).should('not.be.disabled');
@@ -824,7 +824,7 @@ describe('The domains list page', () => {
         cy.wait('@trackingDomainsReq');
 
         cy.withinMainContent(() => {
-          cy.findByRole('table').should('not.be.visible');
+          cy.findByRole('table').should('not.exist');
           cy.findByText('There is no data to display').should('be.visible');
         });
       });
@@ -887,7 +887,7 @@ describe('The domains list page', () => {
           .clear()
           .type('abcdefghijklmnop');
 
-        cy.get('table').should('not.be.visible');
+        cy.get('table').should('not.exist');
         cy.findByText('There is no data to display').should('be.visible');
       });
 
