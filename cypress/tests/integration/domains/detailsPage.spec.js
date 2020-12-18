@@ -50,6 +50,7 @@ describe('The domains details page', () => {
           cy.findByRole('heading', { name: 'Domains' }).should('be.visible');
           cy.url().should('include', '/domains/list');
         });
+
         it('For unverified Tracking Domain sections are rendered correctly along with a unverified banner', () => {
           cy.stubRequest({
             url: '/api/v1/tracking-domains',
@@ -67,7 +68,27 @@ describe('The domains details page', () => {
               'href',
               'https://www.sparkpost.com/docs/tech-resources/enabling-multiple-custom-tracking-domains/',
             );
+
+          cy.get('p')
+            .contains(
+              'Add the CNAME records, Hostnames, and Values for this domain in the settings section of your DNS provider.',
+            )
+            .should('be.visible');
+
+          cy.findByRole('button', { name: 'Verify Domain' }).click();
+          cy.findAllByText(
+            'Please confirm you have added the records to your DNS provider.',
+          ).should('be.visible');
+
+          cy.findAllByLabelText('The CNAME record has been added to the DNS provider.').click({
+            force: true,
+          });
+
+          cy.findAllByText(
+            'Please confirm you have added the records to your DNS provider.',
+          ).should('not.be.visible');
         });
+
         it('verified Tracking Domain with assigned subaccount functions correctly', () => {
           let domainName = 'track1.spappteam.com';
           cy.stubRequest({
@@ -309,6 +330,42 @@ describe('The domains details page', () => {
           cy.findByRole('heading', { name: 'Link Tracking Domain' }).should('not.be.visible');
           cy.findByRole('heading', { name: 'Delete Domain' }).should('be.visible');
           cy.findByRole('button', { name: 'Verify Domain' }).should('be.visible');
+
+          cy.get('p')
+            .contains(
+              'Add these TXT records, Hostnames, and Values for this domain in the settings section of your DNS provider.',
+            )
+            .should('be.visible');
+
+          cy.findByRole('button', { name: 'Verify Domain' }).click();
+
+          cy.findAllByText(
+            'Please confirm you have added the records to your DNS provider.',
+          ).should('be.visible');
+
+          cy.findAllByLabelText('The TXT record has been added to the DNS provider.').click({
+            force: true,
+          });
+
+          cy.findAllByText(
+            'Please confirm you have added the records to your DNS provider.',
+          ).should('not.be.visible');
+
+          cy.get('p')
+            .contains(
+              'Add the CNAME record, Hostname, and Value for this domain in the settings section of your DNS provider.',
+            )
+            .should('be.visible');
+
+          cy.findByRole('button', { name: 'Verify Bounce' }).click();
+
+          cy.findAllByLabelText('The CNAME record has been added to the DNS provider.').click({
+            force: true,
+          });
+
+          cy.findAllByText(
+            'Please confirm you have added the records to your DNS provider.',
+          ).should('not.be.visible');
         });
 
         it('unverified domain renders success message on Verifying Dkim for domain', () => {
@@ -326,7 +383,8 @@ describe('The domains details page', () => {
 
           cy.visit(`${SENDING_BOUNCE_DETAILS_URL}/hello-world-there.com`);
           cy.wait(['@accountDomainsReq', '@unverifieddkimSendingDomains']);
-          cy.findByLabelText('The TXT record has been added to the DNS provider').check({
+
+          cy.findByLabelText('The TXT record has been added to the DNS provider.').check({
             force: true,
           });
           cy.findByRole('button', { name: 'Verify Domain' }).click();
@@ -351,7 +409,7 @@ describe('The domains details page', () => {
           cy.findByRole('heading', { name: 'Delete Domain' }).should('be.visible');
           cy.findByRole('heading', { name: 'Sending' }).should('be.visible');
           cy.findByRole('heading', { name: 'Bounce' }).should('be.visible');
-          cy.findByRole('button', { name: 'Authenticate for Bounce' }).should('be.visible');
+          cy.findByRole('button', { name: 'Verify Bounce' }).should('be.visible');
           cy.findByRole('heading', { name: 'DNS Verification' }).should('not.be.visible');
           cy.findByRole('heading', { name: 'Email Verification' }).should('not.be.visible');
           cy.findByRole('heading', { name: 'Sending and Bounce' }).should('not.be.visible');
@@ -371,10 +429,10 @@ describe('The domains details page', () => {
           });
           cy.visit(`${SENDING_BOUNCE_DETAILS_URL}/prd2.splango.net`);
           cy.wait(['@unverifiedBounceDomains', '@accountDomainsReq']);
-          cy.findAllByLabelText('The CNAME record has been added to the DNS provider').click({
+          cy.findAllByLabelText('The CNAME record has been added to the DNS provider.').click({
             force: true,
           });
-          cy.findByRole('button', { name: 'Authenticate for Bounce' }).click();
+          cy.findByRole('button', { name: 'Verify Bounce' }).click();
           cy.wait('@verifyDomain');
           cy.findAllByText('Successfully verified cname record of prd2.splango.net').should(
             'be.visible',
@@ -400,6 +458,7 @@ describe('The domains details page', () => {
           cy.findByRole('heading', { name: 'DNS Verification' }).should('not.be.visible');
           cy.findByRole('heading', { name: 'Email Verification' }).should('not.be.visible');
         });
+
         it('renders correct sections for verified bounce domain and unverified sending domain', () => {
           cy.stubRequest({
             url: '/api/v1/sending-domains/bounce2.spappteam.com',
@@ -418,6 +477,7 @@ describe('The domains details page', () => {
           cy.findByRole('heading', { name: 'DNS Verification' }).should('be.visible');
           cy.findByRole('heading', { name: 'Email Verification' }).should('be.visible');
         });
+
         it('renders snackbar after sharing and un-sharing the domain.', () => {
           cy.stubRequest({
             url: '/api/v1/sending-domains/bounce2.spappteam.com',
@@ -450,6 +510,7 @@ describe('The domains details page', () => {
             );
           });
         });
+
         it('delete domain prompts confirmation modal first', () => {
           cy.stubRequest({
             url: '/api/v1/sending-domains/bounce2.spappteam.com',

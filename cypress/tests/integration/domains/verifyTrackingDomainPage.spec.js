@@ -17,6 +17,7 @@ describe('The verify tracking domain page', () => {
           requestAlias: 'accountDomainsReq',
         });
       });
+
       it('renders with a relevant page title', () => {
         let domainName = 'blah231231231.gmail.com';
         cy.stubRequest({
@@ -32,6 +33,7 @@ describe('The verify tracking domain page', () => {
         cy.title().should('include', 'Verify Tracking Domain');
         cy.findByRole('heading', { name: 'Verify Tracking Domain' }).should('be.visible');
       });
+
       it('redirects to domains list page when domain not found', () => {
         let domainName = 'domain.not.found';
         cy.stubRequest({

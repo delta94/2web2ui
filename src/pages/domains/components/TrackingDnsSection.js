@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Layout, Stack, Text } from 'src/components/matchbox';
 import { Panel, Checkbox } from 'src/components/matchbox';
-import { SubduedText } from 'src/components/text';
+import { SubduedText, TranslatableText } from 'src/components/text';
 import { ExternalLink, SubduedLink } from 'src/components/links';
 import useDomains from '../hooks/useDomains';
 import { CopyField } from 'src/components';
@@ -13,7 +13,7 @@ import _ from 'lodash';
 export default function TrackingDnsSection({ domain, isSectionVisible, title }) {
   const { trackingDomainCname, verifyTrackingDomain, verifyingTrackingPending } = useDomains();
   const { unverified, domain: domainName, subaccount_id: subaccountId } = domain;
-  const { handleSubmit, watch, register } = useForm();
+  const { handleSubmit, errors, register } = useForm();
 
   const onSubmit = () => {
     return verifyTrackingDomain({
@@ -51,20 +51,26 @@ export default function TrackingDnsSection({ domain, isSectionVisible, title }) 
           <Panel>
             {unverified ? (
               <Panel.Section>
-                Add the{' '}
-                <Text as="span" fontWeight="semibold">
-                  CNAME
-                </Text>{' '}
-                records, Hostnames and Values for this domain in the settings section of your DNS
-                provider.
+                <p>
+                  <TranslatableText>Add the&nbsp;</TranslatableText>
+                  <Text as="span" fontWeight="semibold">
+                    CNAME&nbsp;
+                  </Text>
+                  <TranslatableText>
+                    records, Hostnames, and Values for this domain in the settings section of your
+                    DNS provider.
+                  </TranslatableText>
+                </p>
               </Panel.Section>
             ) : (
               <Panel.Section>
-                Below is the{' '}
-                <Text as="span" fontWeight="semibold">
-                  CNAME
-                </Text>{' '}
-                record for this domain at your DNS provider.
+                <p>
+                  <TranslatableText>Below is the&nbsp;</TranslatableText>
+                  <Text as="span" fontWeight="semibold">
+                    CNAME&nbsp;
+                  </Text>
+                  <TranslatableText>record for this domain at your DNS provider.</TranslatableText>
+                </p>
               </Panel.Section>
             )}
             <Panel.Section>
@@ -83,23 +89,22 @@ export default function TrackingDnsSection({ domain, isSectionVisible, title }) 
 
               {unverified && (
                 <Checkbox
+                  error={
+                    errors['ack-checkbox-tracking'] &&
+                    'Please confirm you have added the records to your DNS provider.'
+                  }
                   mt="600"
                   mb="100"
                   name="ack-checkbox-tracking"
                   ref={register({ required: true })}
-                  label={<>The CNAME record has been added to the DNS provider</>}
+                  label="The CNAME record has been added to the DNS provider."
                 />
               )}
             </Panel.Section>
 
             {unverified && (
               <Panel.Section>
-                <Button
-                  variant="primary"
-                  type="submit"
-                  disabled={!Boolean(watch('ack-checkbox-tracking'))}
-                  loading={verifyingTrackingPending}
-                >
+                <Button variant="primary" type="submit" loading={verifyingTrackingPending}>
                   Verify Domain
                 </Button>
               </Panel.Section>

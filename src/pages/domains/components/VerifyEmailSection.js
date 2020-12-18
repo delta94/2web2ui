@@ -42,7 +42,7 @@ export default function VerifyEmailSection({ domain, isSectionVisible }) {
         )}
       </Layout.Section>
       <Layout.Section>
-        <Panel>
+        <Panel mb="0">
           <Panel.Section>
             If you don't have access to update your DNS records for this domain, you can click
             "verify sender" to ask SparkPost to send an email to any address on this domain. Once
@@ -50,7 +50,6 @@ export default function VerifyEmailSection({ domain, isSectionVisible }) {
             SparkPost will not be able to DKIM-sign the mail it sends on your behalf, which could
             cause delivebility issues.
           </Panel.Section>
-
           <Panel.Section>
             <Button
               onClick={() => {

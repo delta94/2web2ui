@@ -1,11 +1,10 @@
 import React from 'react';
 import { Button, Layout, Stack, Select, Text } from 'src/components/matchbox';
 import { Checkbox, Panel } from 'src/components/matchbox';
-import { SubduedText } from 'src/components/text';
-import { Send } from '@sparkpost/matchbox-icons';
+import { SubduedText, TranslatableText } from 'src/components/text';
+import { Telegram } from '@sparkpost/matchbox-icons';
 import { resolveReadyFor } from 'src/helpers/domains';
 import { ExternalLink, PageLink, SubduedLink } from 'src/components/links';
-import styled from 'styled-components';
 import { useForm, Controller } from 'react-hook-form';
 import LineBreak from 'src/components/lineBreak';
 import getConfig from 'src/helpers/getConfig';
@@ -13,17 +12,13 @@ import { CopyField } from 'src/components';
 import useDomains from '../hooks/useDomains';
 import { EXTERNAL_LINKS } from '../constants';
 
-const PlaneIcon = styled(Send)`
-  transform: translate(0, -25%) rotate(-45deg);
-`;
-
 export default function SetupBounceDomainSection({ domain, isSectionVisible, title }) {
   const { id, status, subaccount_id } = domain;
   const { verify, showAlert, userName, isByoipAccount, verifyBounceLoading } = useDomains();
   const readyFor = resolveReadyFor(status);
   const initVerificationType = isByoipAccount && status.mx_status === 'valid' ? 'MX' : 'CNAME';
   const bounceDomainsConfig = getConfig('bounceDomains');
-  const { control, handleSubmit, watch, register } = useForm();
+  const { control, handleSubmit, watch, errors, register } = useForm();
   const watchVerificationType = watch('verificationType', initVerificationType);
 
   const onSubmit = () => {
@@ -81,31 +76,41 @@ export default function SetupBounceDomainSection({ domain, isSectionVisible, tit
         </Stack>
       </Layout.Section>
       <Layout.Section>
-        <Panel>
+        <Panel mb="0">
           {!readyFor.bounce ? (
             <Panel.Section>
-              Add the{' '}
-              <Text as="span" fontWeight="semibold">
-                CNAME
-              </Text>{' '}
-              record, Hostname and Value for this domain in the settings section of your DNS
-              provider.
-              <Panel.Action>
-                <ExternalLink
-                  to={`mailto:?subject=Assistance%20Requested%20Verifying%20a%20Bounce%20Domain%20on%20SparkPost&body=${userName}%20has%20requested%20your%20assistance%20verifying%20a%20bounce%20domain%20with%20SparkPost.%20Follow%20the%20link%20below%20to%20find%20the%20values%20you%E2%80%99ll%20need%20to%20add%20to%20the%20settings%20of%20your%20DNS%20provider.%0D%0A%5BGo%20to%20SparkPost%5D(${window.location})%0D%0A`}
-                  icon={PlaneIcon}
-                >
-                  Forward to Colleague
-                </ExternalLink>
+              <p>
+                <TranslatableText>Add the&nbsp;</TranslatableText>
+                <Text as="span" fontWeight="semibold">
+                  CNAME&nbsp;
+                </Text>
+                <TranslatableText>
+                  record, Hostname, and Value for this domain in the settings section of your DNS
+                  provider.
+                </TranslatableText>
+              </p>
+              <Panel.Action
+                component={ExternalLink}
+                external="true"
+                to={`mailto:?subject=Assistance%20Requested%20Verifying%20a%20Bounce%20Domain%20on%20SparkPost&body=${userName}%20has%20requested%20your%20assistance%20verifying%20a%20bounce%20domain%20with%20SparkPost.%20Follow%20the%20link%20below%20to%20find%20the%20values%20you%E2%80%99ll%20need%20to%20add%20to%20the%20settings%20of%20your%20DNS%20provider.%0D%0A%5BGo%20to%20SparkPost%5D(${window.location})%0D%0A`}
+                icon={Telegram}
+                iconMargin="0 0 0 .5em"
+                iconSize="18"
+              >
+                Forward to Colleague
               </Panel.Action>
             </Panel.Section>
           ) : (
             <Panel.Section>
-              Below is the{' '}
-              <Text as="span" fontWeight="semibold">
-                CNAME{' '}
-              </Text>
-              record for the Hostname and Value for this domain at your DNS provider
+              <p>
+                <TranslatableText>Below is the&nbsp;</TranslatableText>
+                <Text as="span" fontWeight="semibold">
+                  CNAME&nbsp;
+                </Text>
+                <TranslatableText>
+                  record for the Hostname and Value for this domain at your DNS provider.
+                </TranslatableText>
+              </p>
             </Panel.Section>
           )}
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -175,8 +180,12 @@ export default function SetupBounceDomainSection({ domain, isSectionVisible, tit
             {!readyFor.bounce && (
               <Panel.Section>
                 <Checkbox
+                  error={
+                    errors['ack-checkbox-bounce'] &&
+                    'Please confirm you have added the records to your DNS provider.'
+                  }
                   name="ack-checkbox-bounce"
-                  label={`The ${watchVerificationType} record has been added to the DNS provider`}
+                  label={`The ${watchVerificationType} record has been added to the DNS provider.`}
                   disabled={verifyBounceLoading}
                   ref={register({ required: true })}
                 />
@@ -185,13 +194,8 @@ export default function SetupBounceDomainSection({ domain, isSectionVisible, tit
 
             {!readyFor.bounce && (
               <Panel.Section>
-                <Button
-                  variant="primary"
-                  type="submit"
-                  disabled={!Boolean(watch('ack-checkbox-bounce'))}
-                  loading={verifyBounceLoading}
-                >
-                  Authenticate for Bounce
+                <Button variant="primary" type="submit" loading={verifyBounceLoading}>
+                  Verify Bounce
                 </Button>
               </Panel.Section>
             )}
