@@ -48,7 +48,7 @@ describe('The A/B Testing create page', () => {
     cy.findByText('Try Again').should('be.visible');
     cy.findByText('Show Error Details').click();
     cy.findByText('This is an error').should('be.visible');
-    cy.get('table').should('not.be.visible');
+    cy.get('table').should('not.exist');
 
     stubAbtest();
     cy.findByRole('button', { name: 'Try Again' }).click();
