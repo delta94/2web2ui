@@ -31,7 +31,7 @@ const columns = [
   { label: 'Domain', minWidth: '90px', sortKey: 'domain' },
 ];
 
-export default function BounceReasonTable({ aggregates, reasons = [], tableLoading }) {
+export default function BounceReasonTable({ aggregates, reasons = [], loading }) {
   const getRowData = useCallback(
     item => {
       const { reason, domain, bounce_category_name, bounce_class_name, count_bounce } = item;
@@ -49,7 +49,7 @@ export default function BounceReasonTable({ aggregates, reasons = [], tableLoadi
     [aggregates],
   );
 
-  if (tableLoading) {
+  if (loading) {
     return <LoadingWrapper />;
   }
 

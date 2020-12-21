@@ -32,6 +32,7 @@ import {
 
 import {
   BounceReasonTab,
+  DelayReasonsComparisonTab,
   BounceReasonComparisonTab,
   DelayReasonsTab,
   LinksTab,
@@ -148,6 +149,10 @@ export function ReportBuilder({
   const hasLinksTab = hasLinksMetrics && !hasActiveComparisons;
 
   const tabs = useMemo(() => {
+    /**
+     * For each type of relevant metrics that could render a tab,
+     * loop through active comparisons and add rendered tabs depending on the metrics selected by the end user
+     */
     function getComparisonTabs() {
       let comparisonTabs = [];
 
@@ -314,6 +319,16 @@ export function ReportBuilder({
                   return (
                     <Tabs.Item key={`tab-links-${comparison.value}-${index}`}>
                       <LinksComparisonTab comparison={comparison} />
+                    </Tabs.Item>
+                  );
+                })}
+
+              {hasDelayMetrics &&
+                hasActiveComparisons &&
+                reportOptions.comparisons.map((comparison, index) => {
+                  return (
+                    <Tabs.Item key={`tab-delay-${comparison.value}-${index}`}>
+                      <DelayReasonsComparisonTab comparison={comparison} />
                     </Tabs.Item>
                   );
                 })}

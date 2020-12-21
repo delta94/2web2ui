@@ -82,3 +82,5 @@ export const GROUP_BY_CONFIG = {
     keyName: 'ip_pool',
   },
 };
+
+export const TAB_LOADING_HEIGHT = '300px';

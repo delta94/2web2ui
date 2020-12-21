@@ -1,23 +1,21 @@
 import React from 'react';
-import { useSparkPostQuery } from 'src/hooks';
+import { usePrepareReportBuilderQuery, useSparkPostQuery } from 'src/hooks';
+import { getDelayReasonByDomain, getDeliverability } from 'src/helpers/api/metrics';
 import { ApiErrorBanner, Loading } from 'src/components';
 import { Panel } from 'src/components/matchbox';
 import { getMetricsFromKeys, getFilterByComparison } from 'src/helpers/metrics';
-import { getBounceReasonByDomain, getDeliverability } from 'src/helpers/api/metrics';
-import { selectReasons, selectFormattedAggregates } from 'src/selectors/bounceReport';
-import { BounceReasonTable } from '../tables';
-import { usePrepareReportBuilderQuery } from 'src/hooks';
 import { useReportBuilderContext } from '../../context/ReportBuilderContext';
 import { TAB_LOADING_HEIGHT } from '../../constants';
+import { DelayReasonTable } from '../tables';
 
-export default function BounceReasonComparisonTab({ comparison }) {
-  const { aggregatesQuery, bounceReasonsQuery, isPending, isError } = useQueriesWithComparison(
+export default function DelayReasonComparisonTab({ comparison }) {
+  const { aggregatesQuery, delayReasonsQuery, isPending, isError } = useQueriesWithComparison(
     comparison,
   );
 
   function handleReload() {
-    bounceReasonsQuery.refetch();
     aggregatesQuery.refetch();
+    delayReasonsQuery.refetch();
   }
 
   if (isPending) {
@@ -32,13 +30,10 @@ export default function BounceReasonComparisonTab({ comparison }) {
     );
   }
 
-  // This re-structuring using the `bounceReport` key is a holdover from Redux - could we refactor these selectors to be less opinionated?
-  const reasons = selectReasons({ bounceReport: { reasons: bounceReasonsQuery.data } });
-  const aggregates = selectFormattedAggregates({
-    bounceReport: { aggregates: aggregatesQuery.data[0] },
-  });
+  const reasons = delayReasonsQuery.data;
+  const totalAccepted = aggregatesQuery.data ? aggregatesQuery.data.count_accepted : 1;
 
-  return <BounceReasonTable reasons={reasons} aggregates={aggregates} loading={false} />;
+  return <DelayReasonTable reasons={reasons} totalAccepted={totalAccepted} loading={false} />;
 }
 
 /**
@@ -48,14 +43,11 @@ export default function BounceReasonComparisonTab({ comparison }) {
  */
 function useQueriesWithComparison(comparison) {
   const { state: reportOptions } = useReportBuilderContext();
-  // I borrowed this logic from `src/actions/bounceReport`
   const deliverabilityMetrics = getMetricsFromKeys([
-    'count_bounce',
-    'count_inband_bounce',
-    'count_outofband_bounce',
-    'count_admin_bounce',
+    'count_accepted',
+    'count_delayed',
+    'count_delayed_first',
   ]);
-  const bounceReasonMetrics = getMetricsFromKeys(['count_bounce']);
   const existingFilters = reportOptions.filters ? reportOptions.filters : [];
   const comparisonFilter = getFilterByComparison(comparison);
   const aggregatesParams = usePrepareReportBuilderQuery({
@@ -63,18 +55,18 @@ function useQueriesWithComparison(comparison) {
     filters: [...existingFilters, comparisonFilter],
     metrics: deliverabilityMetrics,
   });
-  const bounceReasonParams = usePrepareReportBuilderQuery({
+  const delayReasonsParams = usePrepareReportBuilderQuery({
     ...reportOptions,
     filters: [...existingFilters, comparisonFilter],
-    metrics: bounceReasonMetrics,
+    metrics: reportOptions.metrics,
   });
-  const bounceReasonsQuery = useSparkPostQuery(() => getBounceReasonByDomain(bounceReasonParams));
+  const delayReasonsQuery = useSparkPostQuery(() => getDelayReasonByDomain(delayReasonsParams));
   const aggregatesQuery = useSparkPostQuery(() => getDeliverability(aggregatesParams));
 
   return {
     aggregatesQuery,
-    bounceReasonsQuery,
-    isPending: bounceReasonsQuery.status === 'loading' || aggregatesQuery.status === 'loading',
-    isError: bounceReasonsQuery.status === 'error' || aggregatesQuery.status === 'error',
+    delayReasonsQuery,
+    isPending: aggregatesQuery.status === 'loading' || delayReasonsQuery.status === 'loading',
+    isError: aggregatesQuery.status === 'error' || delayReasonsQuery.status === 'error',
   };
 }
