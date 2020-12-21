@@ -2,20 +2,6 @@
 
 exports[`renders correctly 1`] = `
 <Page
-  empty={
-    Object {
-      "content": <p>
-        Manage your recipient lists
-      </p>,
-      "image": [Function],
-      "secondaryAction": Object {
-        "content": "Learn More",
-        "external": true,
-        "to": "https://developers.sparkpost.com/api/recipient-lists.html",
-      },
-      "show": false,
-    }
-  }
   primaryAction={
     Object {
       "Component": [Function],
@@ -94,20 +80,6 @@ exports[`renders correctly 1`] = `
 
 exports[`renders empty state 1`] = `
 <Page
-  empty={
-    Object {
-      "content": <p>
-        Manage your recipient lists
-      </p>,
-      "image": [Function],
-      "secondaryAction": Object {
-        "content": "Learn More",
-        "external": true,
-        "to": "https://developers.sparkpost.com/api/recipient-lists.html",
-      },
-      "show": true,
-    }
-  }
   primaryAction={
     Object {
       "Component": [Function],
@@ -163,20 +135,6 @@ exports[`renders empty state 1`] = `
 
 exports[`renders errors when present 1`] = `
 <Page
-  empty={
-    Object {
-      "content": <p>
-        Manage your recipient lists
-      </p>,
-      "image": [Function],
-      "secondaryAction": Object {
-        "content": "Learn More",
-        "external": true,
-        "to": "https://developers.sparkpost.com/api/recipient-lists.html",
-      },
-      "show": false,
-    }
-  }
   primaryAction={
     Object {
       "Component": [Function],
@@ -187,7 +145,7 @@ exports[`renders errors when present 1`] = `
   title="Recipient Lists"
 >
   <ApiErrorBanner
-    message="Sorry, we ran into an error loading your Recipient Lists"
+    message="Sorry, we ran into an error loading Recipient Lists"
     reload={[Function]}
   />
 </Page>
