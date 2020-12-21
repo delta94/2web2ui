@@ -39,9 +39,10 @@ describe('The recipient lists page', () => {
     cy.visit(PAGE_URL);
     cy.wait('@recipientLists');
 
-    cy.findByText('Create Recipient List')
-      .closest('a')
-      .should('have.attr', 'href', '/lists/recipient-lists/create');
+    cy.verifyLink({
+      content: 'Create Recipient List',
+      href: '/lists/recipient-lists/create',
+    });
   });
 
   it('renders an error banner when the server returns one', () => {
@@ -52,7 +53,7 @@ describe('The recipient lists page', () => {
     cy.findByText('An error occurred').should('be.visible');
     cy.findByText('Sorry, we ran into an error loading Recipient Lists').should('be.visible');
     cy.findByText('Try Again').should('be.visible');
-    cy.get('table').should('not.be.visible');
+    cy.get('table').should('not.exist');
 
     stubRecipientLists();
     cy.findByRole('button', { name: 'Try Again' }).click();
@@ -68,13 +69,10 @@ describe('The recipient lists page', () => {
       cy.wait(['@accountReq', '@recipientLists']);
 
       cy.findByRole('heading', { name: 'Organize Recipients' }).should('be.visible');
-      cy.findByText('Recipient Lists Documentation')
-        .closest('a')
-        .should(
-          'have.attr',
-          'href',
-          'https://www.sparkpost.com/docs/user-guide/uploading-recipient-list/',
-        );
+      cy.verifyLink({
+        content: 'Recipient Lists Documentation',
+        href: 'https://www.sparkpost.com/docs/user-guide/uploading-recipient-list/',
+      });
     });
     it('renders the empty state when there are no ab tests', () => {
       stubRecipientLists({ fixture: '200.get.no-results.json' });
@@ -85,16 +83,14 @@ describe('The recipient lists page', () => {
       cy.findByText(
         'A recipient list is a collection of recipients that can be used in a transmission. When sending email to multiple recipients, it’s best to put them in a recipient list. This is particularly true when sending multiple emails to the same recipients.',
       ).should('be.visible');
-      cy.findByText('Create Recipient List')
-        .closest('a')
-        .should('have.attr', 'href', '/lists/recipient-lists/create');
-      cy.findByText('Recipient Lists Documentation')
-        .closest('a')
-        .should(
-          'have.attr',
-          'href',
-          'https://www.sparkpost.com/docs/user-guide/uploading-recipient-list/',
-        );
+      cy.verifyLink({
+        content: 'Create Recipient List',
+        href: '/lists/recipient-lists/create',
+      });
+      cy.verifyLink({
+        content: 'Recipient Lists Documentation',
+        href: 'https://www.sparkpost.com/docs/user-guide/uploading-recipient-list/',
+      });
     });
   }
 });
