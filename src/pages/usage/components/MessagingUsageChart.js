@@ -20,7 +20,8 @@ function MessagingUsageChart(props) {
     return item.usage >= planVolume;
   });
 
-  const thresholdPercentage = (thresholdIndex / cumulativeData.length) * 100;
+  const thresholdPercentage =
+    thresholdIndex === -1 ? 100 : (thresholdIndex / cumulativeData.length) * 100;
 
   const CustomTooltip = ({ showTooltip, payload, label }) => {
     if (!showTooltip) {
