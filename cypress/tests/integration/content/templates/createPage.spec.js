@@ -209,11 +209,23 @@ describe('The create template page', () => {
     });
     cy.findByRole('button', { name: 'Open Menu' }).click();
     cy.findByRole('button', { name: 'Duplicate' }).click();
+
+    cy.stubRequest({
+      method: 'POST',
+      url: '/api/v1/templates',
+      fixture: 'templates/200.post.json',
+      requestAlias: 'createTemplate',
+    });
+
     cy.withinModal(() => {
       cy.findByLabelText(/Template Name/g).should('have.value', `${TEMPLATE_NAME} (COPY)`);
       cy.findByLabelText(/Template ID/g).should('have.value', `${TEMPLATE_ID}-copy`);
+      cy.findByRole('button', { name: 'Duplicate' }).click();
     });
 
-    // TODO: Flesh this out a bit more to include submitting the form
+    cy.wait('@createTemplate');
+    cy.withinSnackbar(() => {
+      cy.findByText('Template duplicated.').should('be.visible');
+    });
   });
 });
