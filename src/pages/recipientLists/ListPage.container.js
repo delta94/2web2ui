@@ -20,11 +20,11 @@ function ListPageContainer(props) {
     listRecipientLists();
   }, [listRecipientLists]);
 
-  const component = useEmptyState(
-    recipientLists.length === 0 && isEmptyStateEnabled && isHibanaEnabled,
-    ListPage,
-    RecipientListEmptyState,
-  )({ ...props, isHibanaEnabled });
+  const component = useEmptyState({
+    isEmpty: recipientLists.length === 0 && isEmptyStateEnabled && isHibanaEnabled,
+    pageComponent: ListPage,
+    emptyComponent: RecipientListEmptyState,
+  })({ ...props, isHibanaEnabled });
 
   if (loading) {
     return <Loading />;
