@@ -5,6 +5,7 @@ import {
   Button,
   Checkbox,
   Inline,
+  LabelValue,
   Modal,
   Stack,
   Tag,
@@ -120,24 +121,33 @@ export function SaveReportModal(props) {
           {saveQuery && (
             <Stack>
               <Box>
-                <Heading as="h6">Metrics</Heading>
-
-                <ActiveMetrics metrics={reportOptions.metrics} />
+                <LabelValue>
+                  <LabelValue.Label>Metrics</LabelValue.Label>
+                  <LabelValue.Value>
+                    <ActiveMetrics metrics={reportOptions.metrics} />
+                  </LabelValue.Value>
+                </LabelValue>
               </Box>
 
               {hasFilters ? (
                 <Box>
-                  <Heading as="h6">Filters</Heading>
-
-                  <ActiveFilters filters={reportOptions.filters} />
+                  <LabelValue>
+                    <LabelValue.Label>Filters</LabelValue.Label>
+                    <LabelValue.Value>
+                      <ActiveFilters filters={reportOptions.filters} />
+                    </LabelValue.Value>
+                  </LabelValue>
                 </Box>
               ) : null}
 
               {hasComparisons ? (
                 <Box>
-                  <Heading as="h6">Comparisons</Heading>
-
-                  <ActiveComparisons comparisons={reportOptions.comparisons} />
+                  <LabelValue>
+                    <LabelValue.Label>Comparisons</LabelValue.Label>
+                    <LabelValue.Value>
+                      <ActiveComparisons comparisons={reportOptions.comparisons} />
+                    </LabelValue.Value>
+                  </LabelValue>
                 </Box>
               ) : null}
 
