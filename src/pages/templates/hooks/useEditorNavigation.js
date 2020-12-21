@@ -17,6 +17,7 @@ const useEditorNavigation = () => {
     filters: { subaccount: subaccountId },
   } = usePageFilters(initFilters);
   const [navKeyTemp, setNavKeyTemp] = useState(navKey.toLowerCase());
+
   const setNavigation = nextNavigationKey => {
     setNavKeyTemp(nextNavigationKey.toLowerCase());
     history.push(

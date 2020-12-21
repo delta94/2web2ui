@@ -1,6 +1,7 @@
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { mount } from 'enzyme';
+import { useParams } from 'react-router';
 import useEditorNavigation from '../useEditorNavigation';
 import usePageFilters from 'src/hooks/usePageFilters';
 
@@ -8,8 +9,10 @@ jest.mock('src/hooks/usePageFilters');
 
 const mockHistoryPush = jest.fn();
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+// See: https://stackoverflow.com/questions/58883556/mocking-react-router-dom-hooks-using-jest-is-not-working
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
+  useParams: jest.fn(),
   useHistory: () => ({
     push: mockHistoryPush,
   }),
@@ -18,6 +21,11 @@ jest.mock('react-router-dom', () => ({
 describe('useEditorNavigation', () => {
   const useTestWrapper = ({ routerState } = {}) => {
     usePageFilters.mockReturnValue({ filters: routerState.requestParams });
+    useParams.mockReturnValue({
+      id: routerState.requestParams.id,
+      version: routerState.requestParams.version,
+      navKey: routerState.requestParams.navKey,
+    });
     const TestComponent = () => <div hooked={useEditorNavigation()} />;
     return mount(<TestComponent />);
   };
