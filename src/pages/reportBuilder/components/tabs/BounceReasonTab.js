@@ -14,9 +14,7 @@ export function BounceReasonsTab({ aggregates, reasons, refreshBounceReport, tab
     }
   }, [refreshBounceReport, reportOptions]);
 
-  return (
-    <BounceReasonTable aggregates={aggregates} reasons={reasons} tableLoading={tableLoading} />
-  );
+  return <BounceReasonTable aggregates={aggregates} reasons={reasons} loading={tableLoading} />;
 }
 
 const mapDispatchToProps = {

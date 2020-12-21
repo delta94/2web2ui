@@ -25,7 +25,7 @@ describe('The templates list page', () => {
     cy.findByText('Show Error Details').click();
     cy.findByText('Error!').should('be.visible');
     cy.findByText('Hide Error Details').click();
-    cy.findByText('Error!').should('not.be.visible');
+    cy.findByText('Error!').should('not.exist');
 
     cy.stubRequest({
       url: TEMPLATES_API_URL,
@@ -65,7 +65,7 @@ describe('The templates list page', () => {
 
     cy.findByText('Stubbed Template 1').should('be.visible');
     cy.findByText('Stubbed Template 2').should('be.visible');
-    cy.findByText('Recent Activity').should('not.be.visible');
+    cy.findByText('Recent Activity').should('not.exist');
   });
 
   it('renders "Recent Activity" when three or more template results are returned', () => {
@@ -355,8 +355,8 @@ describe('The templates list page', () => {
       .type('Stubbed Template 1');
 
     cy.get('table').within(() => {
-      cy.findByText('Stubbed Template 2').should('not.be.visible');
-      cy.findByText('Stubbed Template 3').should('not.be.visible');
+      cy.findByText('Stubbed Template 2').should('not.exist');
+      cy.findByText('Stubbed Template 3').should('not.exist');
     });
 
     cy.findByLabelText('Filter By')
@@ -364,8 +364,8 @@ describe('The templates list page', () => {
       .type('Stubbed Template 2');
 
     cy.get('table').within(() => {
-      cy.findByText('Stubbed Template 1').should('not.be.visible');
-      cy.findByText('Stubbed Template 3').should('not.be.visible');
+      cy.findByText('Stubbed Template 1').should('not.exist');
+      cy.findByText('Stubbed Template 3').should('not.exist');
     });
 
     cy.findByLabelText('Filter By')
@@ -373,8 +373,8 @@ describe('The templates list page', () => {
       .type('Stubbed Template 3');
 
     cy.get('table').within(() => {
-      cy.findByText('Stubbed Template 1').should('not.be.visible');
-      cy.findByText('Stubbed Template 2').should('not.be.visible');
+      cy.findByText('Stubbed Template 1').should('not.exist');
+      cy.findByText('Stubbed Template 2').should('not.exist');
     });
 
     cy.findByLabelText('Filter By')
@@ -382,9 +382,9 @@ describe('The templates list page', () => {
       .type('Nothing will be found');
 
     cy.get('table').within(() => {
-      cy.findByText('Stubbed Template 1').should('not.be.visible');
-      cy.findByText('Stubbed Template 2').should('not.be.visible');
-      cy.findByText('Stubbed Template 3').should('not.be.visible');
+      cy.findByText('Stubbed Template 1').should('not.exist');
+      cy.findByText('Stubbed Template 2').should('not.exist');
+      cy.findByText('Stubbed Template 3').should('not.exist');
     });
   });
 

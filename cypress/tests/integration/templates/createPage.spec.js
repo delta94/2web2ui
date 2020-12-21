@@ -43,7 +43,7 @@ describe('The create template page', () => {
 
     cy.visit(PAGE_URL);
 
-    cy.findByLabelText('Subaccount').should('not.be.visible');
+    cy.findByLabelText('Subaccount').should('not.exist');
 
     // Element is covered by a presentational element, thus requiring the force option to work
     cy.findByLabelText('Assign to Subaccount').check({ force: true });

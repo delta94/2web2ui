@@ -194,20 +194,10 @@ if (IS_HIBANA_ENABLED) {
         cy.findByLabelText('Report').focus();
 
         cy.findListBoxByLabelText('Report').within(() => {
-          cy.findAllByRole('option')
-            .eq(0)
-            .should('have.contain', 'My Bounce Report')
-            .should('have.contain', 'mockuser');
-
-          cy.findAllByRole('option')
-            .eq(1)
-            .should('have.contain', 'Your Sending Report')
-            .should('have.contain', 'sally-sender');
-
-          cy.findAllByRole('option')
-            .eq(3)
-            .should('have.contain', 'Summary Report')
-            .should('have.contain', 'Default');
+          cy.findByRole('option', { name: /My Bounce Report/g }).should('exist');
+          cy.findByRole('option', { name: /My Other Bounce Report/g }).should('exist');
+          cy.findByRole('option', { name: /Your Sending Report/g }).should('exist');
+          cy.findByRole('option', { name: /My new report/g }).should('exist');
         });
       });
 
@@ -288,7 +278,7 @@ if (IS_HIBANA_ENABLED) {
         cy.withinModal(() => {
           //Check that it only shows my reports
           cy.findByText('My Bounce Report').should('be.visible');
-          cy.findByText('Your Sending Report').should('not.be.visible');
+          cy.findByText('Your Sending Report').should('not.exist');
           //Check that it shows all reports
           cy.findByRole('tab', { name: 'All Reports' }).click();
           cy.findAllByText('My Bounce Report').should('have.length', 1); //For both tabs
@@ -321,6 +311,137 @@ if (IS_HIBANA_ENABLED) {
         });
       });
 
+      it("hides pin to dashboard if user doesn't have allow_dashboard_v2.", () => {
+        // by default the test suite doesn't have allow_dashboard_v2 set for the login mock
+        cy.visit(PAGE_URL);
+        cy.findByRole('button', { name: 'View All Reports' }).click();
+
+        // https://sparkpost.atlassian.net/browse/FE-1284
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(250);
+
+        cy.withinModal(() => {
+          cy.get('table').within(() => {
+            cy.findByText('My Bounce Report')
+              .closest('tr')
+              .within(() => {
+                cy.findByRole('button', { name: 'Open Menu' }).click({ force: true });
+                cy.findByRole('button', { name: 'Pin to Dashboard' }).should('not.exist');
+              });
+          });
+
+          cy.findByRole('tab', { name: 'All Reports' }).click();
+
+          // https://sparkpost.atlassian.net/browse/FE-1284
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(250);
+
+          cy.get('table').within(() => {
+            cy.findByText('My Bounce Report')
+              .closest('tr')
+              .within(() => {
+                cy.findByRole('button', { name: 'Open Menu' }).click({ force: true });
+                cy.findByRole('button', { name: 'Pin to Dashboard' }).should('not.exist');
+              });
+          });
+        });
+      });
+
+      it('pins a saved report with unique verbiage for first time save vs overriding save', () => {
+        stubAccountsReq();
+        cy.visit(PAGE_URL);
+        cy.findByRole('button', { name: 'View All Reports' }).click();
+
+        // https://sparkpost.atlassian.net/browse/FE-1284
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(250);
+
+        cy.withinModal(() => {
+          cy.findByLabelText('pinned-to-dashboard').should('not.exist');
+
+          cy.findByRole('tab', { name: 'All Reports' }).click();
+
+          cy.findByLabelText('pinned-to-dashboard').should('not.exist');
+
+          cy.get('table').within(() => {
+            cy.findByText('My Bounce Report')
+              .closest('tr')
+              .within(() => {
+                cy.get('td').should('have.length', 6);
+                cy.findAllByText('Open Menu').click({ force: true });
+                cy.findAllByText('Pin to Dashboard').should('be.visible');
+              });
+          });
+
+          cy.findByRole('tab', { name: 'My Reports' }).click();
+
+          cy.get('table').within(() => {
+            cy.findByText('My Bounce Report')
+              .closest('tr')
+              .within(() => {
+                cy.findAllByText('Open Menu').click({ force: true });
+                cy.findAllByText('Pin to Dashboard').should('be.visible');
+                cy.findAllByText('Pin to Dashboard').click({ force: true });
+              });
+          });
+        });
+
+        cy.withinModal(() => {
+          cy.get('p').contains('My Bounce Report will be pinned to the Dashboard.');
+          cy.findAllByText('Pin to Dashboard').should('be.visible');
+        });
+
+        cy.stubRequest({
+          method: 'PUT',
+          url: '/api/v1/users/mockuser',
+          fixture: 'users/200.put.update-ui-options.json',
+          requestAlias: 'updateUiOption',
+        });
+
+        cy.findByRole('button', { name: 'Pin to Dashboard' }).click();
+        cy.wait('@updateUiOption');
+
+        cy.withinSnackbar(() => {
+          cy.findAllByText('Successfully pinned My Bounce Report to the Dashboard.').should(
+            'be.visible',
+          );
+        });
+
+        cy.findByRole('button', { name: 'View All Reports' }).click();
+
+        // https://sparkpost.atlassian.net/browse/FE-1284
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(250);
+
+        cy.withinModal(() => {
+          cy.get('table').within(() => {
+            cy.findByText('My Bounce Report')
+              .closest('tr')
+              .within(() => {
+                cy.findByLabelText('pinned-to-dashboard').should('be.visible');
+
+                cy.findByText('Open Menu').click({ force: true });
+                cy.findByText('Pin to Dashboard')
+                  .closest('button')
+                  .should('be.disabled');
+              });
+
+            cy.findByText('My Other Bounce Report')
+              .closest('tr')
+              .within(() => {
+                cy.findAllByText('Open Menu').click({ force: true });
+                cy.findAllByText('Pin to Dashboard').click({ force: true });
+              });
+          });
+        });
+
+        cy.withinModal(() => {
+          cy.get('p').contains(
+            'My Other Bounce Report will now replace My Bounce Report on the Dashboard.',
+          );
+        });
+      });
+
       it('deletes a scheduled report', () => {
         cy.visit(PAGE_URL);
         cy.wait('@getSavedReports');
@@ -344,8 +465,10 @@ if (IS_HIBANA_ENABLED) {
         cy.findByRole('button', { name: 'Schedule Report' }).click();
         cy.withinModal(() => {
           cy.findByText('My Scheduled Report').should('be.visible');
-          //For some reason due to having a tableCollection within a modal this command needed to be repeated to open the actionlist
-          cy.findByRole('button', { name: 'Open Menu' }).click({ force: true });
+          // Wait required due to rendering bug with `TableCollection`
+          // Should be removable once https://sparkpost.atlassian.net/browse/FE-1284 is resolved
+          // eslint-disable-next-line
+          cy.wait(500);
           cy.findByRole('button', { name: 'Open Menu' }).click({ force: true });
 
           cy.findByRole('button', { name: 'Delete' }).click({ force: true });
@@ -363,22 +486,13 @@ if (IS_HIBANA_ENABLED) {
       });
 
       it('deletes a saved report', () => {
-        cy.stubRequest({
-          method: 'DELETE',
-          url: '/api/v1/reports/d50d8475-d4e8-4df0-950f-b142f77df0bf',
-          fixture: 'blank.json',
-          requestAlias: 'deleteReport',
-        });
         cy.visit(PAGE_URL);
         cy.wait('@getSavedReports');
 
         cy.findByLabelText('Report').focus(); // open typeahead
 
         cy.findListBoxByLabelText('Report').within(() => {
-          cy.findAllByRole('option')
-            .eq(0)
-            .should('have.contain', 'My Bounce Report')
-            .click();
+          cy.findByRole('option', { name: /My Bounce Report/g }).click();
         });
 
         cy.stubRequest({
@@ -388,27 +502,50 @@ if (IS_HIBANA_ENABLED) {
         });
 
         cy.findByRole('button', { name: 'View All Reports' }).click();
-        //Avoid flakey test by waiting for modal to render. Might be some other issue as well.
-        /* eslint-disable-next-line */
-        cy.wait(500);
-        cy.findByText('Open Menu').click({ force: true }); // The content is visually hidden (intentionally!), so `force: true` is needed here
-        cy.findByText('Delete').click({ force: true });
+
+        // https://sparkpost.atlassian.net/browse/FE-1284
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(250);
+
+        cy.withinModal(() => {
+          cy.get('table').within(() => {
+            cy.findByText('My Bounce Report')
+              .closest('tr')
+              .within(() => {
+                cy.findByRole('button', { name: 'Open Menu' }).click({ force: true }); // The content is visually hidden (intentionally!), so `force: true` is needed here
+                cy.findByRole('button', { name: 'Delete' }).click({ force: true });
+              });
+          });
+        });
+
+        // https://sparkpost.atlassian.net/browse/FE-1284
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(250);
+
+        cy.stubRequest({
+          method: 'DELETE',
+          url: '/api/v1/reports/d50d8475-d4e8-4df0-950f-b142f77df0bf',
+          fixture: 'blank.json',
+          requestAlias: 'deleteReport',
+        });
 
         cy.withinModal(() => {
           cy.findByText('Delete').click({ force: true });
         });
+
         cy.wait('@deleteReport');
         cy.wait('@newGetSavedReports');
+
+        cy.withinSnackbar(() => {
+          cy.findByText('Successfully deleted My Bounce Report.').should('be.visible');
+        });
 
         cy.findByLabelText('Report').focus(); // open typeahead
 
         cy.findByLabelText('Report').should('not.have.value', 'My Bounce Report');
         cy.findListBoxByLabelText('Report').within(() => {
-          cy.findAllByRole('option')
-            .eq(0)
-            .should('not.contain', 'My Bounce Report');
+          cy.findByRole('option', { name: /My Bounce Report/g }).should('not.exist');
         });
-        cy.findByText('You have successfully deleted My Bounce Report').should('be.visible');
       });
 
       it('disabled creating new reports when limit is reached', () => {
@@ -423,5 +560,13 @@ if (IS_HIBANA_ENABLED) {
         cy.findByDataId('reports-limit-tooltip-icon').should('exist');
       });
     });
+  });
+}
+
+function stubAccountsReq({ fixture = 'account/200.get.has-dashboard-v2.json' } = {}) {
+  cy.stubRequest({
+    url: '/api/v1/account**',
+    fixture: fixture,
+    requestAlias: 'accountReq',
   });
 }

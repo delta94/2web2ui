@@ -30,7 +30,7 @@ if (!IS_HIBANA_ENABLED) {
 
       cy.visit(PAGE_URL);
 
-      cy.findByDataId('hibana-controls').should('not.be.visible');
+      cy.findByDataId('hibana-controls').should('not.exist');
     });
 
     it('navigates the user to the profile page and dismisses the banner when clicking "Turn it on to see our new look!"', () => {
@@ -60,7 +60,7 @@ if (!IS_HIBANA_ENABLED) {
           });
         });
 
-        cy.findByDataId('hibana-controls').should('not.be.visible');
+        cy.findByDataId('hibana-controls').should('not.exist');
         cy.url().should('include', '/account/profile');
         cy.title().should('include', 'Profile');
       }
@@ -92,7 +92,7 @@ if (!IS_HIBANA_ENABLED) {
             });
           });
 
-          cy.findByDataId('hibana-controls').should('not.be.visible');
+          cy.findByDataId('hibana-controls').should('not.exist');
         });
       }
     });

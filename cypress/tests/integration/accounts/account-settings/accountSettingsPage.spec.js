@@ -159,7 +159,7 @@ describe('Account Settings Page', () => {
         });
         cy.findByText('SCIM token deleted').should('be.visible');
         cy.findByText('No token generated').should('be.visible');
-        cy.findByText('Delete token').should('not.be.visible');
+        cy.findByText('Delete token').should('not.exist');
       });
       it('modal close when any on the api errors out', () => {
         cy.stubRequest({
@@ -186,7 +186,7 @@ describe('Account Settings Page', () => {
         });
         cy.findByText(
           'The token will be immediately and permanently removed. This cannot be undone.',
-        ).should('not.be.visible');
+        ).should('not.exist');
       });
     });
   });

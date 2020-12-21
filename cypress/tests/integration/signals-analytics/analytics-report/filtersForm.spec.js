@@ -34,8 +34,8 @@ if (IS_HIBANA_ENABLED) {
       cy.findByText('hello.com').should('be.visible');
       cy.findByText('world.org').should('be.visible');
       cy.findByLabelText(COMPARE_BY_LABEL).select('does not contain');
-      cy.findByText('hello.com').should('not.be.visible');
-      cy.findByText('world.org').should('not.be.visible');
+      cy.findByText('hello.com').should('not.exist');
+      cy.findByText('world.org').should('not.exist');
     });
 
     it('validates the user\'s entry performing a "contains" or "does not contain" filter', () => {
@@ -52,14 +52,14 @@ if (IS_HIBANA_ENABLED) {
       cy.findByLabelText('Sending Domain').type('e');
       cy.findByText('3 or more characters required').should('be.visible');
       cy.findByLabelText('Sending Domain').type('l');
-      cy.findByText('3 or more characters required').should('not.be.visible');
+      cy.findByText('3 or more characters required').should('not.exist');
       cy.findByLabelText('Sending Domain').clear();
 
       // The error is removed when the user deletes all of their entry
       cy.findByLabelText('Sending Domain').type('he ');
       cy.findByText('3 or more characters required').should('be.visible');
       cy.findByLabelText('Sending Domain').clear();
-      cy.findByText('3 or more characters required').should('not.be.visible');
+      cy.findByText('3 or more characters required').should('not.exist');
 
       // The error also renders on blur when the user's entry violates the requirements
       cy.findByLabelText('Sending Domain')
@@ -67,7 +67,7 @@ if (IS_HIBANA_ENABLED) {
         .blur();
       cy.findByText('3 or more characters required').should('be.visible');
       cy.findByLabelText('Sending Domain').type('l');
-      cy.findByText('3 or more characters required').should('not.be.visible');
+      cy.findByText('3 or more characters required').should('not.exist');
       cy.findByLabelText('Sending Domain')
         .type('lo.net')
         .blur();
@@ -104,7 +104,7 @@ if (IS_HIBANA_ENABLED) {
         cy.findByRole('button', { name: 'Add And Filter' }).should('be.visible');
         cy.findAllByText('And').should('have.length', 4); // Two "And" buttons, comparison text, and some screen reader only content
         cy.findByRole('radio', { name: 'Or' }).check({ force: true });
-        cy.findByRole('button', { name: 'Add And Filter' }).should('not.be.visible');
+        cy.findByRole('button', { name: 'Add And Filter' }).should('not.exist');
         cy.findByRole('button', { name: 'Add Or Filter' }).click();
         cy.findAllByText('Or').should('have.length', 2); // The button and the comparison text
       });
@@ -156,7 +156,7 @@ if (IS_HIBANA_ENABLED) {
         .eq(0)
         .click();
       cy.findAllByLabelText(TYPE_LABEL).should('have.length', 1);
-      cy.findByLabelText(COMPARE_BY_LABEL).should('not.be.visible');
+      cy.findByLabelText(COMPARE_BY_LABEL).should('not.exist');
       cy.findByDataId('grouping').should('have.length', 1);
     });
 
@@ -176,23 +176,23 @@ if (IS_HIBANA_ENABLED) {
         cy.findAllByRole('button', { name: 'Remove' })
           .eq(0)
           .click();
-        cy.findByText('tag-number-one').should('not.be.visible');
+        cy.findByText('tag-number-one').should('not.exist');
         cy.findByText('tag-number-two').should('be.visible');
         cy.findByText('tag-number-three').should('be.visible');
 
         cy.findAllByRole('button', { name: 'Remove' })
           .eq(0)
           .click();
-        cy.findByText('tag-number-two').should('not.be.visible');
-        cy.findByText('tag-number-two').should('not.be.visible');
+        cy.findByText('tag-number-two').should('not.exist');
+        cy.findByText('tag-number-two').should('not.exist');
         cy.findByText('tag-number-three').should('be.visible');
 
         cy.findAllByRole('button', { name: 'Remove' })
           .eq(0)
           .click();
-        cy.findByText('tag-number-two').should('not.be.visible');
-        cy.findByText('tag-number-two').should('not.be.visible');
-        cy.findByText('tag-number-three').should('not.be.visible');
+        cy.findByText('tag-number-two').should('not.exist');
+        cy.findByText('tag-number-two').should('not.exist');
+        cy.findByText('tag-number-three').should('not.exist');
       });
     });
 
@@ -247,11 +247,11 @@ if (IS_HIBANA_ENABLED) {
         cy.findByRole('option', { name: 'Fake Subaccount 1 (ID 101)' }).click();
 
         cy.findByLabelText('Subaccount').type('Fake Subaccount');
-        cy.findByRole('option', { name: 'Fake Subaccount 1 (ID 101)' }).should('not.be.visible');
+        cy.findByRole('option', { name: 'Fake Subaccount 1 (ID 101)' }).should('not.exist');
         cy.findByRole('option', { name: 'Fake Subaccount 2 (ID 102)' }).click();
 
         cy.findByLabelText('Subaccount').type('Fake Subaccount');
-        cy.findByRole('option', { name: 'Fake Subaccount 2 (ID 102)' }).should('not.be.visible');
+        cy.findByRole('option', { name: 'Fake Subaccount 2 (ID 102)' }).should('not.exist');
         cy.findByRole('option', { name: 'Fake Subaccount 3 (ID 103)' }).click();
 
         cy.findByText('Fake Subaccount 1 (ID 101)').should('be.visible');
@@ -270,9 +270,9 @@ if (IS_HIBANA_ENABLED) {
           .should('have.length', 1)
           .should('be.visible')
           .should('have.value', null);
-        cy.findAllByLabelText(COMPARE_BY_LABEL).should('not.be.visible');
-        cy.findAllByRole('button', { name: 'Add And Filter' }).should('not.be.visible');
-        cy.findAllByRole('button', { name: 'Add Or Filter' }).should('not.be.visible');
+        cy.findAllByLabelText(COMPARE_BY_LABEL).should('not.exist');
+        cy.findAllByRole('button', { name: 'Add And Filter' }).should('not.exist');
+        cy.findAllByRole('button', { name: 'Add Or Filter' }).should('not.exist');
         cy.findByDataId('grouping').should('have.length', 1);
         cy.findAllByRole('group', { name: 'Filter By' }).should('have.length', 1);
       });
@@ -414,7 +414,7 @@ function navigateToForm() {
 }
 
 function fillOutForm() {
-  cy.findByLabelText(COMPARE_BY_LABEL).should('not.be.visible');
+  cy.findByLabelText(COMPARE_BY_LABEL).should('not.exist');
   cy.findByLabelText(TYPE_LABEL).select('Recipient Domain');
   cy.findByLabelText('Recipient Domain').should('be.visible');
   cy.findByLabelText(COMPARE_BY_LABEL)

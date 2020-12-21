@@ -169,7 +169,7 @@ if (IS_HIBANA_ENABLED) {
           cy.verifyLink({ content: 'Events', href: '/reports/message-events' });
           cy.verifyLink({ content: 'Content', href: '/templates' });
           cy.verifyLink({ content: 'Recipients', href: '/lists/recipient-lists' });
-          cy.findByText('Configuration').should('not.be.visible');
+          cy.findByText('Configuration').should('not.exist');
         });
 
         cy.get(desktopNavSelector).within(() => {
@@ -207,7 +207,7 @@ if (IS_HIBANA_ENABLED) {
         cy.url().should('include', '/lists/recipient-list');
 
         cy.get(secondaryNavSelector).within(() => {
-          cy.findByText('Recipient Validation').should('not.be.visible');
+          cy.findByText('Recipient Validation').should('not.exist');
           cy.verifyLink({ content: 'Recipient Lists', href: '/lists/recipient-lists' });
           cy.verifyLink({ content: 'Suppressions', href: '/lists/suppressions' });
         });
@@ -220,9 +220,9 @@ if (IS_HIBANA_ENABLED) {
           cy.verifyLink({ content: 'Signals Analytics', href: '/signals/analytics' });
           cy.verifyLink({ content: 'Events', href: '/reports/message-events' });
           cy.verifyLink({ content: 'Content', href: '/templates' });
-          cy.findByText('Recipients').should('not.be.visible');
-          cy.findByText('Inbox Placement').should('not.be.visible');
-          cy.findByText('Configuration').should('not.be.visible');
+          cy.findByText('Recipients').should('not.exist');
+          cy.findByText('Inbox Placement').should('not.exist');
+          cy.findByText('Configuration').should('not.exist');
         });
 
         cy.get(desktopNavSelector).within(() => {
@@ -249,7 +249,7 @@ if (IS_HIBANA_ENABLED) {
 
         cy.get(secondaryNavSelector).within(() => {
           cy.verifyLink({ content: 'Templates', href: '/templates' });
-          cy.findByText('A/B Testing').should('not.be.visible');
+          cy.findByText('A/B Testing').should('not.exist');
           cy.verifyLink({ content: 'Snippets', href: '/snippets' });
         });
       });
@@ -301,7 +301,7 @@ if (IS_HIBANA_ENABLED) {
 
         cy.url().should('include', '/reports/message-events');
 
-        cy.get(secondaryNavSelector).should('not.be.visible');
+        cy.get(secondaryNavSelector).should('not.exist');
       });
 
       it('routes to the templates page and renders relevant subnav links when "Content" is active', () => {
@@ -382,7 +382,7 @@ if (IS_HIBANA_ENABLED) {
 
         cy.url().should('include', '/inbox-placement');
 
-        cy.get(secondaryNavSelector).should('not.be.visible');
+        cy.get(secondaryNavSelector).should('not.exist');
       });
 
       it('renders the subnav and routes to the sending domains when "Configuration" is active', () => {
@@ -620,7 +620,7 @@ if (IS_HIBANA_ENABLED) {
           cy.findByText('Profile').click();
         });
 
-        cy.get(accountActionlistSelector).should('not.be.visible');
+        cy.get(accountActionlistSelector).should('not.exist');
       });
 
       it('closes the action list when a nav item that triggers an action is clicked', () => {
@@ -631,7 +631,7 @@ if (IS_HIBANA_ENABLED) {
           cy.findByText('Help').click();
         });
 
-        cy.get(accountActionlistSelector).should('not.be.visible');
+        cy.get(accountActionlistSelector).should('not.exist');
       });
 
       it('renders with relevant items as a templates user', () => {

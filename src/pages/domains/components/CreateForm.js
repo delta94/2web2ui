@@ -115,7 +115,7 @@ export default function CreateForm() {
           </Layout.Section>
 
           <Layout.Section>
-            <Panel>
+            <Panel mb="0">
               <Panel.Section>
                 <RadioCard.Group label="Primary Use for Domain">
                   <RadioCard
@@ -175,7 +175,7 @@ export default function CreateForm() {
           </Layout.Section>
 
           <Layout.Section>
-            <Panel>
+            <Panel mb="0">
               <Panel.Section>
                 <TextField
                   ref={register({ required: 'A valid domain is required.' })}

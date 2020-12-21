@@ -254,14 +254,14 @@ if (!IS_HIBANA_ENABLED) {
         href: '/alerts',
       });
       cy.findByText('Recipients').click();
-      cy.findByText('Configuration').should('not.be.visible');
+      cy.findByText('Configuration').should('not.exist');
     });
 
     it('renders relevant links in the account menu', () => {
       openAccountMenu();
 
       cy.get(accountDropdownListSelector).within(() => {
-        cy.findByText('Account Settings').should('not.be.visible');
+        cy.findByText('Account Settings').should('not.exist');
 
         cy.verifyLink({
           content: 'Profile',
@@ -309,7 +309,7 @@ if (!IS_HIBANA_ENABLED) {
           href: '/snippets',
         });
         cy.findByText('Content').click();
-        cy.findByText('Recipients').should('not.be.visible');
+        cy.findByText('Recipients').should('not.exist');
         cy.verifyLink({
           content: 'Alerts',
           href: '/alerts',
@@ -334,8 +334,8 @@ if (!IS_HIBANA_ENABLED) {
           href: '/logout',
         });
 
-        cy.findByText('Billing').should('not.be.visible');
-        cy.findByText('Manage Users').should('not.be.visible');
+        cy.findByText('Billing').should('not.exist');
+        cy.findByText('Manage Users').should('not.exist');
         cy.findByText('Get Help').should('be.visible');
       });
     });
@@ -412,7 +412,7 @@ if (!IS_HIBANA_ENABLED) {
 
         cy.findByText('Content').click();
 
-        cy.findByText('Recipients').should('not.be.visible');
+        cy.findByText('Recipients').should('not.exist');
         cy.verifyLink({
           content: 'Alerts',
           href: '/alerts',
@@ -437,8 +437,8 @@ if (!IS_HIBANA_ENABLED) {
           href: '/logout',
         });
 
-        cy.findByText('Billing').should('not.be.visible');
-        cy.findByText('Manage Users').should('not.be.visible');
+        cy.findByText('Billing').should('not.exist');
+        cy.findByText('Manage Users').should('not.exist');
         cy.findByText('Get Help').should('be.visible');
       });
     });
@@ -474,9 +474,9 @@ if (!IS_HIBANA_ENABLED) {
         });
 
         cy.findByText('Content').click();
-        cy.findByText('Recipients').should('not.be.visible');
-        cy.findByText('Alerts').should('not.be.visible');
-        cy.findByText('Configuration').should('not.be.visible');
+        cy.findByText('Recipients').should('not.exist');
+        cy.findByText('Alerts').should('not.exist');
+        cy.findByText('Configuration').should('not.exist');
       });
     });
 
@@ -514,7 +514,7 @@ if (!IS_HIBANA_ENABLED) {
 
       cy.visit(PAGE_URL);
 
-      cy.findByText('Blocklist').should('not.be.visible');
+      cy.findByText('Blocklist').should('not.exist');
     });
 
     it('renders the "Inbox Placement" feature when the user\'s account has the feature enabled', () => {
@@ -536,7 +536,7 @@ if (!IS_HIBANA_ENABLED) {
 
       cy.visit(PAGE_URL);
 
-      cy.findByText('Inbox Placement').should('not.be.visible');
+      cy.findByText('Inbox Placement').should('not.exist');
     });
   });
 

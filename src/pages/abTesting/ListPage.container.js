@@ -18,11 +18,11 @@ function ListPageContainer(props) {
     listAbTests();
   }, [listAbTests]);
 
-  const component = useEmptyState(
-    abTests.length === 0 && props.isEmptyStateEnabled && isHibanaEnabled,
-    ListPage,
-    AbTestEmptyState,
-  )({ ...props, isHibanaEnabled });
+  const component = useEmptyState({
+    isEmpty: abTests.length === 0 && props.isEmptyStateEnabled && isHibanaEnabled,
+    pageComponent: ListPage,
+    emptyComponent: AbTestEmptyState,
+  })({ ...props, isHibanaEnabled });
 
   if (loading) {
     return <Loading />;

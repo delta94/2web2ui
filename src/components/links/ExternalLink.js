@@ -14,15 +14,15 @@ const ExternalLink = ({
   component: _component, // ignore, won't apply external props correctly if set
   showIcon = true,
   icon: Icon = OpenInNew,
+  iconSize = 13,
+  iconMargin = '-0.1em 0 0 0',
   ...props
 }) => {
   const isButton = Component.name === 'Button';
-  let iconSize = 13;
-  let iconMargin = '-0.1em 0 0 0';
 
-  if (isButton) {
+  if (isButton && Number(iconSize) === 13 && iconMargin === '-0.1em 0 0 0') {
     iconSize = 18;
-    iconMargin = '0 0 0 4px';
+    iconMargin = '0 0 0 .25em';
   }
 
   return (

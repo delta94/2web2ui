@@ -89,7 +89,7 @@ export default function DomainStatusSection({ domain, id, isTracking }) {
           </SubduedLink>
         </Layout.Section>
         <Layout.Section>
-          <Panel>
+          <Panel mb="0">
             <Panel.Section>
               <Columns space="100">
                 <Column>
@@ -170,8 +170,7 @@ export default function DomainStatusSection({ domain, id, isTracking }) {
           {resolvedStatus === 'unverified' && (
             <SubduedText fontSize="200">
               This domain failed authentication. It can take 24 to 48 hours for the DNS record to
-              propogate. For other reasons why this ay have happenedchek out our domain
-              authentication documentation.
+              propogate.
             </SubduedText>
           )}
           {resolvedStatus === 'unverified' && (
@@ -204,7 +203,7 @@ export default function DomainStatusSection({ domain, id, isTracking }) {
         </Stack>
       </Layout.Section>
       <Layout.Section>
-        <Panel>
+        <Panel mb="0">
           <Panel.Section>
             <Columns space="100">
               <Column>

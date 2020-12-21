@@ -35,14 +35,13 @@ export default function DeleteDomainSection({ domain, isTracking, id, history })
         <Layout.SectionTitle as="h2">Delete Domain</Layout.SectionTitle>
       </Layout.Section>
       <Layout.Section>
-        <Panel accent="red">
+        <Panel accent="red" mb="0">
           <Panel.Section>
             Deleting a domain is permanent and cannot be undone.{' '}
             <Text as="span" fontWeight="semibold">
               Deletion of the domain affects any transmission that uses this domain.{' '}
             </Text>
           </Panel.Section>
-
           <Panel.Section>
             <Button color="red" outlineBorder size="default" onClick={() => openModal()}>
               Delete Domain

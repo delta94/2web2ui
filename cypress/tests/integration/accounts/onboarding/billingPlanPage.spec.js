@@ -55,14 +55,14 @@ describe('The billing plan page', () => {
       cy.get('[data-id="plan-picker-trigger"]').click();
       cy.findByText('Full-featured developer account').click();
 
-      cy.findByLabelText('Promo Code').should('not.be.visible');
-      cy.findByLabelText('Credit Card Number').should('not.be.visible');
-      cy.findByLabelText('Cardholder Name').should('not.be.visible');
-      cy.findByLabelText('Expiration Date').should('not.be.visible');
-      cy.findByLabelText('Security Code').should('not.be.visible');
-      cy.findByLabelText('Country').should('not.be.visible');
-      cy.findByLabelText('State').should('not.be.visible');
-      cy.findByLabelText('Zip Code').should('not.be.visible');
+      cy.findByLabelText('Promo Code').should('not.exist');
+      cy.findByLabelText('Credit Card Number').should('not.exist');
+      cy.findByLabelText('Cardholder Name').should('not.exist');
+      cy.findByLabelText('Expiration Date').should('not.exist');
+      cy.findByLabelText('Security Code').should('not.exist');
+      cy.findByLabelText('Country').should('not.exist');
+      cy.findByLabelText('State').should('not.exist');
+      cy.findByLabelText('Zip Code').should('not.exist');
     });
 
     it('get started with a test account', () => {
@@ -94,7 +94,7 @@ describe('The billing plan page', () => {
       cy.findByLabelText('Country').select('United States');
       cy.findByLabelText('State').should('be.visible');
       cy.findByLabelText('Country').select('Albania');
-      cy.findByLabelText('State').should('not.be.visible');
+      cy.findByLabelText('State').should('not.exist');
     });
 
     it('has a credit card field which provides user feedback when the entered value is not an accepted format', () => {
@@ -127,8 +127,8 @@ describe('The billing plan page', () => {
 
       cy.visit('/onboarding/plan'); // Revisit page to override existing stub in `beforeEach()`
 
-      cy.findByLabelText('First Name').should('not.be.visible');
-      cy.findByLabelText('Last Name').should('not.be.visible');
+      cy.findByLabelText('First Name').should('not.exist');
+      cy.findByLabelText('Last Name').should('not.exist');
     });
 
     it('shows "Required" errors on all required fields when the user attempts to submit the form before completing relevant data', () => {
@@ -279,9 +279,9 @@ describe('The billing plan page', () => {
         cy.findByText('Apply').click();
         cy.findByText('$37.50').should('be.visible'); // Half of the starting value of $75.00 - determined by the fixture `discount_percentage` value
         cy.findByLabelText('Promo Code').should('be.disabled');
-        cy.findByText('Apply').should('not.be.visible');
+        cy.findByText('Apply').should('not.exist');
         cy.findByText('Remove').click();
-        cy.findByText('$37.50').should('not.be.visible'); // Half of the starting value of $75.00 - determined by the fixture `discount_percentage` value
+        cy.findByText('$37.50').should('not.exist'); // Half of the starting value of $75.00 - determined by the fixture `discount_percentage` value
       });
     });
   });

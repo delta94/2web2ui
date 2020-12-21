@@ -89,8 +89,7 @@ describe('Summary Report page', () => {
             .closest('a')
             .click({ force: true });
         });
-        cy.findByText('Campaign').should('be.visible');
-        cy.findByText('sparkpost-test').should('be.visible');
+        cy.findByText('Campaign: sparkpost-test').should('be.visible');
       });
     });
 
@@ -112,7 +111,7 @@ describe('Summary Report page', () => {
       });
 
       cy.findByDataId('summary-chart').within(() => {
-        cy.findByText('Accepted').should('not.be.visible');
+        cy.findByText('Accepted').should('not.exist');
         cy.findByText('Injected').should('be.visible');
       });
     });
