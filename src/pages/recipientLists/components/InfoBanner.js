@@ -4,6 +4,7 @@ import { Banner, Picture } from 'src/components/matchbox';
 import MailWebp from '@sparkpost/matchbox-media/images/Sending-Mail.webp';
 import { updateUserUIOptions } from 'src/actions/currentUser';
 import { isUserUiOptionSet } from 'src/helpers/conditions/user';
+import { LINKS } from 'src/constants';
 
 export default function InfoBanner() {
   const [dismiss, setDismiss] = useState(
@@ -32,12 +33,7 @@ export default function InfoBanner() {
         When sending email to multiple recipients, it’s best to put them in a recipient list. This
         is particularly true when sending multiple emails to the same recipients.
       </p>
-      <Banner.Action
-        color="blue"
-        to="https://www.sparkpost.com/docs/user-guide/uploading-recipient-list/"
-        external
-        variant="outline"
-      >
+      <Banner.Action color="blue" to={LINKS.RECIP_DOCS} external variant="outline">
         Recipient Lists Documentation
       </Banner.Action>
       <Banner.Media>

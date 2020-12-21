@@ -4,6 +4,7 @@ import MailJpg from '@sparkpost/matchbox-media/images/Sending-Mail.jpg';
 import MailWebp from '@sparkpost/matchbox-media/images/Sending-Mail.webp';
 import { Page } from 'src/components/matchbox';
 import { PageLink } from 'src/components/links';
+import { LINKS } from 'src/constants';
 
 export default function RecipientListEmptyState() {
   return (
@@ -23,11 +24,7 @@ export default function RecipientListEmptyState() {
         <EmptyState.Action component={PageLink} to="/lists/recipient-lists/create">
           Create Recipient List
         </EmptyState.Action>
-        <EmptyState.Action
-          variant="outline"
-          to="https://www.sparkpost.com/docs/user-guide/uploading-recipient-list/"
-          external
-        >
+        <EmptyState.Action variant="outline" to={LINKS.RECIP_DOCS} external>
           Recipient Lists Documentation
         </EmptyState.Action>
       </EmptyState>
