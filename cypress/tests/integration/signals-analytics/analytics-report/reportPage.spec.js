@@ -62,7 +62,7 @@ if (IS_HIBANA_ENABLED) {
         .should('be.visible')
         .click();
       cy.wait(['@getTimeSeries']);
-      cy.findByText('Unable to load report').should('not.be.visible');
+      cy.findByText('Unable to load report').should('not.exist');
     });
 
     it('renders the initial page based on query params', () => {
@@ -132,7 +132,7 @@ if (IS_HIBANA_ENABLED) {
       // 6. Verify that that the only metric rendered is "Admin Bounce Rate"
       cy.withinMainContent(() => {
         uncheckedMetrics.forEach(metric => {
-          cy.findAllByText(metric.name).should('not.be.visible');
+          cy.findAllByText(metric.name).should('not.exist');
           cy.url().should('not.include', `=${metric.queryParam}`);
         });
       });
@@ -166,7 +166,7 @@ if (IS_HIBANA_ENABLED) {
           cy.wrap(xhr.url).should('not.include', metric.queryParam);
         });
 
-        cy.findByText(tagContent).should('not.be.visible');
+        cy.findByText(tagContent).should('not.exist');
         cy.url().should('not.include', `=${metric.queryParam}`);
       }
 
@@ -238,13 +238,13 @@ if (IS_HIBANA_ENABLED) {
             cy.findByText('world').should('be.visible');
             getFirstRemoveButton().click();
             cy.findByText('Campaign').should('be.visible');
-            cy.findByText('hello').should('not.be.visible');
+            cy.findByText('hello').should('not.exist');
             cy.findByText('world').should('be.visible');
             getFirstRemoveButton().click();
             // The filter label no longer renders when all filter values are removed
-            cy.findByText('Campaign').should('not.be.visible');
-            cy.findByText('hello').should('not.be.visible');
-            cy.findByText('world').should('not.be.visible');
+            cy.findByText('Campaign').should('not.exist');
+            cy.findByText('hello').should('not.exist');
+            cy.findByText('world').should('not.exist');
 
             // Remove remaining filters in the group
             getFirstRemoveButton().click();
@@ -265,14 +265,14 @@ if (IS_HIBANA_ENABLED) {
       });
 
       // No tags render when no filters are applied
-      getFilterTags().should('not.be.visible');
+      getFilterTags().should('not.exist');
       cy.findByRole('heading', { name: 'Filters' }).should('be.visible');
       cy.findByRole('button', { name: 'Add Filters' }).click();
 
       // Verify the filters form state was reset as well
       cy.withinDrawer(() => {
         cy.findByLabelText('Type').should('be.visible');
-        cy.findByLabelText('Compare By').should('not.be.visible');
+        cy.findByLabelText('Compare By').should('not.exist');
       });
     });
 
@@ -286,7 +286,7 @@ if (IS_HIBANA_ENABLED) {
         cy.findByText('Close').click({ force: true });
       });
 
-      cy.findByLabelText('Type').should('not.be.visible');
+      cy.findByLabelText('Type').should('not.exist');
     });
   });
 }

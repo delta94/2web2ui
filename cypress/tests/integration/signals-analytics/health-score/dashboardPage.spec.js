@@ -288,7 +288,7 @@ describe('The health score dashboard page', () => {
       });
 
       it('re-requests data when filtering by breakdown and renders a search field', () => {
-        cy.findByLabelText('Search by Breakdown').should('not.be.visible');
+        cy.findByLabelText('Search by Breakdown').should('not.exist');
 
         cy.findByLabelText('Breakdown').select('By Campaign');
         cy.wait('@nextRequest');

@@ -10,52 +10,35 @@ describe('Billing Page', () => {
     cy.stubRequest({
       url: BILLING_API_BASE_URL,
       fixture: 'billing/200.get.json',
-      fixtureAlias: 'billingGet',
     });
     cy.stubRequest({
       url: `${BILLING_API_BASE_URL}/plans`,
       fixture: 'billing/plans/200.get.json',
-      fixtureAlias: 'plansGet',
+      requestAlias: 'plansGet',
     });
     cy.stubRequest({
       url: `${BILLING_API_BASE_URL}/bundles`,
       fixture: 'billing/bundles/200.get.json',
-      fixtureAlias: 'bundlesGet',
+      requestAlias: 'bundlesGet',
     });
     cy.stubRequest({
       url: '/api/v1/sending-ips',
       fixture: 'sending-ips/200.get.json',
-      fixtureAlias: 'sendingipsGet',
     });
 
     cy.stubRequest({
       url: `${BILLING_API_BASE_URL}/invoices`,
       fixture: 'billing/invoices/200.get.json',
-      fixtureAlias: 'invoicesGet',
     });
 
     cy.stubRequest({
       url: '/api/v1/usage',
       fixture: 'usage/200.get.json',
-      fixtureAlias: 'usageGet',
-    });
-
-    cy.stubRequest({
-      url: `${BILLING_API_BASE_URL}/bundles`,
-      fixture: 'billing/bundles/200.get.json',
-      fixtureAlias: 'bundlesGet',
-    });
-
-    cy.stubRequest({
-      url: `${BILLING_API_BASE_URL}/plans`,
-      fixture: 'billing/plans/200.get.json',
-      fixtureAlias: 'billingPlansGet',
     });
 
     cy.stubRequest({
       url: `${BILLING_API_BASE_URL}/subscription`,
       fixture: 'billing/subscription/200.get.json',
-      fixtureAlias: 'billingSubscriptionGet',
     });
   });
 
@@ -96,7 +79,7 @@ describe('Billing Page', () => {
     cy.visit(PAGE_URL);
 
     cy.findByText('Pending Plan Change').should('be.visible');
-    cy.findByText('Change Plan').should('not.be.visible');
+    cy.findByText('Change Plan').should('not.exist');
   });
 
   it('renders with a link to the change plan page', () => {
@@ -120,16 +103,24 @@ describe('Billing Page', () => {
 
     cy.visit(PAGE_URL);
 
-    cy.findByText('Dedicated IPs').should('not.be.visible');
+    cy.findByText('Dedicated IPs').should('not.exist');
   });
 
-  it('renders the manually billed transition banner when the user\'s subscription type is not "active", "inactive", or "none"', () => {
+  it.skip('renders the manually billed transition banner when the user\'s subscription type is not "active", "inactive", or "none"', () => {
     cy.stubRequest({
       url: `${BILLING_API_BASE_URL}/subscription`,
       fixture: 'billing/subscription/200.get.manually-billed.json',
+      requestAlias: 'manuallyBilledSubsReq',
+    });
+    cy.stubRequest({
+      url: `${BILLING_API_BASE_URL}/plans`,
+      fixture: 'billing/plans/200.get.json',
+      requestAlias: 'plansGet',
     });
 
     cy.visit(PAGE_URL);
+
+    cy.wait(['@plansGet', '@bundlesGet', '@manuallyBilledSubsReq']);
 
     cy.findByText('Your current 100K Premier plan includes 50,000 emails per month').should(
       'be.visible',
@@ -161,7 +152,7 @@ describe('Billing Page', () => {
     );
     cy.verifyLink({ content: 'visit the billing page', href: '/account/billing' });
     cy.findAllByText('Update Payment Information').should('be.visible');
-    cy.findByText('Plan Overview').should('not.be.visible');
+    cy.findByText('Plan Overview').should('not.exist');
     cy.findByLabelText('Credit Card Number').should('be.visible');
     cy.findByLabelText('Cardholder Name').should('be.visible');
     cy.findByLabelText('Expiration Date').should('be.visible');
@@ -308,7 +299,7 @@ describe('Billing Page', () => {
         cy.withinModal(() => {
           cy.findAllByText('Update Payment Information').should('be.visible');
           cy.findByRole('button', { name: 'Cancel' }).click({ force: true });
-          cy.findAllByText('Update Payment Information').should('not.be.visible');
+          cy.findAllByText('Update Payment Information').should('not.exist');
         });
       });
 
@@ -371,7 +362,7 @@ describe('Billing Page', () => {
         cy.withinSnackbar(() => {
           cy.findByText('Payment Information Updated').should('be.visible');
         });
-        cy.findByLabelText('Credit Card Number').should('not.be.visible'); // The modal should now be closed
+        cy.findByLabelText('Credit Card Number').should('not.exist'); // The modal should now be closed
       });
 
       it('renders an error when the server returns an error when updating payment information', () => {
@@ -507,7 +498,7 @@ describe('Billing Page', () => {
         cy.withinModal(() => {
           cy.findByLabelText('First Name').should('be.visible');
           cy.findByRole('button', { name: 'Cancel' }).click({ force: true });
-          cy.findByLabelText('First Name').should('not.be.visible');
+          cy.findByLabelText('First Name').should('not.exist');
         });
       });
 
@@ -567,7 +558,7 @@ describe('Billing Page', () => {
           cy.wrap(request.body).should('have.property', 'zip_code', '123456');
         });
         cy.findByText('Billing Contact Updated').should('be.visible');
-        cy.findByLabelText('First Name').should('not.be.visible'); // The modal is closed'
+        cy.findByLabelText('First Name').should('not.exist'); // The modal is closed'
       });
 
       it('renders an error message when the server returns an error', () => {
@@ -646,7 +637,7 @@ describe('Billing Page', () => {
 
       cy.visit(PAGE_URL);
 
-      cy.findByText('Invoice History').should('not.be.visible');
+      cy.findByText('Invoice History').should('not.exist');
     });
 
     it('does not render the "Invoice History" table when the server returns an error', () => {
@@ -658,7 +649,7 @@ describe('Billing Page', () => {
 
       cy.visit(PAGE_URL);
 
-      cy.findByText('Invoice History').should('not.be.visible');
+      cy.findByText('Invoice History').should('not.exist');
     });
 
     it('has a download button in each table row that requests an individual invoice', () => {

@@ -2,16 +2,21 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { Modal, Tabs } from 'src/components/matchbox';
 import { selectCondition } from 'src/selectors/accessConditionState';
+import { isUserUiOptionSet } from 'src/helpers/conditions/user';
 import { isAccountUiOptionSet } from 'src/helpers/conditions/account';
 import { MyReportsTab, AllReportsTab } from './ReportsListModalTabs';
+
 export function ReportsListModal({
   reports,
   open,
   onClose,
   currentUser,
+  handlePin,
   handleDelete,
   handleEdit,
   isScheduledReportsEnabled,
+  allowDashboardV2,
+  pinnedReportId,
   handleReportChange,
 }) {
   const handleReportChangeAndClose = report => {
@@ -31,15 +36,21 @@ export function ReportsListModal({
       currentUser={currentUser}
       handleReportChangeAndClose={handleReportChangeAndClose}
       isScheduledReportsEnabled={isScheduledReportsEnabled}
+      handlePin={handlePin}
       handleDelete={handleDelete}
       handleEdit={handleEdit}
+      allowDashboardV2={allowDashboardV2}
+      pinnedReport={reports.find(report => report.id === pinnedReportId)}
     />,
     <AllReportsTab
       reports={reports}
       handleReportChangeAndClose={handleReportChangeAndClose}
       isScheduledReportsEnabled={isScheduledReportsEnabled}
+      handlePin={handlePin}
       handleDelete={handleDelete}
       handleEdit={handleEdit}
+      allowDashboardV2={allowDashboardV2}
+      pinnedReport={reports.find(report => report.id === pinnedReportId)}
     />,
   ];
 
@@ -70,6 +81,8 @@ const mapStateToProps = state => {
     isScheduledReportsEnabled: selectCondition(isAccountUiOptionSet('allow_scheduled_reports'))(
       state,
     ),
+    pinnedReportId: selectCondition(isUserUiOptionSet('pinned_report_id'))(state),
+    allowDashboardV2: selectCondition(isAccountUiOptionSet('allow_dashboard_v2'))(state),
   };
 };
 export default connect(mapStateToProps)(ReportsListModal);

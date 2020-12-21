@@ -89,8 +89,8 @@ describe('The events details page', () => {
     cy.findByText('Refresh').click();
 
     cy.findAllByText('fake-recipient@hotmail.com').should('have.length', 0);
-    cy.findByText('fake-sender@yahoo.com').should('not.be.visible');
-    cy.findByText('Mock Subject 1').should('not.be.visible');
+    cy.findByText('fake-sender@yahoo.com').should('not.exist');
+    cy.findByText('Mock Subject 1').should('not.exist');
   });
 
   it('re-renders the event details when clicking on a row within the "Message History" table', () => {
@@ -115,8 +115,8 @@ describe('The events details page', () => {
 
     cy.visit(`${PAGE_BASE_URL}/_noid_/1234`); // When no messsage ID exists, the route looks like this, and renders the alternate view
 
-    cy.findByText('Message History').should('not.be.visible');
-    cy.findByText('Message:').should('not.be.visible'); // No message ID heading is rendered
+    cy.findByText('Message History').should('not.exist');
+    cy.findByText('Message:').should('not.exist'); // No message ID heading is rendered
     cy.findByText('Event: 1234').should('be.visible');
   });
 });

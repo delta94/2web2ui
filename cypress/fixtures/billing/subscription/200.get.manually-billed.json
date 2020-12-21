@@ -2,7 +2,10 @@
   "results": {
     "bill_cycle_day": 5,
     "pending_downgrades": [],
-    "products": [],
+    "products": [{
+      "plan": "100K-premier-0519",
+      "product": "messaging"
+    }],
     "type": "manual"
   }
 }

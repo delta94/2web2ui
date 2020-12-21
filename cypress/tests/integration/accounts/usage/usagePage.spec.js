@@ -76,7 +76,7 @@ describe('The usage page', () => {
       cy.wait(['@usageReq', '@usageHistoryReq', '@subscriptionReq', '@accountReq']);
       cy.findByRole('heading', { name: 'Messaging Usage' }).should('be.visible');
       cy.findByRole('heading', { name: 'Feature Usage' }).should('be.visible');
-      cy.findByRole('heading', { name: 'Recipient Validation Usage' }).should('not.be.visible');
+      cy.findByRole('heading', { name: 'Recipient Validation Usage' }).should('not.exist');
     });
 
     it('does not render recipient validation usage chart when the request fails', () => {
@@ -95,7 +95,7 @@ describe('The usage page', () => {
 
       cy.visit(PAGE_URL);
       cy.wait(['@usageReq', '@usageHistoryReq', '@subscriptionReq', '@accountReq']);
-      cy.findByText('Aug 18th').should('not.be.visible');
+      cy.findByText('Aug 18th').should('not.exist');
     });
 
     it('renders an error when a request fails, allowing the user to retry', () => {
@@ -115,6 +115,7 @@ describe('The usage page', () => {
 
       // Usage request occurs 3 times due to retries
       cy.wait(['@usageReq', '@usageHistoryReq', '@subscriptionReq', '@accountReq']);
+      cy.wait('@usageReq');
       cy.wait('@usageReq');
       cy.wait('@usageReq');
       cy.findByRole('heading', { name: 'An error occurred' }).should('be.visible');

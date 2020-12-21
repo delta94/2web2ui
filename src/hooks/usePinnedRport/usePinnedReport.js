@@ -18,7 +18,7 @@ export default function usePinnedReport(onboarding) {
   const isFirstRender = useRef(true);
 
   useEffect(() => {
-    if (onboarding === 'analytics') {
+    if (onboarding === 'done') {
       isFirstRender.current = false; //used this to prevent triggering the getAggregateTable action on first render since loading state is false in reducer initially
       dispatch(listSubaccounts());
       dispatch(getReports());
@@ -64,7 +64,7 @@ export default function usePinnedReport(onboarding) {
       isReady: true,
       filters: hydrateFilters(options.filters, { subaccounts }),
     });
-
+    pinnedReport.query_string = report.query_string;
     pinnedReport.linkToReportBuilder = report.query_string.includes('report=')
       ? `/signals/analytics?${report.query_string}`
       : `/signals/analytics?${report.query_string}&report=${pinnedReportId}`;
@@ -80,6 +80,7 @@ export default function usePinnedReport(onboarding) {
       filters: hydrateFilters(summaryReportOptions.filters, { subaccounts }),
     });
     pinnedReport.linkToReportBuilder = `/signals/analytics?${summaryReportQueryString}`;
+    pinnedReport.query_string = summaryReportQueryString;
   }
 
   return { pinnedReport };

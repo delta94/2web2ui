@@ -36,7 +36,7 @@ describe('SparkPost request handling via `useSparkPostQuery`', () => {
       cy.wait('@usageReq');
       cy.wait('@usageReq');
       cy.wait('@usageReq');
-      cy.findByText('Something went wrong.').should('not.be.visible');
+      cy.findByText('Something went wrong.').should('not.exist');
     });
 
     it("re-requests the user's account information when an API responds with a 403 status code", () => {

@@ -16,6 +16,7 @@ export const SEGMENT_EVENTS = {
   INVITE_SENT: 'Invite Sent',
   SENDING_DOMAIN_ADDED: 'Sending Domain Added',
   SENDING_DOMAIN_VERIFIED: 'Sending Domain Verified',
+  EMPTY_STATE_LOADED: 'Empty state loaded',
 };
 
 const UX_EVENTS = [SEGMENT_EVENTS.HIBANA_TOGGLED_ON, SEGMENT_EVENTS.HIBANA_TOGGLED_OFF];

@@ -47,8 +47,8 @@ describe('Alerts Page - Edit', () => {
       cy.findByText('Gmail').should('be.visible');
       cy.findByText('Apple').should('be.visible');
       cy.findByLabelText('Facet').select('ip_pool');
-      cy.findByText('Gmail').should('not.be.visible');
-      cy.findByText('Apple').should('not.be.visible');
+      cy.findByText('Gmail').should('not.exist');
+      cy.findByText('Apple').should('not.exist');
     });
   });
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { updateUserUIOptions } from 'src/actions/currentUser';
 import { PRESET_REPORT_CONFIGS } from '../../constants';
 import TypeSelect from 'src/components/typeahead/TypeSelect';
 import { Button, Column, Columns } from 'src/components/matchbox';
@@ -9,7 +10,7 @@ import SaveReportModal from './SaveReportModal';
 import { deleteReport, getReports } from 'src/actions/reports';
 import useModal from 'src/hooks/useModal';
 import ScheduledReportsModal from './ScheduledReportsModal';
-import { DeleteModal } from 'src/components';
+import { ConfirmationModal, DeleteModal } from 'src/components';
 import { showAlert } from 'src/actions/globalAlert';
 import { selectCondition } from 'src/selectors/accessConditionState';
 import { isAccountUiOptionSet } from 'src/helpers/conditions/account';
@@ -22,20 +23,32 @@ export const SavedReportsSection = props => {
     closeModal,
     isModalOpen,
     openModal,
-    meta: { type, focusedReport = {} } = {},
+    meta: { type, focusedReport = {}, previouslyPinnedReport = {} } = {},
   } = useModal();
 
   const reports = props.reports.map(report => ({ ...report, key: report.id }));
   const { actions } = useReportBuilderContext();
   const { refreshReportOptions } = actions;
   const { currentUser, handleReportChange, isScheduledReportsEnabled, selectedReport } = props;
+
+  const onPinConfirm = () => {
+    const { showAlert } = props;
+    props.updateUserUIOptions({ pinned_report_id: focusedReport.id }).then(() => {
+      closeModal();
+      showAlert({
+        type: 'success',
+        message: `Successfully pinned ${focusedReport.name} to the Dashboard.`,
+      });
+    });
+  };
+
   const onDelete = () => {
     const { deleteReport, getReports, showAlert } = props;
     deleteReport(focusedReport.id).then(() => {
       closeModal();
       showAlert({
         type: 'success',
-        message: `You have successfully deleted ${focusedReport.name}`,
+        message: `Successfully deleted ${focusedReport.name}.`,
       });
       // Unsets the report if it's the report that's deleted.
       if (focusedReport.id === selectedReport.id) {
@@ -49,6 +62,14 @@ export const SavedReportsSection = props => {
         handleReportChange(null);
       }
       getReports();
+    });
+  };
+
+  const handlePin = (reportToPin, oldReportThatWasPinned) => {
+    openModal({
+      type: 'confirm-pin',
+      focusedReport: reportToPin,
+      previouslyPinnedReport: oldReportThatWasPinned,
     });
   };
 
@@ -161,17 +182,57 @@ export const SavedReportsSection = props => {
         open={isModalOpen && type === 'view'}
         onClose={closeModal}
         handleDelete={openDeleteModal}
+        handlePin={handlePin}
         handleEdit={openEditModal}
         handleReportChange={handleReportChange}
         reports={reports}
+      />
+      <ConfirmationModal
+        title="Pin to Dashboard"
+        confirmVerb="Pin to Dashboard"
+        content={
+          <>
+            {previouslyPinnedReport &&
+              previouslyPinnedReport.id &&
+              focusedReport.id !== previouslyPinnedReport.id && (
+                <p>
+                  <TranslatableText>
+                    <Bold>{focusedReport.name}</Bold>
+                  </TranslatableText>
+                  <TranslatableText>&nbsp;will now replace&nbsp;</TranslatableText>
+                  <TranslatableText>
+                    <Bold>{previouslyPinnedReport.name}</Bold>
+                  </TranslatableText>
+                  <TranslatableText>&nbsp;on the Dashboard.</TranslatableText>
+                </p>
+              )}
+            {!previouslyPinnedReport.id && (
+              <p>
+                <TranslatableText>
+                  <Bold>{focusedReport.name}</Bold>
+                </TranslatableText>
+                <TranslatableText>&nbsp;will be pinned to the Dashboard.&nbsp;</TranslatableText>
+              </p>
+            )}
+          </>
+        }
+        open={isModalOpen && type === 'confirm-pin'}
+        isPending={props.userOptionsPending}
+        onCancel={closeModal}
+        onConfirm={onPinConfirm}
       />
       <DeleteModal
         title="Are you sure you want to delete your saved report?"
         confirmVerb="Delete"
         content={
           <p>
-            The report <Bold>"{focusedReport.name}"</Bold> will be permanently removed. This cannot
-            be undone.
+            <TranslatableText>The report&nbsp;</TranslatableText>
+            <TranslatableText>
+              <Bold>"{focusedReport.name}"</Bold>
+            </TranslatableText>
+            <TranslatableText>
+              &nbsp;will be permanently removed. This cannot be undone.
+            </TranslatableText>
           </p>
         }
         open={isModalOpen && type === 'delete'}
@@ -188,11 +249,15 @@ const mapStateToProps = state => ({
   reports: state.reports.list,
   status: state.reports.status,
   isDeletePending: state.reports.deletePending,
+  userOptionsPending: state.currentUser.userOptionsPending,
   isScheduledReportsEnabled: selectCondition(isAccountUiOptionSet('allow_scheduled_reports'))(
     state,
   ),
 });
 
-export default connect(mapStateToProps, { getReports, deleteReport, showAlert })(
-  SavedReportsSection,
-);
+export default connect(mapStateToProps, {
+  getReports,
+  updateUserUIOptions,
+  deleteReport,
+  showAlert,
+})(SavedReportsSection);

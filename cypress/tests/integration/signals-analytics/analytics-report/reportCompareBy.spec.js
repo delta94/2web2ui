@@ -29,7 +29,7 @@ if (IS_HIBANA_ENABLED) {
     it('Clicking add filter adds a new field for a filter', () => {
       openCompareByModal();
       cy.withinDrawer(() => {
-        cy.findByRole('button', { name: 'Add Subaccount' }).should('not.be.visible');
+        cy.findByRole('button', { name: 'Add Subaccount' }).should('not.exist');
       });
       fillOutForm();
       cy.withinDrawer(() => {
@@ -72,7 +72,7 @@ if (IS_HIBANA_ENABLED) {
       openCompareByModal();
       fillOutForm();
       cy.withinDrawer(() => {
-        cy.findByRole('button', { name: 'Remove Filter' }).should('not.be.visible');
+        cy.findByRole('button', { name: 'Remove Filter' }).should('not.exist');
         cy.findByRole('button', { name: 'Add Subaccount' }).click();
         cy.findAllByLabelText('Subaccount').should('have.length', 3);
         cy.findByRole('button', { name: 'Remove Filter' })
@@ -129,7 +129,7 @@ if (IS_HIBANA_ENABLED) {
 
       //Comparison added to filters after this point if last one
       cy.findByDataId('report-options').within(() => {
-        cy.findByText('Fake Subaccount 1 (ID 101)').should('not.be.visible');
+        cy.findByText('Fake Subaccount 1 (ID 101)').should('not.exist');
         cy.findByText('Fake Subaccount 3 (ID 103)').should('be.visible');
       });
     });
@@ -154,7 +154,7 @@ if (IS_HIBANA_ENABLED) {
 
       //Comparison added to filters after this point if last one
       cy.findByDataId('report-options').within(() => {
-        cy.findByText('Fake Subaccount 1 (ID 101)').should('not.be.visible');
+        cy.findByText('Fake Subaccount 1 (ID 101)').should('not.exist');
         cy.findByText('Fake Subaccount 3 (ID 103)').should('be.visible');
       });
     });

@@ -79,7 +79,7 @@ describe('The multi recipients data-privacy page', () => {
     cy.findByText('Submit Request').click();
     cy.findAllByText('Upload Error').should('be.visible');
     cy.findByText('Download List').click();
-    cy.findAllByText('Upload Error').should('not.be.visible');
+    cy.findAllByText('Upload Error').should('not.exist');
   });
 
   describe('with subaccounts', () => {

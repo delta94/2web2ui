@@ -37,7 +37,7 @@ function mapStateToProps(state) {
   const canManageApiKeys = hasGrants('api_keys/manage')(state);
   const canManageSendingDomains = hasGrants('sending_domains/manage')(state);
 
-  let onboarding = 'analytics';
+  let onboarding = 'done';
   if (canViewUsage && lastUsageDate === null && (isAnAdmin || isDev)) {
     let addSendingDomainNeeded;
     let verifySendingNeeded;

@@ -105,7 +105,7 @@ describe('Change Billing Plan Page', () => {
     cy.findByText('Change Plan').click();
     cy.findAllByText('Required').should('have.length', 5);
     fillOutCreditCardForm();
-    cy.findAllByText('Required').should('not.be.visible');
+    cy.findAllByText('Required').should('not.exist');
 
     mockCommonHttpCalls();
 
@@ -567,8 +567,8 @@ describe('Change Billing Plan Page', () => {
       cy.findByText('Close').click({ force: true });
     });
 
-    cy.findAllByText('Starter Plans').should('not.be.visible');
-    cy.findAllByText('Premier Plans').should('not.be.visible');
+    cy.findAllByText('Starter Plans').should('not.exist');
+    cy.findAllByText('Premier Plans').should('not.exist');
   });
   it('Upgrades from a starter plan to premier plan, with subaccounts limit_override higher than premier subaccount limit', () => {
     // user is on the test plan
@@ -590,7 +590,7 @@ describe('Change Billing Plan Page', () => {
 
     cy.get('[data-id=select-plan-1M-premier-0519]').click();
 
-    cy.findByText('Your new plan only allows for 15 active subaccounts.').should('not.be.visible');
+    cy.findByText('Your new plan only allows for 15 active subaccounts.').should('not.exist');
 
     cy.stubRequest({
       url: '/api/v1/billing/subscription/bundle',

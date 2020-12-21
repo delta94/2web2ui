@@ -140,7 +140,7 @@ describe('The recipients suppressions list page', () => {
         cy.findByText('Cancel').click();
       });
 
-      cy.findByText(DELETE_MODAL_CONTENT).should('not.be.visible');
+      cy.findByText(DELETE_MODAL_CONTENT).should('not.exist');
 
       // Testing deletion within the modal
       cy.get('table').within(() => {
@@ -227,7 +227,7 @@ describe('The recipients suppressions list page', () => {
           .click({ force: true }),
       );
 
-      cy.findAllByText('Delete').should('not.be.visible');
+      cy.findAllByText('Delete').should('not.exist');
 
       // eslint-disable-next-line
       cy.wait(deleteDelay);
@@ -261,7 +261,7 @@ describe('The recipients suppressions list page', () => {
         cy.findByText('Close').click({ force: true });
       });
 
-      cy.findByText('Suppression Details').should('not.be.visible');
+      cy.findByText('Suppression Details').should('not.exist');
     });
 
     it('sorts alphabetically by "Recipient", "Type", "Source", and "Subaccount"', () => {
@@ -409,7 +409,7 @@ describe('The recipients suppressions list page', () => {
 
       cy.visit(PAGE_URL);
 
-      cy.findByText('Subaccount').should('not.be.visible');
+      cy.findByText('Subaccount').should('not.exist');
     });
 
     describe('table filtering that triggers network requests and updates suppression list results', () => {
@@ -424,7 +424,7 @@ describe('The recipients suppressions list page', () => {
           requestAlias: 'stubbedFilteredRequest',
         });
 
-        cy.findByText('filtered-fake-email@gmail.com').should('not.be.visible');
+        cy.findByText('filtered-fake-email@gmail.com').should('not.exist');
       });
 
       it('re-requests data when filtering by a broad date range', () => {

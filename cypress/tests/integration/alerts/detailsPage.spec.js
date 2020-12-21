@@ -86,7 +86,7 @@ describe('The alerts details pages', () => {
       cy.findByText('Delete').click();
       cy.findByText('Are you sure you want to delete this alert?').should('be.visible');
       cy.findByText('Cancel').click();
-      cy.findByText('Are you sure you want to delete this alert?').should('not.be.visible');
+      cy.findByText('Are you sure you want to delete this alert?').should('not.exist');
 
       cy.get('main').within(() => cy.findByText('Delete').click());
       cy.withinModal(() => {
@@ -127,9 +127,7 @@ describe('The alerts details pages', () => {
       cy.get('tbody tr')
         .eq(rowIndex)
         .within(el => {
-          cy.findByText('Active', { container: el }).should(
-            isActive ? 'be.visible' : 'not.be.visible',
-          );
+          cy.findByText('Active', { container: el }).should(isActive ? 'be.visible' : 'not.exist');
           cy.findByText(subaccount, { container: el }).should('be.visible');
           cy.findByText(score.toString(), { container: el }).should('be.visible');
         });
@@ -143,7 +141,7 @@ describe('The alerts details pages', () => {
 
       cy.visit(PAGE_URL);
 
-      cy.get('table').should('not.be.visible');
+      cy.get('table').should('not.exist');
       cy.findByText('No incidents').should('be.visible');
     });
 
