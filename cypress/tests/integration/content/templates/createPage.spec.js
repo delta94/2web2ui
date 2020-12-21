@@ -1,9 +1,9 @@
-import { TEMPLATE_ID } from './constants';
+import { TEMPLATE_ID, TEMPLATE_NAME } from './constants';
 const PAGE_URL = '/templates/create';
 
 function submitForm() {
-  cy.findByLabelText('Template Name').type('Stubbed Template 1');
-  cy.findByLabelText('Template ID').should('have.value', 'stubbed-template-1');
+  cy.findByLabelText('Template Name').type(TEMPLATE_NAME);
+  cy.findByLabelText('Template ID').should('have.value', TEMPLATE_ID); // The template ID is generated from the user's input in the name field
   cy.findByLabelText('Subject').type('This is a subject');
   cy.findByLabelText('From Email').type('hello@');
   cy.findByText('hello@bounce.uat.sparkspam.com').click();
@@ -20,18 +20,22 @@ describe('The create template page', () => {
     cy.login({ isStubbed: true });
   });
 
-  it('has a relevant page title', () => {
+  it('renders with a relevant title and links', () => {
     cy.visit(PAGE_URL);
 
     cy.title().should('include', 'Create Template');
     cy.findByRole('heading', { name: 'Create Template' }).should('be.visible');
-  });
-
-  it('has a link back to the templates list page', () => {
-    cy.visit(PAGE_URL);
-
     cy.verifyLink({
       content: 'View All Templates',
+      href: '/templates',
+    });
+
+    // Buttons at the bottom of the form
+    cy.findByRole('button', { name: 'Create and View' })
+      .should('be.visible')
+      .should('be.disabled');
+    cy.verifyLink({
+      content: 'Cancel',
       href: '/templates',
     });
   });
@@ -40,6 +44,7 @@ describe('The create template page', () => {
     cy.stubRequest({
       url: '/api/v1/subaccounts',
       fixture: 'subaccounts/200.get.json',
+      requestAlias: 'getSubaccounts',
     });
 
     cy.visit(PAGE_URL);
@@ -50,16 +55,17 @@ describe('The create template page', () => {
     cy.findByLabelText('Assign to Subaccount').check({ force: true });
 
     cy.findByLabelText('Subaccount').focus();
+    cy.wait('@getSubaccounts');
 
-    cy.findByText('Fake Subaccount 1').should('be.visible');
-    cy.findByText('Fake Subaccount 2').should('be.visible');
-    cy.findByText('Fake Subaccount 3')
+    cy.findByRole('option', { name: /Fake Subaccount 1/g }).should('be.visible');
+    cy.findByRole('option', { name: /Fake Subaccount 2/g }).should('be.visible');
+    cy.findByRole('option', { name: /Fake Subaccount 3/g })
       .should('be.visible')
       .click();
 
     cy.findByLabelText('Subaccount').should('have.value', 'Fake Subaccount 3 (103)');
 
-    cy.findByText('Clear').click();
+    cy.findByRole('button', { name: 'Clear' }).click();
 
     cy.findByLabelText('Subaccount').should('have.value', '');
   });
@@ -90,51 +96,41 @@ describe('The create template page', () => {
     cy.findAllByText('Required').should('have.length', 4);
   });
 
-  it('has a disabled "Create and View" button when relevant form fields have not been filled', () => {
-    cy.visit(PAGE_URL);
-
-    cy.findByRole('button', { name: 'Create and View' }).should('be.disabled');
-  });
-
-  it('has a "Cancel" button that links back to the templates list page', () => {
-    cy.visit(PAGE_URL);
-
-    cy.verifyLink({
-      content: 'Cancel',
-      href: '/templates',
-    });
-  });
-
   it('creates a new template and redirects to the edit draft page on creation', () => {
     cy.stubRequest({
       method: 'POST',
       url: '/api/v1/templates',
       fixture: 'templates/200.post.json',
+      requestAlias: 'createTemplate',
     });
 
     cy.stubRequest({
-      url: '/api/v1/templates/stubbed-template-1',
-      fixture: 'templates/stubbed-template-1/200.get.json',
+      url: `/api/v1/templates/${TEMPLATE_ID}`,
+      fixture: `templates/${TEMPLATE_ID}/200.get.json`,
+      requestAlias: 'getTemplate',
     });
 
     cy.stubRequest({
       method: 'POST',
       url: '/api/v1/utils/content-previewer',
       fixture: 'utils/content-previewer/200.post.json',
+      requestAlias: 'getPreview',
     });
 
     cy.stubRequest({
       url: '/api/v1/subaccounts',
       fixture: 'subaccounts/200.get.json',
+      requestAlias: 'getSubaccounts',
     });
 
     cy.visit(PAGE_URL);
 
     submitForm();
-
+    cy.wait('@createTemplate');
+    cy.wait(['@getTemplate', '@getPreview', '@getSubaccounts']);
     cy.findByText('Template Created.').should('be.visible');
     cy.url().should('include', '/edit');
-    cy.findByText('Stubbed Template 1 (DRAFT)').should('be.visible');
+    cy.findByText(`${TEMPLATE_NAME} (DRAFT)`).should('be.visible');
   });
 
   it('renders an error when template creation fails', () => {
@@ -143,12 +139,13 @@ describe('The create template page', () => {
       statusCode: 400,
       url: '/api/v1/templates',
       fixture: 'templates/400.post.json',
+      requestAlias: 'createTemplateFail',
     });
 
     cy.visit(PAGE_URL);
 
     submitForm();
-
+    cy.wait('@createTemplateFail');
     cy.findByText('Something went wrong.').should('be.visible');
     cy.url().should('include', 'create');
   });
@@ -158,7 +155,7 @@ describe('The create template page', () => {
   it('create a new template, redirects to the edit draft page, and allows the user to publish and then duplicate the new template', () => {
     cy.visit(PAGE_URL);
 
-    cy.findByLabelText('Template Name').type('Stubbed Template 1');
+    cy.findByLabelText('Template Name').type(TEMPLATE_NAME);
     cy.findByLabelText('From Email').type('hello@');
     cy.findByRole('option', { name: 'hello@bounce.uat.sparkspam.com' }).click();
     cy.findByLabelText('Subject').type('My Email Subject');
@@ -196,13 +193,13 @@ describe('The create template page', () => {
     cy.stubRequest({
       method: 'PUT',
       url: `/api/v1/templates/${TEMPLATE_ID}`,
-      fixture: 'templates/stubbed-template-1/200.put.json',
+      fixture: `templates/${TEMPLATE_ID}/200.put.json`,
       requestAlias: 'publishTemplate',
     });
 
     cy.stubRequest({
       url: `/api/v1/templates/${TEMPLATE_ID}?draft=false`,
-      fixture: 'templates/stubbed-template-1/200.get.published.json',
+      fixture: `templates/${TEMPLATE_ID}/200.get.published.json`,
       requestAlias: 'getPublishedTemplate',
     });
 
@@ -213,8 +210,10 @@ describe('The create template page', () => {
     cy.findByRole('button', { name: 'Open Menu' }).click();
     cy.findByRole('button', { name: 'Duplicate' }).click();
     cy.withinModal(() => {
-      cy.findByLabelText(/Template Name/g).should('have.value', 'Stubbed Template 1 (COPY)');
+      cy.findByLabelText(/Template Name/g).should('have.value', `${TEMPLATE_NAME} (COPY)`);
       cy.findByLabelText(/Template ID/g).should('have.value', `${TEMPLATE_ID}-copy`);
     });
+
+    // TODO: Flesh this out a bit more to include submitting the form
   });
 });
