@@ -13,9 +13,7 @@ const EditorContext = createContext();
 const chainHooks = (...hooks) => hooks.reduce((acc, hook) => ({ ...acc, ...hook(acc) }), {});
 
 const initFilters = {
-  id: {},
   subaccount: {},
-  version: {},
 };
 
 export const EditorContextProvider = ({

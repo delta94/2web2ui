@@ -1,19 +1,27 @@
 import React from 'react';
 import { mount, shallow } from 'enzyme';
+import { useParams } from 'react-router';
 import usePageFilters from 'src/hooks/usePageFilters';
 import { EditorContextProvider } from '../EditorContext';
 
 jest.mock('src/hooks/usePageFilters');
+// See: https://stackoverflow.com/questions/58883556/mocking-react-router-dom-hooks-using-jest-is-not-working
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
+  useParams: jest.fn(),
+}));
 
 describe('EditorContext', () => {
   describe('EditorContextProvider', () => {
     const subject = ({ render = shallow, value = {}, routerParams = {} } = {}) => {
       usePageFilters.mockReturnValue({
         filters: {
-          id: 'test-template',
           subaccount: '123',
-          ...routerParams,
         },
+      });
+      useParams.mockReturnValue({
+        id: 'test-template',
+        ...routerParams,
       });
 
       return render(
