@@ -17,18 +17,16 @@ export function ChangeReportModal({ reports, open, onClose, currentUser }) {
   };
 
   const onSubmit = val => {
-    if (val.reportId) {
-      dispatch(updateUserUIOptions({ pinned_report_id: val.reportId })).then(() => {
-        dispatch(
-          showAlert({
-            type: 'success',
-            message: 'Pinned Report updated',
-          }),
-        );
-      });
+    dispatch(updateUserUIOptions({ pinned_report_id: val.reportId })).then(() => {
+      dispatch(
+        showAlert({
+          type: 'success',
+          message: 'Pinned Report updated',
+        }),
+      );
+    });
 
-      onClose();
-    }
+    onClose();
   };
 
   const TABS = [
