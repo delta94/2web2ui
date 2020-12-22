@@ -188,6 +188,11 @@ describe('The create template page', () => {
 
     cy.findByRole('button', { name: 'Create and View' }).click();
     cy.wait('@createTemplate');
+    cy.withinSnackbar(() => {
+      cy.findByText('Template Created.').should('be.visible');
+      cy.findByRole('button').click(); // Dismisses the snackbar to prevent UI obstruction
+    });
+
     cy.wait(['@getTemplate', '@getPreview', '@getSubaccounts']);
 
     cy.stubRequest({
