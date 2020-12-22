@@ -158,7 +158,7 @@
     "colors": "^1.4.0",
     "css-loader": "^2.1.0",
     "cssnano": "^4.0.3",
-    "cypress": "^6.1.0",
+    "cypress": "^6.2.0",
     "cypress-file-upload": "^3.5.3",
     "cypress-multi-reporters": "^1.2.4",
     "enzyme": "^3.9.0",
