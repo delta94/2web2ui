@@ -119,18 +119,6 @@ Cypress.Commands.add('stubAuth', ({ hasRefreshToken = false } = {}) => {
     status: 200,
     response: '@sendingDomainsGet',
   }).as('stubbedSendingDomains');
-  cy.route({
-    method: 'POST',
-    url: '/sockjs-node/**/*',
-    status: 200,
-    response: {},
-  }).as('stubbedSockNodePost');
-  cy.route({
-    method: 'GET',
-    url: '/sockjs-node/**/*',
-    status: 200,
-    response: {},
-  }).as('stubbedSockNodeGet');
 });
 
 /**
@@ -140,32 +128,40 @@ Cypress.Commands.add('stubAuth', ({ hasRefreshToken = false } = {}) => {
  * @param {number} statusCode - the HTTP response status code. Defaults to `200`.
  * @param {string} url - the URL of the request that will be intercepted
  * @param {string} fixture - the path of the relevant fixture. See: https://docs.cypress.io/api/commands/fixture.html
- * @param {string} fixtureAlias - the name of the alias used for the passed in fixture
  * @param {string} requestAlias - the alias name for the passed in route - useful when paired with cy.wait();
  * @param {number} delay - delay before a request will resolve - useful for testing loading states
  */
 Cypress.Commands.add(
   'stubRequest',
   ({
-    onRequest,
     method = 'GET',
     statusCode = 200,
     url,
+    headers,
+    queryParams,
     fixture,
-    fixtureAlias = 'requestAlias',
     requestAlias = 'stubbedRequest',
-    delay,
+    delay = 0,
+    forceNetworkError = false,
   }) => {
-    cy.server();
-    cy.fixture(fixture).as(fixtureAlias);
-    cy.route({
+    // See: https://docs.cypress.io/api/commands/intercept.html#routeMatcher-RouteMatcher
+    const routeMatcher = {
       method,
       url,
-      status: statusCode,
-      response: `@${fixtureAlias}`,
-      onRequest,
-      delay,
-    }).as(requestAlias);
+      headers,
+      query: queryParams,
+    };
+
+    // See: https://docs.cypress.io/api/commands/intercept.html#routeHandler-string-object-Function-StaticResponse
+    // Additional options could be exposed on an as-needed basis
+    const routeHandler = {
+      fixture,
+      delayMs: delay,
+      forceNetworkError,
+      statusCode,
+    };
+
+    cy.intercept(routeMatcher, routeHandler).as(requestAlias);
   },
 );
 
