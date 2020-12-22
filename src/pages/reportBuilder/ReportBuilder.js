@@ -36,6 +36,7 @@ import {
   BounceReasonComparisonTab,
   DelayReasonsTab,
   LinksTab,
+  LinksComparisonTab,
   RejectionReasonsTab,
 } from './components/tabs';
 import { useReportBuilderContext } from './context/ReportBuilderContext';
@@ -308,6 +309,16 @@ export function ReportBuilder({
                   return (
                     <Tabs.Item key={`tab-bounce-${comparison.value}-${index}`}>
                       <BounceReasonComparisonTab comparison={comparison} />
+                    </Tabs.Item>
+                  );
+                })}
+
+              {hasLinksMetrics &&
+                hasActiveComparisons &&
+                reportOptions.comparisons.map((comparison, index) => {
+                  return (
+                    <Tabs.Item key={`tab-links-${comparison.value}-${index}`}>
+                      <LinksComparisonTab comparison={comparison} />
                     </Tabs.Item>
                   );
                 })}

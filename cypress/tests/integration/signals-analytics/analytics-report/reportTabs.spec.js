@@ -652,6 +652,149 @@ if (IS_HIBANA_ENABLED) {
         verifyDelayReasonsTable();
       });
     });
+
+    describe('the links comparison tables', () => {
+      it('renders additional tabs when comparisons are enabled', () => {
+        commonBeforeSteps();
+        applyEngagementMetrics();
+        applySubaccountComparisons();
+        cy.wait(['@getDeliverability', '@getTimeSeries']);
+
+        cy.findByRole('tab', { name: 'Links' }).should('not.exist');
+        cy.findByRole('tab', { name: 'Links Fake Subaccount 1 (ID 101)' }).should('be.visible');
+        cy.findByRole('tab', { name: 'Links Fake Subaccount 2 (ID 102)' }).should('be.visible');
+
+        cy.stubRequest({
+          url: '/api/v1/metrics/deliverability/link-name**/*',
+          fixture: 'metrics/deliverability/link-name/200.get.json',
+          requestAlias: 'getEngagement',
+        });
+        cy.findByRole('tab', { name: 'Links Fake Subaccount 1 (ID 101)' }).click();
+        cy.wait(['@getDeliverability', '@getEngagement']).then(xhrs => {
+          const [deliverabilityReq, engagementReq] = xhrs;
+
+          cy.wrap(deliverabilityReq.url).should('include', '101');
+          cy.wrap(engagementReq.url).should('include', '101');
+        });
+
+        cy.get('table')
+          .should('be.visible')
+          .within(() => {
+            cy.get('tbody tr')
+              .eq(0)
+              .within(() => {
+                cy.get('td')
+                  .eq(0)
+                  .should('have.text', 'Mock Link 1');
+                cy.get('td')
+                  .eq(1)
+                  .should('have.text', '10');
+                cy.get('td')
+                  .eq(2)
+                  .should('have.text', '10');
+                cy.get('td')
+                  .eq(3)
+                  .should('have.text', '0%');
+              });
+          });
+      });
+
+      it('merges existing query filters with comparisons when making requests for bounce reasons and aggregated metrics', () => {
+        commonBeforeSteps();
+        applyEngagementMetrics();
+        applySubaccountComparisons();
+
+        // Apply an additional subaccount filter
+        cy.findByRole('button', { name: 'Add Filters' }).click();
+        cy.findByLabelText('Type').select('Subaccount');
+        cy.findByLabelText('Compare By').select('is equal to');
+        cy.findByLabelText('Subaccount').type('Fake Subaccount 4');
+        cy.wait('@getSubaccounts');
+        cy.findByRole('option', { name: 'Fake Subaccount 4 (ID 104)' }).click();
+        cy.findByRole('button', { name: 'Apply Filters' }).click();
+
+        // Select the links tab and verify the network request
+        cy.stubRequest({
+          url: '/api/v1/metrics/deliverability**/*',
+          fixture: 'metrics/deliverability/200.get.json',
+          requestAlias: 'getDeliverabilityAgain',
+        });
+        cy.stubRequest({
+          url: '/api/v1/metrics/deliverability/link-name**/*',
+          fixture: 'metrics/deliverability/link-name/200.get.json',
+          requestAlias: 'getEngagement',
+        });
+        cy.findByRole('tab', { name: 'Links Fake Subaccount 1 (ID 101)' }).click();
+
+        cy.wait(['@getDeliverabilityAgain', '@getEngagement']).then(xhrs => {
+          const [deliverabilityReq, engagementReq] = xhrs;
+
+          // Verify the subaccount filters that were already present are in the request
+          cy.wrap(deliverabilityReq.url).should('include', '104');
+          cy.wrap(engagementReq.url).should('include', '104');
+
+          // And then verify that the relevant subaccount comparison was converted to a filter and included as well
+          cy.wrap(deliverabilityReq.url).should('include', '101');
+          cy.wrap(engagementReq.url).should('include', '101');
+        });
+      });
+
+      it('renders an error when one or both API requests fail', () => {
+        commonBeforeSteps();
+        applyEngagementMetrics();
+        applySubaccountComparisons();
+
+        cy.stubRequest({
+          url: '/api/v1/metrics/deliverability**/*',
+          fixture: '400.json',
+          statusCode: 400,
+          requestAlias: 'getDeliverabilityFail',
+        });
+
+        cy.findByRole('tab', { name: 'Links Fake Subaccount 1 (ID 101)' }).click();
+        cy.wait('@getDeliverabilityFail');
+        cy.wait('@getDeliverabilityFail');
+        cy.wait('@getDeliverabilityFail');
+        cy.wait('@getDeliverabilityFail');
+
+        cy.findByText('An error occurred').should('be.visible');
+        cy.findByText('Sorry, there was an issue.').should('be.visible');
+
+        cy.stubRequest({
+          url: '/api/v1/metrics/deliverability/link-name**/*',
+          fixture: 'metrics/deliverability/link-name/200.get.json',
+          requestAlias: 'getEngagement',
+        });
+        cy.stubRequest({
+          url: '/api/v1/metrics/deliverability**/*',
+          fixture: 'metrics/deliverability/200.get.json',
+          requestAlias: 'getDeliverability',
+        });
+        cy.findByRole('button', { name: 'Try Again' }).click();
+        cy.wait(['@getEngagement', '@getDeliverability']);
+
+        cy.get('table')
+          .should('be.visible')
+          .within(() => {
+            cy.get('tbody tr')
+              .eq(0)
+              .within(() => {
+                cy.get('td')
+                  .eq(0)
+                  .should('have.text', 'Mock Link 1');
+                cy.get('td')
+                  .eq(1)
+                  .should('have.text', '10');
+                cy.get('td')
+                  .eq(2)
+                  .should('have.text', '10');
+                cy.get('td')
+                  .eq(3)
+                  .should('have.text', '0%');
+              });
+          });
+      });
+    });
   });
 }
 
@@ -681,7 +824,7 @@ function commonBeforeSteps() {
  */
 function applyBounceMetrics() {
   cy.withinDrawer(() => {
-    // Uncheck defaults, and check a metric that renders the "Rejection Reason" table
+    // Uncheck defaults, and check a metric that renders the "Bounce Reason" table
     cy.findByLabelText('Targeted').uncheck({ force: true });
     cy.findByLabelText('Accepted').uncheck({ force: true });
     cy.findByLabelText('Bounces').uncheck({ force: true });
@@ -712,6 +855,19 @@ function applyDelayMetrics() {
     cy.findByLabelText('Delayed 1st Attempt').check({ force: true });
 
     cy.findByRole('button', { name: 'Apply Metrics' }).click();
+    cy.wait(['@getDeliverability', '@getTimeSeries']);
+  });
+}
+
+function applyEngagementMetrics() {
+  cy.withinDrawer(() => {
+    // Uncheck defaults, and check a metric that renders the "Links" table
+    cy.findByLabelText('Targeted').uncheck({ force: true });
+    cy.findByLabelText('Accepted').uncheck({ force: true });
+    cy.findByLabelText('Bounces').uncheck({ force: true });
+    cy.findByLabelText('Clicks').check({ force: true });
+    cy.findByRole('button', { name: 'Apply Metrics' }).click();
+
     cy.wait(['@getDeliverability', '@getTimeSeries']);
   });
 }

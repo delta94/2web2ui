@@ -3,4 +3,5 @@ export { default as BounceReasonComparisonTab } from './BounceReasonComparisonTa
 export { default as DelayReasonsTab } from './DelayReasonsTab';
 export { default as DelayReasonsComparisonTab } from './DelayReasonsComparisonTab';
 export { default as LinksTab } from './LinksTab';
+export { default as LinksComparisonTab } from './LinksComparisonTab';
 export { default as RejectionReasonsTab } from './RejectionReasonsTab';
