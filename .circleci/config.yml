@@ -144,7 +144,7 @@ jobs:
 
   'Integration Testing - OG Theme':
     docker:
-      - image: cypress/browsers
+      - image: cypress/included
     parallelism: 5
     steps:
       - setup
@@ -166,7 +166,7 @@ jobs:
 
   'Integration Testing - OG Theme - Targeted':
     docker:
-      - image: cypress/browsers
+      - image: cypress/included
     description: 'Runs integration tests for the OG theme, structured for individual test debugging'
     parameters:
       specs:
@@ -188,7 +188,7 @@ jobs:
 
   'Integration Testing - Hibana Theme':
     docker:
-      - image: cypress/browsers
+      - image: cypress/included
     parallelism: 5
     steps:
       - setup
@@ -210,7 +210,7 @@ jobs:
 
   'Integration Testing - Hibana Theme - Targeted':
     docker:
-      - image: cypress/browsers
+      - image: cypress/included
     description: 'Runs integration tests for the Hibana theme, structured for individual test debugging'
     parameters:
       specs:
