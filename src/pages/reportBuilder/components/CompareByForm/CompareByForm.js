@@ -26,6 +26,8 @@ import { useReportBuilderContext } from '../../context/ReportBuilderContext';
 import Typeahead from './Typeahead';
 import styled from 'styled-components';
 
+import { segmentTrack, SEGMENT_EVENTS } from 'src/helpers/segment';
+
 const initialState = {
   filters: [null, null],
   filterType: undefined,
@@ -101,6 +103,13 @@ function CompareByForm({
 
     if (formattedFilters.length < 2 && formattedFilters.length > 0) {
       return dispatch({ type: 'SET_ERROR', error: 'Select more than one item to compare' });
+    }
+
+    if (formattedFilters.length >= 2) {
+      segmentTrack(SEGMENT_EVENTS.REPORT_BUILDER_COMPARISON_ADDED, {
+        comparisonType: state.filterType,
+        numberOfComparisons: formattedFilters.length,
+      });
     }
 
     return handleSubmit({ comparisons: formattedFilters });
