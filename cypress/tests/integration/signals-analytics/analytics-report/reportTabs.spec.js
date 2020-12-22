@@ -713,7 +713,7 @@ if (IS_HIBANA_ENABLED) {
         cy.findByRole('option', { name: 'Fake Subaccount 4 (ID 104)' }).click();
         cy.findByRole('button', { name: 'Apply Filters' }).click();
 
-        // Select the bounce reason tab and verify the network request
+        // Select the links tab and verify the network request
         cy.stubRequest({
           url: '/api/v1/metrics/deliverability**/*',
           fixture: 'metrics/deliverability/200.get.json',
@@ -726,7 +726,7 @@ if (IS_HIBANA_ENABLED) {
         });
         cy.findByRole('tab', { name: 'Links Fake Subaccount 1 (ID 101)' }).click();
 
-        cy.wait(['@getEngagement', '@getDeliverabilityAgain']).then(xhrs => {
+        cy.wait(['@getDeliverabilityAgain', '@getEngagement']).then(xhrs => {
           const [deliverabilityReq, engagementReq] = xhrs;
 
           // Verify the subaccount filters that were already present are in the request
