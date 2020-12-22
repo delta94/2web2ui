@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
+import { useForm, useWatch } from 'react-hook-form';
 import { Button, Modal, Tabs } from 'src/components/matchbox';
 import { updateUserUIOptions } from 'src/actions/currentUser';
 import { showAlert } from 'src/actions/globalAlert';
@@ -11,6 +12,8 @@ export function ChangeReportModal({ reports, open, onClose, currentUser }) {
   const dispatch = useDispatch();
 
   const [tabIndex, setTabIndex] = useState(0);
+
+  const { control, register, handleSubmit } = useForm();
 
   const handleTabChange = index => {
     setTabIndex(index);
@@ -34,36 +37,55 @@ export function ChangeReportModal({ reports, open, onClose, currentUser }) {
       reports={reports}
       currentUser={currentUser}
       onSubmit={onSubmit}
+      register={register}
     />,
-    <AllReportsTabWithSelectableRows reports={reports} onSubmit={onSubmit} />,
+    <AllReportsTabWithSelectableRows reports={reports} onSubmit={onSubmit} register={register} />,
   ];
 
   return (
     <Modal open={open} onClose={onClose} showCloseButton maxWidth="1300">
       <Modal.Header>Change Report</Modal.Header>
       <Modal.Content p="0">
-        <Tabs
-          tabs={[
-            { content: 'My Reports', onClick: () => handleTabChange(0) },
-            { content: 'All Reports', onClick: () => handleTabChange(1) },
-          ]}
-          fitted
-          selected={tabIndex}
-        />
+        <form onSubmit={handleSubmit(onSubmit)} id="reportsmodalForm">
+          <Tabs
+            tabs={[
+              { content: 'My Reports', onClick: () => handleTabChange(0) },
+              { content: 'All Reports', onClick: () => handleTabChange(1) },
+            ]}
+            fitted
+            selected={tabIndex}
+          />
 
-        {TABS[tabIndex]}
+          {TABS[tabIndex]}
+        </form>
+        <ModalFooter onClose={onClose} control={control} />
       </Modal.Content>
-      <Modal.Footer>
-        <Button variant="primary" loadingLabel="Loading" type="submit" form="reportsmodalForm">
-          Change Report
-        </Button>
-        <Button variant="secondary" onClick={onClose}>
-          Cancel
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
 }
+
+const ModalFooter = ({ onClose, control }) => {
+  const submitDisbaled = useWatch({
+    control,
+    name: 'reportId',
+  });
+  return (
+    <>
+      <Button
+        variant="primary"
+        loadingLabel="Loading"
+        type="submit"
+        form="reportsmodalForm"
+        disabled={!submitDisbaled}
+      >
+        Change Report
+      </Button>
+      <Button variant="secondary" onClick={onClose}>
+        Cancel
+      </Button>
+    </>
+  );
+};
 
 const mapStateToProps = state => {
   return {

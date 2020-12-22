@@ -3,7 +3,6 @@ import { TableCollection, Subaccount } from 'src/components';
 import { Box, Radio, Table, Tag, Tooltip } from 'src/components/matchbox';
 import { formatDateTime } from 'src/helpers/date';
 import { shrinkToFit } from 'src/helpers/string';
-import { useForm } from 'react-hook-form';
 
 const FilterBoxWrapper = props => (
   <Box borderBottom="400" padding="400">
@@ -11,13 +10,8 @@ const FilterBoxWrapper = props => (
   </Box>
 );
 const SHRINK_LENGTH = 50;
-export const MyReportsTabWithSelectableRows = ({ reports, currentUser, onSubmit }) => {
+export const MyReportsTabWithSelectableRows = ({ reports, currentUser, register }) => {
   const myReports = reports.filter(({ creator }) => creator === currentUser);
-  const { register, handleSubmit } = useForm({
-    defaultValues: {
-      reportId: myReports[0]?.id,
-    },
-  });
   const getMyReportColumns = () => {
     return [
       { label: 'Name', sortKey: 'name', maxWidth: '250' },
@@ -26,11 +20,9 @@ export const MyReportsTabWithSelectableRows = ({ reports, currentUser, onSubmit 
   };
   const TableWrapper = ({ children }) => {
     return (
-      <form onSubmit={handleSubmit(onSubmit)} id="reportsmodalForm">
-        <Radio.Group label="reportList" labelHidden>
-          <Table>{children}</Table>
-        </Radio.Group>
-      </form>
+      <Radio.Group label="reportList" labelHidden>
+        <Table>{children}</Table>
+      </Radio.Group>
     );
   };
   const myReportsRows = report => {
@@ -58,12 +50,7 @@ export const MyReportsTabWithSelectableRows = ({ reports, currentUser, onSubmit 
   );
 };
 
-export const AllReportsTabWithSelectableRows = ({ reports, onSubmit }) => {
-  const { register, handleSubmit } = useForm({
-    defaultValues: {
-      reportId: reports[0]?.id,
-    },
-  });
+export const AllReportsTabWithSelectableRows = ({ reports, register }) => {
   const getColumnsForAllReports = () => {
     return [
       { label: 'Name', sortKey: 'name' },
@@ -75,11 +62,9 @@ export const AllReportsTabWithSelectableRows = ({ reports, onSubmit }) => {
 
   const TableWrapper = ({ children }) => {
     return (
-      <form onSubmit={handleSubmit(onSubmit)} id="reportsmodalForm">
-        <Radio.Group label="reportList" labelHidden>
-          <Table>{children}</Table>
-        </Radio.Group>
-      </form>
+      <Radio.Group label="reportList" labelHidden>
+        <Table>{children}</Table>
+      </Radio.Group>
     );
   };
 
