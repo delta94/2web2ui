@@ -79,10 +79,14 @@ const Actions = ({
     >
       <ActionList>
         {canEdit && <ActionList.Action content="Delete" onClick={() => handleDelete(report)} />}
-
-        <ActionList.Action content="Schedule" to={`/signals/schedule/${report.id}`} as={PageLink} />
-
-        {rest.allowDashboardV2 && rest.isScheduledReportsEnabled && (
+        {rest.isScheduledReportsEnabled && (
+          <ActionList.Action
+            content="Schedule"
+            to={`/signals/schedule/${report.id}`}
+            as={PageLink}
+          />
+        )}
+        {rest.allowDashboardV2 && (
           <PinToDashboardAction
             content="Pin to Dashboard"
             is="button"
