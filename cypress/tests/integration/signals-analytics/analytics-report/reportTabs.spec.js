@@ -588,7 +588,7 @@ if (IS_HIBANA_ENABLED) {
         cy.findByRole('option', { name: 'Fake Subaccount 4 (ID 104)' }).click();
         cy.findByRole('button', { name: 'Apply Filters' }).click();
 
-        // Select the bounce reason tab and verify the network request
+        // Select the delay reason tab and verify the network request
         cy.stubRequest({
           url: '/api/v1/metrics/deliverability**/*',
           fixture: 'metrics/deliverability/200.get.json',
@@ -653,7 +653,7 @@ if (IS_HIBANA_ENABLED) {
       });
     });
 
-    describe('the links comparison tables', () => {
+    describe('the links comparison (AKA compare by) tables', () => {
       it('renders additional tabs when comparisons are enabled', () => {
         commonBeforeSteps();
         applyEngagementMetrics();
@@ -795,6 +795,146 @@ if (IS_HIBANA_ENABLED) {
           });
       });
     });
+
+    describe('the rejection reason comparison (AKA compare by) tables', () => {
+      /**
+       * Re-usable function for verifying table UI for this particular tab on the page
+       */
+      function verifyRejectionReasonsTable() {
+        cy.get('table')
+          .should('be.visible')
+          .within(() => {
+            cy.get('tbody tr')
+              .eq(0)
+              .within(() => {
+                cy.get('td')
+                  .eq(0)
+                  .should('have.text', '5');
+                cy.get('td')
+                  .eq(1)
+                  .should('have.text', 'Policy Rejection');
+                cy.get('td')
+                  .eq(2)
+                  .should('have.text', '550 - Connection frequency limited');
+                cy.get('td')
+                  .eq(3)
+                  .should('have.text', 'gmail.com');
+              });
+          });
+      }
+
+      it('renders additional tabs when comparisons are made', () => {
+        commonBeforeSteps();
+        applyRejectionMetrics();
+        applySubaccountComparisons();
+        cy.wait(['@getDeliverability', '@getTimeSeries']);
+
+        cy.findByRole('tab', { name: 'Rejection Reason Fake Subaccount 1 (ID 101)' }).should(
+          'be.visible',
+        );
+        cy.findByRole('tab', { name: 'Rejection Reason Fake Subaccount 2 (ID 102)' }).should(
+          'be.visible',
+        );
+
+        cy.stubRequest({
+          url: '/api/v1/metrics/deliverability/rejection-reason/domain**/*',
+          fixture: 'metrics/deliverability/rejection-reason/domain/200.get.json',
+          requestAlias: 'getRejectionReasons',
+        });
+        cy.findByRole('tab', { name: 'Rejection Reason Fake Subaccount 1 (ID 101)' }).click();
+        cy.wait('@getRejectionReasons').then(xhr => {
+          cy.wrap(xhr.url).should('include', 'subaccounts');
+          cy.wrap(xhr.url).should('include', '101');
+        });
+
+        verifyRejectionReasonsTable();
+      });
+
+      it('merges existing query filters with comparisons when making requests for delay reasons and aggregated metrics', () => {
+        commonBeforeSteps();
+        applyRejectionMetrics();
+        applySubaccountComparisons();
+        cy.wait(['@getDeliverability', '@getTimeSeries']);
+
+        // Apply an additional account filter
+        cy.findByRole('button', { name: 'Add Filters' }).click();
+        cy.findByLabelText('Type').select('Subaccount');
+        cy.findByLabelText('Compare By').select('is equal to');
+        cy.findByLabelText('Subaccount').type('Fake Subaccount 4');
+        cy.wait('@getSubaccounts');
+        cy.findByRole('option', { name: 'Fake Subaccount 4 (ID 104)' }).click();
+        cy.findByRole('button', { name: 'Apply Filters' }).click();
+
+        cy.stubRequest({
+          url: '/api/v1/metrics/deliverability/rejection-reason/domain**/*',
+          fixture: 'metrics/deliverability/rejection-reason/domain/200.get.json',
+          requestAlias: 'getRejectionReasons',
+        });
+        cy.findByRole('tab', { name: 'Rejection Reason Fake Subaccount 1 (ID 101)' }).click();
+
+        cy.wait('@getRejectionReasons').then(xhr => {
+          // Verify the subaccount filters that were already present are in the request
+          cy.wrap(xhr.url).should('include', '104');
+
+          // And then verify that the relevant subaccount comparison was converted to a filter and included as well
+          cy.wrap(xhr.url).should('include', '101');
+        });
+      });
+
+      it('renders an error when one or both API requests fail', () => {
+        commonBeforeSteps();
+        applyRejectionMetrics();
+        applySubaccountComparisons();
+        cy.wait(['@getDeliverability', '@getTimeSeries']);
+
+        cy.stubRequest({
+          url: '/api/v1/metrics/deliverability/rejection-reason/domain**/*',
+          statusCode: 400,
+          fixture: '400.json',
+          requestAlias: 'getRejectionReasonsFail',
+        });
+
+        cy.findByRole('tab', { name: 'Rejection Reason Fake Subaccount 1 (ID 101)' }).click();
+        cy.wait('@getRejectionReasonsFail');
+        cy.wait('@getRejectionReasonsFail');
+        cy.wait('@getRejectionReasonsFail');
+        cy.wait('@getRejectionReasonsFail');
+
+        cy.findByText('An error occurred').should('be.visible');
+        cy.findByText('Sorry, there was an issue.').should('be.visible');
+
+        cy.stubRequest({
+          url: '/api/v1/metrics/deliverability/rejection-reason/domain**/*',
+          fixture: 'metrics/deliverability/rejection-reason/domain/200.get.json',
+          requestAlias: 'getRejectionReasons',
+        });
+        cy.findByRole('button', { name: 'Try Again' }).click();
+        cy.wait('@getRejectionReasons');
+
+        verifyRejectionReasonsTable();
+      });
+    });
+  });
+}
+
+/**
+ * Applies two subaccount comparisons to the current report
+ */
+function applySubaccountComparisons() {
+  cy.findByRole('button', { name: 'Add Comparison' }).click();
+  cy.withinDrawer(() => {
+    cy.findByLabelText('Type').select('Subaccount');
+    cy.findAllByLabelText('Subaccount')
+      .eq(0)
+      .type('sub');
+    cy.wait('@getSubaccounts');
+    cy.findByRole('option', { name: 'Fake Subaccount 1 (ID 101)' }).click();
+    cy.findAllByLabelText('Subaccount')
+      .eq(1)
+      .type('sub');
+    cy.wait('@getSubaccounts');
+    cy.findByRole('option', { name: 'Fake Subaccount 2 (ID 102)' }).click();
+    cy.findByRole('button', { name: 'Compare' }).click();
   });
 }
 
@@ -859,6 +999,9 @@ function applyDelayMetrics() {
   });
 }
 
+/**
+ * Applies engagement-related metrics to the current report
+ */
 function applyEngagementMetrics() {
   cy.withinDrawer(() => {
     // Uncheck defaults, and check a metric that renders the "Links" table
@@ -873,22 +1016,24 @@ function applyEngagementMetrics() {
 }
 
 /**
- * Applies two subaccount comparisons to the current report
+ * Applies rejected-related metrics to the current report
  */
-function applySubaccountComparisons() {
-  cy.findByRole('button', { name: 'Add Comparison' }).click();
+function applyRejectionMetrics() {
   cy.withinDrawer(() => {
-    cy.findByLabelText('Type').select('Subaccount');
-    cy.findAllByLabelText('Subaccount')
-      .eq(0)
-      .type('sub');
-    cy.wait('@getSubaccounts');
-    cy.findByRole('option', { name: 'Fake Subaccount 1 (ID 101)' }).click();
-    cy.findAllByLabelText('Subaccount')
-      .eq(1)
-      .type('sub');
-    cy.wait('@getSubaccounts');
-    cy.findByRole('option', { name: 'Fake Subaccount 2 (ID 102)' }).click();
-    cy.findByRole('button', { name: 'Compare' }).click();
+    // Uncheck defaults, and check a metric that renders the "Rejection Reason" table
+    cy.findByLabelText('Targeted').uncheck({ force: true });
+    cy.findByLabelText('Accepted').uncheck({ force: true });
+    cy.findByLabelText('Bounces').uncheck({ force: true });
+    cy.findByLabelText('Sent').uncheck({ force: true });
+
+    // Then check rejection-related metrics
+    cy.findByLabelText('Rejected').check({ force: true });
+    cy.findByLabelText('Policy Rejections').check({ force: true });
+    cy.findByLabelText('Generation Failures').check({ force: true });
+    cy.findByLabelText('Generation Rejections').check({ force: true });
+    cy.findByLabelText('Rejection Rate').check({ force: true });
+
+    cy.findByRole('button', { name: 'Apply Metrics' }).click();
+    cy.wait(['@getDeliverability', '@getTimeSeries']);
   });
 }

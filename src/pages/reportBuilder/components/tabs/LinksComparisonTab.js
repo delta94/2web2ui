@@ -1,19 +1,16 @@
 import React from 'react';
-import { useSparkPostQuery } from 'src/hooks';
+import { useSparkPostQuery, usePrepareReportBuilderQuery } from 'src/hooks';
+import { DELIVERABILITY_LINKS_METRIC_KEYS, LINKS_BY_DOMAIN_METRIC_KEYS } from 'src/config/metrics';
 import { ApiErrorBanner, Loading } from 'src/components';
 import { Panel } from 'src/components/matchbox';
 import { getMetricsFromKeys, getFilterByComparison } from 'src/helpers/metrics';
 import { getEngagement, getDeliverability } from 'src/helpers/api/metrics';
 import { LinksTable } from '../tables';
 import { useReportBuilderContext } from '../../context/ReportBuilderContext';
-import { usePrepareReportBuilderQuery } from 'src/hooks';
+import { TAB_LOADING_HEIGHT } from '../../constants';
 
 export default function LinksComparisonTab({ comparison }) {
-  const [aggregatesArgs, linkArgs] = useRequestArguments(comparison);
-  const linksQuery = useSparkPostQuery(() => getEngagement(linkArgs));
-  const aggregatesQuery = useSparkPostQuery(() => getDeliverability(aggregatesArgs));
-  const isPending = linksQuery.status === 'loading' || aggregatesQuery.status === 'loading';
-  const isError = linksQuery.status === 'error' || aggregatesQuery.status === 'error';
+  const { aggregatesQuery, linksQuery, isPending, isError } = useQueriesWithComparison(comparison);
 
   function handleReload() {
     linksQuery.refetch();
@@ -21,7 +18,7 @@ export default function LinksComparisonTab({ comparison }) {
   }
 
   if (isPending) {
-    return <Loading minHeight="300px" />;
+    return <Loading minHeight={TAB_LOADING_HEIGHT} />;
   }
 
   if (isError) {
@@ -36,7 +33,7 @@ export default function LinksComparisonTab({ comparison }) {
     <LinksTable
       links={linksQuery.data}
       totalClicks={aggregatesQuery.data.count_clicked}
-      tableLoading={false}
+      loading={false}
     />
   );
 }
@@ -45,23 +42,14 @@ export default function LinksComparisonTab({ comparison }) {
  * Prepares request parameters using common hooks, then leverages helper functions to determine which `metrics` are passed as arguments to each request.
  *
  * @param {Object} comparison - passed in comparison set by the user via the "Compare By" feature
+ *
  */
-function useRequestArguments(comparison) {
+function useQueriesWithComparison(comparison) {
   const { state: reportOptions } = useReportBuilderContext();
-
-  // I borrowed this logic from `src/actions/bounceReport`
-  // But does the comparison value influence which metrics are valid for this request?
-  const deliverabilityMetrics = getMetricsFromKeys([
-    'count_accepted',
-    'count_clicked',
-    'count_sent',
-    'count_unique_clicked_approx',
-    'count_unique_confirmed_opened_approx',
-  ]);
-  const linkMetrics = getMetricsFromKeys(['count_clicked', 'count_raw_clicked_approx']);
+  const deliverabilityMetrics = getMetricsFromKeys(DELIVERABILITY_LINKS_METRIC_KEYS);
+  const linkMetrics = getMetricsFromKeys(LINKS_BY_DOMAIN_METRIC_KEYS);
   const existingFilters = reportOptions.filters ? reportOptions.filters : [];
   const comparisonFilter = getFilterByComparison(comparison);
-
   const aggregatesArgs = usePrepareReportBuilderQuery({
     ...reportOptions,
     filters: [...existingFilters, comparisonFilter],
@@ -72,6 +60,13 @@ function useRequestArguments(comparison) {
     filters: [...existingFilters, comparisonFilter],
     metrics: linkMetrics,
   });
+  const linksQuery = useSparkPostQuery(() => getEngagement(linkArgs));
+  const aggregatesQuery = useSparkPostQuery(() => getDeliverability(aggregatesArgs));
 
-  return [aggregatesArgs, linkArgs];
+  return {
+    aggregatesQuery,
+    linksQuery,
+    isPending: linksQuery.status === 'loading' || aggregatesQuery.status === 'loading',
+    isError: linksQuery.status === 'error' || aggregatesQuery.status === 'error',
+  };
 }

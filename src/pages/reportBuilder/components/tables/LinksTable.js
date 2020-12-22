@@ -26,7 +26,7 @@ const columns = [
   { label: 'Percent of Total', sortKey: 'percentage_clicked' },
 ];
 
-export default function LinksTable({ totalClicks, links = [], tableLoading }) {
+export default function LinksTable({ totalClicks, links = [], loading }) {
   const getRowData = useCallback(
     rowData => {
       const { count_clicked, count_raw_clicked_approx, link_name } = rowData;
@@ -40,7 +40,7 @@ export default function LinksTable({ totalClicks, links = [], tableLoading }) {
     [totalClicks],
   );
 
-  if (tableLoading) {
+  if (loading) {
     return <LoadingWrapper />;
   }
 

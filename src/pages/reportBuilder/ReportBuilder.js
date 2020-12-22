@@ -29,15 +29,15 @@ import {
   SaveReportModal,
   CompareByGroupByTable,
 } from './components';
-
 import {
   BounceReasonTab,
-  DelayReasonsComparisonTab,
   BounceReasonComparisonTab,
   DelayReasonsTab,
+  DelayReasonsComparisonTab,
   LinksTab,
   LinksComparisonTab,
   RejectionReasonsTab,
+  RejectionReasonsComparisonTab,
 } from './components/tabs';
 import { useReportBuilderContext } from './context/ReportBuilderContext';
 import { PRESET_REPORT_CONFIGS } from './constants';
@@ -329,6 +329,16 @@ export function ReportBuilder({
                   return (
                     <Tabs.Item key={`tab-delay-${comparison.value}-${index}`}>
                       <DelayReasonsComparisonTab comparison={comparison} />
+                    </Tabs.Item>
+                  );
+                })}
+
+              {hasRejectionMetrics &&
+                hasActiveComparisons &&
+                reportOptions.comparisons.map((comparison, index) => {
+                  return (
+                    <Tabs.Item key={`tab-rejection-${comparison.value}-${index}`}>
+                      <RejectionReasonsComparisonTab comparison={comparison} />
                     </Tabs.Item>
                   );
                 })}

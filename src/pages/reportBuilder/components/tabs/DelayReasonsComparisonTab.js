@@ -1,5 +1,6 @@
 import React from 'react';
 import { usePrepareReportBuilderQuery, useSparkPostQuery } from 'src/hooks';
+import { DELIVERABILITY_DELAY_METRIC_KEYS } from 'src/config/metrics';
 import { getDelayReasonByDomain, getDeliverability } from 'src/helpers/api/metrics';
 import { ApiErrorBanner, Loading } from 'src/components';
 import { Panel } from 'src/components/matchbox';
@@ -40,14 +41,11 @@ export default function DelayReasonComparisonTab({ comparison }) {
  * Prepares request parameters using common hooks, then leverages helper functions to determine which `metrics` are passed as arguments to each request.
  *
  * @param {Object} comparison - passed in comparison set by the user via the "Compare By" feature
+ *
  */
 function useQueriesWithComparison(comparison) {
   const { state: reportOptions } = useReportBuilderContext();
-  const deliverabilityMetrics = getMetricsFromKeys([
-    'count_accepted',
-    'count_delayed',
-    'count_delayed_first',
-  ]);
+  const deliverabilityMetrics = getMetricsFromKeys(DELIVERABILITY_DELAY_METRIC_KEYS);
   const existingFilters = reportOptions.filters ? reportOptions.filters : [];
   const comparisonFilter = getFilterByComparison(comparison);
   const aggregatesParams = usePrepareReportBuilderQuery({

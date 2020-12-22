@@ -5,3 +5,4 @@ export { default as DelayReasonsComparisonTab } from './DelayReasonsComparisonTa
 export { default as LinksTab } from './LinksTab';
 export { default as LinksComparisonTab } from './LinksComparisonTab';
 export { default as RejectionReasonsTab } from './RejectionReasonsTab';
+export { default as RejectionReasonsComparisonTab } from './RejectionReasonsComparisonTab';
