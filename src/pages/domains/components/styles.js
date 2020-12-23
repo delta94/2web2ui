@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { ChevronRight } from '@sparkpost/matchbox-icons';
 
 export const StyledFilterFields = styled.div`
   display: grid;
@@ -19,16 +20,25 @@ export const StyledGridCell = styled.div`
   }
 `;
 
-export const StatusPopoverContent = styled.span`
-  display: inline-block; /* Necessary to supply width */
-  width: 100px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+export const StatusPopoverChevron = styled(ChevronRight)`
+  color: ${props => props.theme.colors.blue['700']};
+  position: absolute;
+  right: ${props => props.theme.space['300']};
+  transform: rotate(90deg);
+`;
 
-  > * {
-    /* Hacky fix, but addresses vertical centering without introducing a flex parent that wreaks havoc on text truncation */
-    display: inline-block;
-    transform: translateY(2px);
-  }
+// Set width of text to prevent overflow and tweak style
+// note, Button's color prop controls focus outline, hover background and text color, if color=grey is used
+//   the focus outline doesn't match the rest of the filters, instead this is only going to override text color
+// note, add padding to make space for absolute positioning of icon
+// see, https://stackoverflow.com/a/37427386
+export const StatusPopoverContent = styled.span`
+  color: ${props => props.theme.colors.gray['800']};
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+  white-space: nowrap;
+  width: 100px;
+  padding-right: ${props => props.theme.space['500']};
 `;
