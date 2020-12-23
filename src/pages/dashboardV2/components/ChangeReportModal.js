@@ -58,19 +58,19 @@ export function ChangeReportModal({ reports, open, onClose, currentUser }) {
 
           {TABS[tabIndex]}
         </form>
-        <ModalFooter onClose={onClose} control={control} />
       </Modal.Content>
+      <ModalFooter onClose={onClose} control={control} />
     </Modal>
   );
 }
 
-const ModalFooter = ({ onClose, control }) => {
+function ModalFooter({ onClose, control }) {
   const submitDisbaled = useWatch({
     control,
     name: 'reportId',
   });
   return (
-    <>
+    <Modal.Footer>
       <Button
         variant="primary"
         loadingLabel="Loading"
@@ -83,9 +83,10 @@ const ModalFooter = ({ onClose, control }) => {
       <Button variant="secondary" onClick={onClose}>
         Cancel
       </Button>
-    </>
+    </Modal.Footer>
   );
-};
+}
+ModalFooter.displayName = 'Modal.Footer';
 
 const mapStateToProps = state => {
   return {
