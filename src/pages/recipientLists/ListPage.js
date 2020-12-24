@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
 import { Page } from 'src/components/matchbox';
 import { Loading, ApiErrorBanner, TableCollection } from 'src/components';
 import { Users } from 'src/components/images';
 import { PageLink } from 'src/components/links';
 import { listRecipientLists } from 'src/actions/recipientLists';
 import { LINKS } from 'src/constants';
+import RecipientListEmptyState from './components/RecipientListEmptyState';
 
 const columns = [
   { label: 'Name', sortKey: 'name' },
@@ -84,6 +84,7 @@ export class ListPage extends Component {
             external: true,
           },
         }}
+        hibanaEmptyStateComponent={RecipientListEmptyState}
       >
         {error ? this.renderError() : this.renderCollection()}
       </Page>
