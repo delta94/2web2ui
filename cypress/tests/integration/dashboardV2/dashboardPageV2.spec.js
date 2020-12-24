@@ -66,7 +66,11 @@ describe('Version 2 of the dashboard page', () => {
         requestAlias: 'updateUIOptions',
       });
       cy.withinModal(() => {
-        cy.findByLabelText('Report d50d8475-d4e8-4df0-950f-b142f77df0bf').check({ force: true });
+        // arbitary wait was added because of this issue https://sparkpost.atlassian.net/browse/FE-1284
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(0);
+        cy.get('[type="radio"]').check('d50d8475-d4e8-4df0-950f-b142f77df0bf', { force: true });
+
         cy.findByRole('button', { name: 'Change Report' }).click();
       });
       cy.wait('@updateUIOptions').then(xhr => {
